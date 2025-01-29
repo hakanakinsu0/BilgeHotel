@@ -17,17 +17,17 @@ namespace Project.Configuration.Options
         /// <summary>
         /// AppUser ile ilişkili yapılandırmaları belirler.
         /// - AppUser ↔ AppUserProfile bire bir (1:1) ilişki.
-        /// - AppUser ↔ AppUserRole çoktan çoğa (n:m) ilişki.
+        /// - AppUser ↔ AppUserRole çoktan-çoğa (n:m) ilişki.
         /// - AppUserRole içindeki UserId alanı foreign key olarak belirlenmiştir.
         /// </summary>
         public override void Configure(EntityTypeBuilder<AppUser> builder)
         {
             base.Configure(builder);
 
-            // AppUser ↔ AppUserProfile ilişkisi
+            // AppUser ↔ AppUserProfile bire bir ilişkisi
             builder.HasOne(x => x.AppUserProfile) // AppUser'in bir AppUserProfile ilişkisi var.
                    .WithOne(x => x.AppUser) // AppUserProfile'in bir AppUser ilişkisi var.
-                   .HasForeignKey<AppUserProfile>(x => x.Id); // AppUserProfile içindeki Id foreign key olarak kullanılır.
+                   .HasForeignKey<AppUserProfile>(x => x.AppUserId); // AppUserProfile içindeki AppUserId foreign key olarak belirlenir.
 
             // AppUser ↔ AppUserRole ilişkisi
             builder.HasMany(x => x.UserRoles) // AppUser'in birden fazla UserRole ilişkisi var.

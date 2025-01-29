@@ -12,6 +12,8 @@ namespace Project.Entities.Models
     /// </summary>
     public class RoomFeature : BaseEntity
     {
+        public bool IsActive { get; set; } // Özelliğin aktif olup olmadığını belirten alan
+
         // Foreign Keys
         public int RoomId { get; set; } // İlişkili oda.
         public int FeatureId { get; set; } // İlişkili özellik.

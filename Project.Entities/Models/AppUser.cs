@@ -17,7 +17,6 @@ namespace Project.Entities.Models
     public class AppUser : IdentityUser<int>, IEntity
     {
         public Guid ActivationCode { get; set; } // Kullanıcının e-posta doğrulaması için benzersiz aktivasyon kodu.
-
         public DateTime CreatedDate { get; set; } // Kullanıcının sisteme eklendiği tarih.
         public DateTime? ModifiedDate { get; set; } // Kullanıcı bilgileri en son güncellendiği tarih. Null olabilir.
         public DateTime? DeletedDate { get; set; } // Kullanıcının silindiği tarih. Null olabilir.

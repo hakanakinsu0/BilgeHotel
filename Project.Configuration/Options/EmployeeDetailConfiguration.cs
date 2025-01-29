@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // EmployeeDetail'a özel alanlara yönelik ayarlamalar yapılabilir.
+            builder.Property(x => x.Salary).HasColumnType("money");
         }
     }
 }

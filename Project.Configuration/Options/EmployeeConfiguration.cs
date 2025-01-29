@@ -28,8 +28,6 @@ namespace Project.Configuration.Options
                    .WithOne(x => x.Employee) // EmployeeDetail'in bir Employee ilişkisi var.
                    .HasForeignKey<EmployeeDetail>(x => x.EmployeeId); // EmployeeDetail içindeki EmployeeId foreign key olarak belirlenir.
 
-            // Employee ↔ EmployeeShift çoktan-çoğa ilişkisi
-            builder.HasIndex(x => new { x.Id }).IsUnique(); // Çoktan-çoğa ilişki için indeks tanımı.
         }
     }
 }
