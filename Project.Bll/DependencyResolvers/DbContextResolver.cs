@@ -11,21 +11,32 @@ using System.Threading.Tasks;
 namespace Project.Bll.DependencyResolvers
 {
     /// <summary>
-    /// DbContext için Dependency Injection hizmetini çözümler.
+    /// Veritabanı bağlamı (DbContext) için Dependency Injection (DI) hizmetini çözümler.
+    /// Uygulamanın DI sistemine DbContext ekleyerek, tüm bileşenlerin veritabanı ile iletişim kurmasını sağlar.
     /// </summary>
     public static class DbContextResolver
     {
         /// <summary>
-        /// DbContext'i IServiceCollection'a ekler.
+        /// DbContext'i IServiceCollection'a ekler ve veritabanı bağlantısını yapılandırır.
         /// </summary>
         public static void AddDbContextService(this IServiceCollection services)
         {
-            //ServiceProvider size bir hizmet saglayıcısı nesnesi sunarak istediginiz ayarlama dosyasına erişmenizin temelini atar
-
+            // **ServiceProvider Kullanımı**
+            // ServiceProvider, Dependency Injection (DI) konteynerinden servisleri almak için kullanılır.
+            // Bu satır ile DI sisteminde yapılandırılmış servisleri içeren bir `provider` nesnesi oluşturuluyor.
             ServiceProvider provider = services.BuildServiceProvider();
 
-            IConfiguration configuration = provider.GetService<IConfiguration>();//bu noktadan itibaren artık set as startup olarak ayarlanmıs projenin appsettings.json dosyasına ulasma durumunuz acılmıstır...
-            services.AddDbContext<MyContext>(x => x.UseSqlServer(configuration.GetConnectionString("MyConnection")).UseLazyLoadingProxies());
+            // **IConfiguration Kullanımı**
+            // IConfiguration, uygulamanın appsettings.json dosyasından ayarları okumak için kullanılır.
+            // Burada ServiceProvider aracılığıyla IConfiguration servisi elde ediliyor.
+            IConfiguration configuration = provider.GetService<IConfiguration>();
+
+            // **DbContext'i DI Konteynerine Ekleme**
+            // Burada MyContext sınıfı, UseSqlServer ile SQL Server bağlantısı kullanılarak DI sistemine ekleniyor.
+            // Ayrıca UseLazyLoadingProxies() kullanılarak Lazy Loading aktif hale getiriliyor.
+            services.AddDbContext<MyContext>(x =>
+                x.UseSqlServer(configuration.GetConnectionString("MyConnection"))
+                 .UseLazyLoadingProxies());
         }
     }
 }

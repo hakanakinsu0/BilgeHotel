@@ -11,16 +11,31 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.ContextClasses
 {
+    /// <summary>
+    /// Veritabanı ile bağlantıyı yöneten DbContext sınıfıdır.
+    /// IdentityDbContext'ten miras alarak kullanıcı (AppUser), roller (AppRole) ve kimlik doğrulama işlemlerini yönetir.
+    /// </summary>
     public class MyContext : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
+        /// <summary>
+        /// MyContext constructor'ı, dışarıdan gelen DbContextOptions ile başlatılır.
+        /// </summary>
+        /// <param name="opt">Veritabanı bağlantı seçenekleri</param>
         public MyContext(DbContextOptions<MyContext> opt) : base(opt)
         {
 
         }
+
+        /// <summary>
+        /// Fluent API kullanılarak veritabanı konfigürasyonlarını uygular.
+        /// Tüm entity'lerin yapılandırmaları ApplyConfiguration() ile yüklenir.
+        /// </summary>
+        /// <param name="builder">Model yapılandırması</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            base.OnModelCreating(builder); // Identity ile ilgili varsayılan konfigürasyonları uygular
 
+            // **Tüm entity'lerin konfigürasyonları burada çağrılıyor**
             builder.ApplyConfiguration(new AppRoleConfiguration());
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppUserProfileConfiguration());
@@ -40,6 +55,7 @@ namespace Project.Dal.ContextClasses
             builder.ApplyConfiguration(new ShiftConfiguration());
         }
 
+        // **Veritabanı Tabloları**
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<AppRole> AppRoles { get; set; }
         public DbSet<AppUserProfile> AppUserProfiles { get; set; }
