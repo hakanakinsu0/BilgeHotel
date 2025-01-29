@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Project.Dal.ContextClasses;
 using Project.Entities.Models;
+using Project.Bll.DependencyResolvers;
+
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -8,31 +9,10 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-builder.Services.AddIdentity<AppUser, AppRole>(x =>
-{
-    x.Password.RequiredLength = 4;
-    x.Password.RequireDigit = false;
-    x.Password.RequireLowercase = false;
-    x.Password.RequireUppercase = false;
-    x.Password.RequireNonAlphanumeric = false;
-    x.Lockout.MaxFailedAccessAttempts = 5;
-    x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    x.SignIn.RequireConfirmedEmail = false;
-    x.User.RequireUniqueEmail = true;
-
-}).AddEntityFrameworkStores<MyContext>();
-
-builder.Services.ConfigureApplicationCookie(x =>
-{
-
-    x.Cookie.HttpOnly = true;
-    x.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    x.Cookie.Name = "CyberSelf";
-    x.Cookie.SameSite = SameSiteMode.Strict;
-
-});
-
-builder.Services.AddDbContext<MyContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")).UseLazyLoadingProxies());
+// **Dependency Resolvers Kullanýmý**
+builder.Services.AddDbContextService();
+builder.Services.AddIdentityService();
+builder.Services.AddRepositoryService();
 
 WebApplication app = builder.Build();
 
@@ -44,6 +24,10 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
