@@ -16,6 +16,7 @@ namespace Project.Entities.Models
         public string Description { get; set; } // Oda türünün açıklaması (opsiyonel).
 
         // Relational Properties
-        public virtual ICollection<Room> Rooms { get; set; } // Bu türdeki odalar ile ilişki.
+        public virtual ICollection<Room> Rooms { get; set; } // 1 RoomType N Room, 1 Room 1 RoomType
+
     }
 }

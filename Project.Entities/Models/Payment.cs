@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,13 +15,14 @@ namespace Project.Entities.Models
     {
         public DateTime PaymentDate { get; set; } // Ödemenin yapıldığı tarih.
         public decimal PaymentAmount { get; set; } // Ödenen toplam tutar.
-        public string PaymentMethod { get; set; } // Ödeme yöntemi (ör. "Kredi Kartı").
+        public PaymentMethod PaymentMethod { get; set; } // Ödeme yöntemi (Kredi Kartı, Nakit, Banka Havalesi).
 
         // Foreign Keys
         public int ReservationId { get; set; } // Ödemeye bağlı rezervasyon.
 
         // Relational Properties
-        public virtual Reservation Reservation { get; set; } // Rezervasyon ile ilişki.
+        public virtual Reservation Reservation { get; set; } // 1 Reservation 1 Payment, 1 Payment 1 Reservation
+
 
     }
 }

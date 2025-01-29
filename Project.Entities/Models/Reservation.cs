@@ -23,9 +23,10 @@ namespace Project.Entities.Models
 
 
         // Relational Properties
-        public virtual Customer Customer { get; set; } // Müşteri ile ilişki.
-        public virtual Room Room { get; set; } // Oda ile ilişki.
-        public virtual Package Package { get; set; } // Paket ile ilişki.
-        public virtual Payment Payment { get; set; } // Ödeme ile ilişki (opsiyonel).
+        public virtual Customer Customer { get; set; } // 1 Customer N Reservation, 1 Reservation 1 Customer
+        public virtual Room Room { get; set; } // 1 Room N Reservation, 1 Reservation 1 Room
+        public virtual Package Package { get; set; } // 1 Package N Reservation, 1 Reservation 1 Package
+        public virtual Payment Payment { get; set; } // 1 Reservation 1 Payment, 1 Payment 1 Reservation
+
     }
 }

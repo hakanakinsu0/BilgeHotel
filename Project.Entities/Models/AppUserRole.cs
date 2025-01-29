@@ -22,7 +22,8 @@ namespace Project.Entities.Models
         public DataStatus Status { get; set; }
 
         // Relational Properties
-        public virtual AppUser User { get; set; } // İlişkili kullanıcı.
-        public virtual AppRole Role { get; set; } // İlişkili rol.
+        public virtual AppUser User { get; set; } //  1 AppUser N AppRole, 1 AppRole N AppUser
+        public virtual AppRole Role { get; set; } //  1 AppUser N AppRole, 1 AppRole N AppUser
+
     }
 }

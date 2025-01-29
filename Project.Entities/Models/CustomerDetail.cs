@@ -22,6 +22,7 @@ namespace Project.Entities.Models
         public int CustomerId { get; set; } // Müşteri ile ilişki için foreign key.
 
         // Relational Properties
-        public virtual Customer Customer { get; set; } // Müşteri ile bire bir ilişki.
+        public virtual Customer Customer { get; set; } // 1 Customer 1 CustomerDetail, 1 CustomerDetail 1 Customer
+
     }
 }

@@ -17,7 +17,8 @@ namespace Project.Entities.Models
 
 
         // Relational Properties
-        public virtual ICollection<Reservation> Reservations { get; set; } // Müşteri ile ilişkili rezervasyonlar.
-        public virtual CustomerDetail CustomerDetail { get; set; } // Müşteri detayları ile bire bir ilişki.
+        public virtual ICollection<Reservation> Reservations { get; set; } // 1 Customer N Reservation, 1 Reservation 1 Customer
+        public virtual CustomerDetail CustomerDetail { get; set; } // 1 Customer 1 CustomerDetail, 1 CustomerDetail 1 Customer
+
     }
 }

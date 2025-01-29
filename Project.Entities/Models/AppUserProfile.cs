@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Project.Entities.Models
         public string FirstName { get; set; } // Kullanıcının adı.
         public string LastName { get; set; } // Kullanıcının soyadı.
         public DateTime? BirthDate { get; set; } // Kullanıcının doğum tarihi. Null olabilir.
-        public string Gender { get; set; } // Kullanıcının cinsiyeti (ör. "Male", "Female").
+        public Gender Gender { get; set; } // Kullanıcının cinsiyeti (ör. "Male", "Female").
 
         //Foreign Keys
         public int? AppUserId { get; set; } // AppUser ile bire bir ilişki için kullanılan yabancı anahtar (Foreign Key).
@@ -24,6 +25,7 @@ namespace Project.Entities.Models
 
 
         // Relational Property
-        public virtual AppUser AppUser { get; set; } // AppUser ile bire bir ilişki.
+        public virtual AppUser AppUser { get; set; } // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser 
+
     }
 }

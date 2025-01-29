@@ -17,7 +17,7 @@ namespace Project.Entities.Models
         public int FeatureId { get; set; } // İlişkili özellik.
 
         // Relational Properties
-        public virtual Room Room { get; set; } // Oda ile ilişki.
-        public virtual Feature Feature { get; set; } // Özellik ile ilişki.
+        public virtual Room Room { get; set; } // Junction Table: 1 Room N Feature, 1 Feature N Room
+        public virtual Feature Feature { get; set; } // Junction Table: 1 Room N Feature, 1 Feature N Room
     }
 }

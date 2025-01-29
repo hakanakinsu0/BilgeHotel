@@ -24,7 +24,6 @@ namespace Project.Entities.Models
         public DataStatus Status { get; set; } // Verinin durumunu belirtir (Inserted, Updated, Deleted).
 
         //Relational Properties
-        public virtual ICollection<AppUserRole> UserRoles { get; set; } // Çoktan çoğa ilişki.
-
+        public virtual ICollection<AppUserRole> UserRoles { get; set; } // Junction Table: 1 AppUser N AppRole, 1 AppRole N AppUser
     }
 }

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Project.Entities.Enums
 {
-    // DataStatus: Verinin durumunu belirlemek için kullanılan enumdur.
-    // Amaç: Verilerin eklenme, güncellenme ve silinme durumlarını izlemek.
+    /// <summary>
+    /// Verinin durumunu belirlemek için kullanılan enumdur.
+    /// Verilerin eklenme, güncellenme ve silinme durumlarını izlemek.
+    /// </summary>
     public enum DataStatus
     {
         Inserted = 1, // Verinin yeni eklendiği durum.

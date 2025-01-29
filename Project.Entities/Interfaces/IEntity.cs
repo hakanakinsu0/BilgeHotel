@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Entities.Interfaces
 {
-    // IEntity: Tüm entity sınıflarının ortak özelliklerini tanımlayan bir arayüzdür.
-    // Amaç: Entity sınıfları için standart bir yapı oluşturmak.
+    /// <summary>
+    /// Projedeki tüm entity sınıfları için temel özellikleri tanımlayan bir arayüz içerir.
+    /// IEntity, tüm entity sınıflarında standart bir yapı sağlar.
+    /// </summary>
     public interface IEntity
     {
         public int Id { get; set; } // Veritabanı tablolarında birincil anahtar (Primary Key) olarak kullanılır.

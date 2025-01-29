@@ -17,6 +17,6 @@ namespace Project.Entities.Models
         public decimal PriceMultiplier { get; set; } // Paket fiyat çarpanı.
 
         // Relational Properties
-        public virtual ICollection<Reservation> Reservations { get; set; } // Bu paketle ilişkili rezervasyonlar.
+        public virtual ICollection<Reservation> Reservations { get; set; } // 1 Package N Reservation, 1 Reservation 1 Package
     }
 }

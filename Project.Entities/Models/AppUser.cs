@@ -24,8 +24,8 @@ namespace Project.Entities.Models
         public DataStatus Status { get; set; } // Kullanıcının durumunu belirtir (Inserted, Updated, Deleted).
 
         // Relational Property
-        public virtual AppUserProfile AppUserProfile { get; set; } // Kullanıcının profil bilgileriyle bire bir ilişki.
-        public virtual ICollection<AppUserRole> UserRoles { get; set; } // Çoktan çoğa ilişki.
+        public virtual AppUserProfile AppUserProfile { get; set; } // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser 
+        public virtual ICollection<AppUserRole> UserRoles { get; set; } // Junction Table : 1 AppUser N AppRole, 1 AppRole N AppUser
 
     }
 }

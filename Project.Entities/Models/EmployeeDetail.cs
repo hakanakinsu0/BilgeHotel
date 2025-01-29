@@ -22,6 +22,6 @@ namespace Project.Entities.Models
         public int EmployeeId { get; set; } // Çalışan ile ilişki için foreign key.
 
         // Relational Properties
-        public virtual Employee Employee { get; set; } // Çalışan tablosu ile bire bir ilişki.
+        public virtual Employee Employee { get; set; } // 1 Employee 1 EmployeeDetail, 1 EmployeeDetail 1 Employee
     }
 }

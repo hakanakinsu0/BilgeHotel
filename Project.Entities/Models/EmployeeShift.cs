@@ -17,7 +17,8 @@ namespace Project.Entities.Models
         public int ShiftId { get; set; } // Vardiyayı temsil eder.
 
         // Relational Properties
-        public virtual Employee Employee { get; set; } // Çalışan ile ilişki.
-        public virtual Shift Shift { get; set; } // Vardiya ile ilişki.
+        public virtual Employee Employee { get; set; } // 1 Employee N Shift, 1 Shift N Employee
+        public virtual Shift Shift { get; set; } // 1 Employee N Shift, 1 Shift N Employee
+
     }
 }

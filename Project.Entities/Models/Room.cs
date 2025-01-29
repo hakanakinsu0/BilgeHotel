@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,13 +16,16 @@ namespace Project.Entities.Models
         public string RoomNumber { get; set; } // Odanın numarası.
         public int Floor { get; set; } // Odanın bulunduğu kat.
         public decimal PricePerNight { get; set; } // Odanın gecelik fiyatı.
+        public RoomStatus RoomStatus { get; set; } // Odanın durumu (Boş, Dolu, Bakımda).
+
 
         // Foreign Keys
         public int RoomTypeId { get; set; } // Odanın türü.
 
         // Relational Properties
-        public virtual RoomType RoomType { get; set; } // Oda türü ile ilişki.
-        public virtual ICollection<RoomFeature> RoomFeatures { get; set; } // Oda özellikleri ile ilişki.
-        public virtual ICollection<Reservation> Reservations { get; set; } // Rezervasyonlarla ilişki.
+        public virtual RoomType RoomType { get; set; } // 1 RoomType N Room, 1 Room 1 RoomType
+        public virtual ICollection<RoomFeature> RoomFeatures { get; set; } // Junction Table: 1 Room N Feature, 1 Feature N Room
+        public virtual ICollection<Reservation> Reservations { get; set; } // 1 Room N Reservation, 1 Reservation 1 Room
+
     }
 }

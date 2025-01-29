@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace Project.Entities.Models
 {
-    // BaseEntity: Tüm entity sınıflarının ortak özelliklerini içeren temel (base) bir abstract sınıftır.
-    // Amaç: Kod tekrarı yapmadan ortak özelliklerin tüm entity sınıflarında kullanılmasını sağlamak.
+    /// <summary>
+    /// Tüm entity sınıflarının ortak özelliklerini içeren temel (base) bir abstract sınıftır.
+    /// Kod tekrarı yapmadan ortak özelliklerin tüm entity sınıflarında kullanılmasını sağlamak.
+    /// </summary>
     public abstract class BaseEntity : IEntity
     {
         public int Id { get; set; } // Veritabanı tablolarında birincil anahtar (Primary Key) olarak kullanılır.
