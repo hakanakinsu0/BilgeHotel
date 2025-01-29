@@ -20,13 +20,13 @@ namespace Project.Entities.Models
         public int CustomerId { get; set; } // Rezervasyonu yapan müşteri.
         public int RoomId { get; set; } // Rezerve edilen oda.
         public int PackageId { get; set; } // Rezervasyon için seçilen paket.
-
+        public int? EmployeeId { get; set; } // Rezervasyonu yöneten Employee (Opsiyonel)
 
         // Relational Properties
         public virtual Customer Customer { get; set; } // 1 Customer N Reservation, 1 Reservation 1 Customer
         public virtual Room Room { get; set; } // 1 Room N Reservation, 1 Reservation 1 Room
         public virtual Package Package { get; set; } // 1 Package N Reservation, 1 Reservation 1 Package
         public virtual Payment Payment { get; set; } // 1 Reservation 1 Payment, 1 Payment 1 Reservation
-
+        public virtual Employee Employee { get; set; } // 1 Employee N Reservation, 1 Reservation 1 Employee
     }
 }

@@ -19,6 +19,5 @@ namespace Project.Entities.Models
         // Relational Properties
         public virtual Employee Employee { get; set; } // 1 Employee N Shift, 1 Shift N Employee
         public virtual Shift Shift { get; set; } // 1 Employee N Shift, 1 Shift N Employee
-
     }
 }

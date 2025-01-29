@@ -14,11 +14,11 @@ namespace Project.Entities.Models
     {
         public string FirstName { get; set; } // Çalışanın adı.
         public string LastName { get; set; } // Çalışanın soyadı.
-        public string Position { get; set; } // Çalışanın pozisyonu (ör. "Resepsiyonist").
+        public string Position { get; set; } // Çalışanın pozisyonu.
 
         // Relational Properties
         public virtual EmployeeDetail EmployeeDetail { get; set; } // 1 Employee 1 EmployeeDetail, 1 EmployeeDetail 1 Employee
-        public virtual IQueryable<EmployeeShift> EmployeeShifts { get; set; } // Junction Table: 1 Employee N Shift, 1 Shift N Employee
-
+        public virtual ICollection<EmployeeShift> EmployeeShifts { get; set; } // 1 Employee N Shift, 1 Shift N Employee
+        public virtual ICollection<Reservation> ManagedReservations { get; set; } // 1 Employee N Reservation, 1 Reservation 1 Employee
     }
 }

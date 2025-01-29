@@ -18,7 +18,6 @@ namespace Project.Entities.Models
         public decimal PricePerNight { get; set; } // Odanın gecelik fiyatı.
         public RoomStatus RoomStatus { get; set; } // Odanın durumu (Boş, Dolu, Bakımda).
 
-
         // Foreign Keys
         public int RoomTypeId { get; set; } // Odanın türü.
 
@@ -26,6 +25,5 @@ namespace Project.Entities.Models
         public virtual RoomType RoomType { get; set; } // 1 RoomType N Room, 1 Room 1 RoomType
         public virtual ICollection<RoomFeature> RoomFeatures { get; set; } // Junction Table: 1 Room N Feature, 1 Feature N Room
         public virtual ICollection<Reservation> Reservations { get; set; } // 1 Room N Reservation, 1 Reservation 1 Room
-
     }
 }

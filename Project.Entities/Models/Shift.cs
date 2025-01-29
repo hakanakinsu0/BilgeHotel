@@ -17,7 +17,6 @@ namespace Project.Entities.Models
         public TimeSpan EndTime { get; set; } // Vardiya bitiş saati.
 
         // Relational Properties
-        public virtual IQueryable<EmployeeShift> EmployeeShifts { get; set; } // Junction Table: 1 Employee N Shift, 1 Shift N Employee
-
+        public virtual ICollection<EmployeeShift> EmployeeShifts { get; set; } // 1 Employee N Shift, 1 Shift N Employee
     }
 }

@@ -10,24 +10,29 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında Employee tablosunun yapılandırılmasını sağlar.
-    /// Employee, çalışan detayları (EmployeeDetail) ve vardiyalar (Shift) ile ilişkilidir.
+    /// Employee, çalışan detayları (EmployeeDetail) ve rezervasyon yönetimi (Reservation) ile ilişkilidir.
     /// </summary>
     public class EmployeeConfiguration : BaseConfiguration<Employee>
     {
         /// <summary>
         /// Employee ile ilişkili yapılandırmaları belirler.
         /// - Employee ↔ EmployeeDetail bire bir (1:1) ilişki.
-        /// - Employee ↔ EmployeeShift çoktan-çoğa (n:m) ilişki.
+        /// - Employee ↔ Reservation bire çok (1:N) ilişki.
         /// </summary>
         public override void Configure(EntityTypeBuilder<Employee> builder)
         {
             base.Configure(builder);
 
             // Employee ↔ EmployeeDetail bire bir ilişkisi
-            builder.HasOne(x => x.EmployeeDetail) // Employee'in bir EmployeeDetail ilişkisi var.
-                   .WithOne(x => x.Employee) // EmployeeDetail'in bir Employee ilişkisi var.
-                   .HasForeignKey<EmployeeDetail>(x => x.EmployeeId); // EmployeeDetail içindeki EmployeeId foreign key olarak belirlenir.
+            builder.HasOne(x => x.EmployeeDetail)
+                   .WithOne(x => x.Employee)
+                   .HasForeignKey<EmployeeDetail>(x => x.EmployeeId);
 
+            // Employee ↔ Reservation bire çok ilişkisi
+            builder.HasMany(x => x.ManagedReservations)
+                   .WithOne(x => x.Employee)
+                   .HasForeignKey(x => x.EmployeeId)
+                   .IsRequired();
         }
     }
 }

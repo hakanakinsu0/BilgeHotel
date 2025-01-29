@@ -2,6 +2,7 @@
 using Project.Entities.Enums;
 using Project.Entities.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,9 +23,9 @@ namespace Project.Entities.Models
         public DateTime? DeletedDate { get; set; } // Kullanıcının silindiği tarih. Null olabilir.
         public DataStatus Status { get; set; } // Kullanıcının durumunu belirtir (Inserted, Updated, Deleted).
 
-        // Relational Property
+        // Relational Properties
         public virtual AppUserProfile AppUserProfile { get; set; } // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser 
-        public virtual ICollection<AppUserRole> UserRoles { get; set; } // Junction Table : 1 AppUser N AppRole, 1 AppRole N AppUser
-
+        public virtual ICollection<AppUserRole> UserRoles { get; set; } // Junction Table: 1 AppUser N AppRole, 1 AppRole N AppUser
+        public virtual ICollection<Customer> Customers { get; set; } // 1 AppUser N Customer, 1 Customer 1 AppUser
     }
 }

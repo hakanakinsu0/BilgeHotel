@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -18,22 +19,28 @@ namespace Project.Configuration.Options
         /// AppUser ile ilişkili yapılandırmaları belirler.
         /// - AppUser ↔ AppUserProfile bire bir (1:1) ilişki.
         /// - AppUser ↔ AppUserRole çoktan-çoğa (n:m) ilişki.
-        /// - AppUserRole içindeki UserId alanı foreign key olarak belirlenmiştir.
+        /// - AppUser ↔ Customer bire çok (1:N) ilişki.
         /// </summary>
         public override void Configure(EntityTypeBuilder<AppUser> builder)
         {
             base.Configure(builder);
 
             // AppUser ↔ AppUserProfile bire bir ilişkisi
-            builder.HasOne(x => x.AppUserProfile) // AppUser'in bir AppUserProfile ilişkisi var.
-                   .WithOne(x => x.AppUser) // AppUserProfile'in bir AppUser ilişkisi var.
-                   .HasForeignKey<AppUserProfile>(x => x.AppUserId); // AppUserProfile içindeki AppUserId foreign key olarak belirlenir.
+            builder.HasOne(x => x.AppUserProfile)
+                   .WithOne(x => x.AppUser)
+                   .HasForeignKey<AppUserProfile>(x => x.AppUserId);
 
-            // AppUser ↔ AppUserRole ilişkisi
-            builder.HasMany(x => x.UserRoles) // AppUser'in birden fazla UserRole ilişkisi var.
-                   .WithOne(x => x.User) // Her UserRole'in bir AppUser ilişkisi var.
-                   .HasForeignKey(x => x.UserId) // UserRole içindeki UserId foreign key olarak kullanılır.
-                   .IsRequired(); // Foreign key zorunludur.
+            // AppUser ↔ AppUserRole çoktan-çoğa ilişkisi
+            builder.HasMany(x => x.UserRoles)
+                   .WithOne(x => x.User)
+                   .HasForeignKey(x => x.UserId)
+                   .IsRequired();
+
+            // AppUser ↔ Customer bire çok ilişkisi
+            builder.HasMany(x => x.Customers)
+                   .WithOne(x => x.AppUser)
+                   .HasForeignKey(x => x.AppUserId)
+                   .IsRequired();
         }
     }
 }
