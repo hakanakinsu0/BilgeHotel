@@ -13,6 +13,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContextService();
 builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
+builder.Services.AddMapperServices();
+
 
 WebApplication app = builder.Build();
 
