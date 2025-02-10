@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,10 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
+            builder.HasKey(x => x.Id);
             builder.HasIndex(x => new { x.UserId, x.RoleId }).IsUnique(); // Junction Table: 1 AppUser N AppRole, 1 AppRole N AppUser
+            // **AppUserRole tablosu "AspNetUserRoles" olarak kullanılacak**
+            builder.ToTable("AspNetUserRoles");
         }
     }
 }

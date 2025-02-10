@@ -7,6 +7,7 @@ using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,6 +55,11 @@ namespace Project.Dal.ContextClasses
             builder.ApplyConfiguration(new RoomFeatureConfiguration());
             builder.ApplyConfiguration(new RoomTypeConfiguration());
             builder.ApplyConfiguration(new ShiftConfiguration());
+
+            RoomTypeSeed.SeedRoomTypes(builder);
+            RoomSeed.SeedRooms(builder);
+            EmployeeSeed.SeedEmployees(builder);
+            UserAndRoleSeed.SeedUsersAndRoles(builder);
         }
 
         // **Veritabanı Tabloları**
