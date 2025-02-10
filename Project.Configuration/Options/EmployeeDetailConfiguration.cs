@@ -22,7 +22,8 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            builder.Property(x => x.Salary).HasColumnType("money");
+            builder.Property(x => x.Salary) 
+                   .HasColumnType("money"); // Veritabanında Salary alanının veri tipi decimal yerine money olarak ayarlanır.
         }
     }
 }

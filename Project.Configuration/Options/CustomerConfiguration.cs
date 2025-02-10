@@ -24,16 +24,13 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Customer ↔ CustomerDetail bire bir ilişkisi
-            builder.HasOne(x => x.CustomerDetail)
+            builder.HasOne(x => x.CustomerDetail) // 1 Customer 1 CustomerDetail, 1 CustomerDetail 1 Customer
                    .WithOne(x => x.Customer)
                    .HasForeignKey<CustomerDetail>(x => x.CustomerId);
 
-            // Customer ↔ AppUser bire çok ilişkisi
-            builder.HasOne(x => x.AppUser)
+            builder.HasOne(x => x.AppUser) // 1 AppUser N Customer, 1 Customer 1 AppUser
                    .WithMany(x => x.Customers)
-                   .HasForeignKey(x => x.AppUserId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .HasForeignKey(x => x.AppUserId);
         }
     }
 }

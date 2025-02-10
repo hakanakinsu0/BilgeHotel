@@ -15,13 +15,12 @@ namespace Project.Configuration.Options
     {
         /// <summary>
         /// AppUserProfile yapılandırmalarını belirler.
-        /// Tablonun alanlarına yönelik ek ayarlamalar yapılabilir.
         /// </summary>
         public override void Configure(EntityTypeBuilder<AppUserProfile> builder)
         {
             base.Configure(builder);
-            // AppUserProfile'a özel ayarlar burada tanımlanabilir.
-            // Şu an için ek bir yapılandırmaya gerek yok.
+
+            // AppUserProfile'a özel ekstra yapılandırma yok.
         }
     }
 }

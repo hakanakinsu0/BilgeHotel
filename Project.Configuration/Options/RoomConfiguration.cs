@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Project.Configuration.Options
 {
- /// <summary>
- /// Veritabanında Room tablosunun yapılandırılmasını sağlar.
- /// Room, oda türü (RoomType), oda özellikleri (RoomFeature) ve rezervasyonlar (Reservation) ile ilişkilidir.
- /// </summary>
+    /// <summary>
+    /// Veritabanında Room tablosunun yapılandırılmasını sağlar.
+    /// Room, oda türü (RoomType), oda özellikleri (RoomFeature) ve rezervasyonlar (Reservation) ile ilişkilidir.
+    /// </summary>
     public class RoomConfiguration : BaseConfiguration<Room>
     {
         /// <summary>
@@ -23,8 +23,8 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Decimal alanları "money" türüne çeviriyoruz.
-            builder.Property(x => x.PricePerNight).HasColumnType("money");
+            builder.Property(x => x.PricePerNight) 
+                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
         }
     }
 }

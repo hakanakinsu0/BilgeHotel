@@ -22,8 +22,8 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Çoktan-çoğa ilişkiyi temsil eden indeks
-            builder.HasIndex(x => new { x.RoomId, x.FeatureId }).IsUnique();
+            builder.HasIndex(x => new { x.RoomId, x.FeatureId }) // Junction Table: 1 Room N Feature, 1 Feature N Room
+                   .IsUnique();
         }
     }
 }

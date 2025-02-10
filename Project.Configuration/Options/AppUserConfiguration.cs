@@ -25,19 +25,16 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // AppUser ↔ AppUserProfile bire bir ilişkisi
-            builder.HasOne(x => x.AppUserProfile)
+            builder.HasOne(x => x.AppUserProfile) // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser
                    .WithOne(x => x.AppUser)
                    .HasForeignKey<AppUserProfile>(x => x.AppUserId);
 
-            // AppUser ↔ AppUserRole çoktan-çoğa ilişkisi
-            builder.HasMany(x => x.UserRoles)
+            builder.HasMany(x => x.UserRoles) // Junction Table: 1 AppUser N AppRole, 1 AppRole N AppUser
                    .WithOne(x => x.User)
                    .HasForeignKey(x => x.UserId)
                    .IsRequired();
 
-            // AppUser ↔ Customer bire çok ilişkisi
-            builder.HasMany(x => x.Customers)
+            builder.HasMany(x => x.Customers) // 1 AppUser N Customer, 1 Customer 1 AppUser
                    .WithOne(x => x.AppUser)
                    .HasForeignKey(x => x.AppUserId)
                    .IsRequired();

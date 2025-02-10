@@ -23,8 +23,7 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Kullanıcı ve rol kombinasyonunu benzersiz hale getiren indeks
-            builder.HasIndex(x => new { x.UserId, x.RoleId }).IsUnique();
+            builder.HasIndex(x => new { x.UserId, x.RoleId }).IsUnique(); // Junction Table: 1 AppUser N AppRole, 1 AppRole N AppUser
         }
     }
 }

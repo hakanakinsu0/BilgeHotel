@@ -21,7 +21,7 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Shift'e özel ek ayarlamalar burada tanımlanabilir.
+            // Shift tablosuna özel ek ayarlamalar bulunmamaktadır.
         }
     }
 }

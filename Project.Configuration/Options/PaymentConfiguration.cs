@@ -23,8 +23,8 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Decimal alanları "money" türüne çeviriyoruz.
-            builder.Property(x => x.PaymentAmount).HasColumnType("money");
+            builder.Property(x => x.PaymentAmount) 
+                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
         }
     }
 }

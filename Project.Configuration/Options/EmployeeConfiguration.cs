@@ -23,13 +23,11 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Employee ↔ EmployeeDetail bire bir ilişkisi
-            builder.HasOne(x => x.EmployeeDetail)
+            builder.HasOne(x => x.EmployeeDetail) // 1 Employee 1 EmployeeDetail, 1 EmployeeDetail 1 Employee
                    .WithOne(x => x.Employee)
                    .HasForeignKey<EmployeeDetail>(x => x.EmployeeId);
 
-            // Employee ↔ Reservation bire çok ilişkisi
-            builder.HasMany(x => x.ManagedReservations)
+            builder.HasMany(x => x.ManagedReservations) // 1 Employee N Reservation, 1 Reservation 1 Employee
                    .WithOne(x => x.Employee)
                    .HasForeignKey(x => x.EmployeeId)
                    .IsRequired();

@@ -22,8 +22,8 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Çoktan-çoğa ilişkiyi temsil eden indeks
-            builder.HasIndex(x => new { x.EmployeeId, x.ShiftId }).IsUnique();
+            builder.HasIndex(x => new { x.EmployeeId, x.ShiftId }) // Junction Table: 1 Employee N Shift, 1 Shift N Employee
+                   .IsUnique();
         }
     }
 }

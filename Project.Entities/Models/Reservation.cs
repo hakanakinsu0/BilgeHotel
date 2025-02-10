@@ -17,9 +17,9 @@ namespace Project.Entities.Models
         public decimal TotalPrice { get; set; } // Rezervasyon toplam tutarı.
 
         //Foreign Keys
-        public int CustomerId { get; set; } // Rezervasyonu yapan müşteri.
+        public int? CustomerId { get; set; } // Rezervasyonu yapan müşteri.
         public int RoomId { get; set; } // Rezerve edilen oda.
-        public int PackageId { get; set; } // Rezervasyon için seçilen paket.
+        public int? PackageId { get; set; } // Rezervasyon için seçilen paket.
         public int? EmployeeId { get; set; } // Rezervasyonu yöneten Employee (Opsiyonel)
 
         // Relational Properties

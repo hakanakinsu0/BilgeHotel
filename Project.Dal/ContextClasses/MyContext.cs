@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Project.Configuration.Options;
+using Project.Dal.BogusHandling;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;

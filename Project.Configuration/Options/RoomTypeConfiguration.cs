@@ -21,7 +21,7 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // RoomType'a özel ek ayarlamalar burada tanımlanabilir.
+            // RoomType'a özel ek ayarlamalar bulunmamaktadır.
         }
     }
 }

@@ -21,8 +21,7 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            // Feature tablosunda özel bir yapılandırma şu anda gerekmiyor.
-
+            // Feature tablosunda özel bir yapılandırma gerekmiyor.
         }
     }
 }
