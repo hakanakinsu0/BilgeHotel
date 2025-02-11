@@ -14,6 +14,8 @@ builder.Services.AddDbContextService();
 builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
 builder.Services.AddMapperServices();
+builder.Services.AddManagerService();
+
 
 
 WebApplication app = builder.Build();
