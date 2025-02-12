@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "E-Posta Aktivasyonu Gerekli";
+}
+
+<h2 class="text-center text-danger">Hesabınızı Doğrulayın</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning text-center">
+        @TempData["Message"]
+    </div>
+}
+
+<p class="text-center">
+    Hesabınızı henüz doğrulamadınız. Lütfen kayıt olurken verdiğiniz e-posta adresinize gönderilen aktivasyon linkine tıklayarak hesabınızı aktif hale getirin.
+</p>
+
+<div class="text-center mt-4">
+    <a href="@Url.Action("SignIn", "Home")" class="btn btn-primary">Giriş Yap</a>
+</div>

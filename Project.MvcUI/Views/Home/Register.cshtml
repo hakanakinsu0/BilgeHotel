@@ -1,0 +1,43 @@
+﻿@model UserRegisterRequestModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<h2 class="text-center">Kayıt Ol</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info text-center">
+        @TempData["Message"]
+    </div>
+}
+
+<form asp-action="Register" asp-controller="Home" method="post" class="mt-4">
+    <div class="form-group">
+        <input asp-for="UserName" class="form-control" placeholder="Kullanıcı Adı">
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input asp-for="Email" type="email" class="form-control" placeholder="E-posta">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input asp-for="Password" type="password" class="form-control" placeholder="Şifre">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Şifre Tekrar">
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block mt-3">Kayıt Ol</button>
+</form>
+
+<div class="text-center mt-3">
+    <p>Hesabınız var mı? <a href="@Url.Action("SignIn", "Home")">Giriş Yap</a></p>
+</div>
+
