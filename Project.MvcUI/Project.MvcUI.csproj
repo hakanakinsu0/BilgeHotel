@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Project.Common\Project.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\OutherTools\assets\jquery-file-upload\server\php\files\thumbnail\" />
+  </ItemGroup>
+
 </Project>

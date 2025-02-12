@@ -30,23 +30,25 @@ namespace Project.MvcUI.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult SendTestMail()
-        {
-            try
-            {
-                MailService.Send(
-                    receiver: "hakanakinsu.37@gmail.com",
-                    body: "Bu bir test e-postasýdýr.",
-                    subject: "Test Mail",
-                    sender: "testemail3172@gmail.com"
-                );
+        #region MailGonderimTesti
+        //public IActionResult SendTestMail()
+        //{
+        //    try
+        //    {
+        //        MailService.Send(
+        //            receiver: "hakanakinsu.37@gmail.com",
+        //            body: "Bu bir test e-postasýdýr.",
+        //            subject: "Test Mail",
+        //            sender: "testemail3172@gmail.com"
+        //        );
 
-                return Content("E-posta baþarýyla gönderildi!");
-            }
-            catch (Exception ex)
-            {
-                return Content($"E-posta gönderme sýrasýnda hata oluþtu: {ex.Message}");
-            }
-        }
+        //        return Content("E-posta baþarýyla gönderildi!");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Content($"E-posta gönderme sýrasýnda hata oluþtu: {ex.Message}");
+        //    }
+        //} 
+        #endregion
     }
 }
