@@ -251,7 +251,10 @@
                 <ul class="nav pull-right top-menu">
                     <li>
                         <input type="text" class="form-control search" placeholder="Search">
+                        
+
                     </li>
+                    
                     <!-- user login dropdown start-->
                     <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -266,6 +269,15 @@
                             <li><a href="#"><i class="icon-bell-alt"></i> Notification</a></li>
                             <li><a href="login.html"><i class="icon-key"></i> Log Out</a></li>
                         </ul>
+                    </li>
+
+                    <li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form asp-action="Logout" asp-controller="Home" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">Çıkış Yap</button>
+                            </form>
+                        }
                     </li>
                     <!-- user login dropdown end -->
                 </ul>

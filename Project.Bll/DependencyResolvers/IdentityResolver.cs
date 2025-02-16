@@ -23,28 +23,25 @@ namespace Project.Bll.DependencyResolvers
         /// </summary>
         public static void AddIdentityService(this IServiceCollection services)
         {
-            // **Identity Konfigürasyonu**
-            // Kullanıcı (AppUser) ve rol (AppRole) sistemlerini Identity ile DI'ye ekler.
             services.AddIdentity<AppUser, AppRole>(x =>
             {
                 // **Şifre Politikaları**
-                x.Password.RequireDigit = false; // En az bir rakam içermesi zorunlu değil.
-                x.Password.RequiredLength = 4; // Minimum şifre uzunluğu 4 karakter.
-                x.Password.RequireLowercase = false; // Küçük harf zorunluluğu yok.
-                x.Password.RequireUppercase = false; // Büyük harf zorunluluğu yok.
-                x.Password.RequireNonAlphanumeric = false; // Alfanümerik olmayan karakter gereksinimi yok.
+                x.Password.RequireDigit = true;  // En az bir rakam içermeli.
+                x.Password.RequiredLength = 6;   // Minimum şifre uzunluğu 6 karakter.
+                x.Password.RequireLowercase = true;  // Küçük harf zorunlu.
+                x.Password.RequireUppercase = true;  // Büyük harf zorunlu.
+                x.Password.RequireNonAlphanumeric = false;  // Özel karakter gerekmiyor.
 
                 // **Hesap Kilitleme Politikaları**
-                x.Lockout.MaxFailedAccessAttempts = 5; // 5 başarısız giriş denemesi sonrası kilitlenme.
-                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Kilitlenme süresi 5 dakika.
+                x.Lockout.MaxFailedAccessAttempts = 3;  // 3 başarısız giriş denemesi sonrası kilitlenme.
+                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);  // Kilitlenme süresi 10 dakika.
 
                 // **Giriş ve Kullanıcı Politikaları**
-                x.SignIn.RequireConfirmedEmail = false; // Kullanıcı e-posta onayı olmadan giriş yapabilir.
-                x.User.RequireUniqueEmail = true; // Her kullanıcının e-posta adresi benzersiz olmalıdır.
+                x.SignIn.RequireConfirmedEmail = true;  // Kullanıcı e-posta onayı olmadan giriş yapamaz.
+                x.User.RequireUniqueEmail = true;  // E-posta adresi benzersiz olmalı.
             })
-            // **Entity Framework Store Eklenmesi**
-            // Identity sisteminin Entity Framework ile çalışmasını sağlar ve MyContext ile ilişkilendirir.
-            .AddEntityFrameworkStores<MyContext>();
+            .AddEntityFrameworkStores<MyContext>()
+            .AddDefaultTokenProviders(); // Şifre sıfırlama ve e-posta doğrulama için token üretimi sağlar.
         }
     }
 }

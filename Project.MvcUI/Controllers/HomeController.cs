@@ -83,10 +83,18 @@ namespace Project.MvcUI.Controllers
                 return View(model);
             }
 
-            // Benzersiz aktivasyon kodu oluþtur
+            // **Mevcut e-posta kontrolü**
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Email", "Bu e-posta adresi ile zaten bir hesap oluþturulmuþ.");
+                return View(model);
+            }
+
+            // **Benzersiz aktivasyon kodu oluþtur**
             Guid specId = Guid.NewGuid();
 
-            // Kullanýcý oluþturma
+            // **Yeni Kullanýcý Oluþturma**
             AppUser appUser = new()
             {
                 UserName = model.UserName,
@@ -96,37 +104,14 @@ namespace Project.MvcUI.Controllers
                 Status = DataStatus.Inserted
             };
 
-            // Kullanýcýyý kaydet
+            // **Þifreyi Identity ile kontrol et ve hata mesajlarýný al**
             IdentityResult result = await _userManager.CreateAsync(appUser, model.Password);
 
             if (result.Succeeded)
             {
-                #region **Rol Atama Ýþlemi**
-                // Eðer "Member" rolü yoksa, oluþtur
-                var existingRole = await _roleManager.FindByNameAsync("Member");
-                if (existingRole == null)
-                {
-                    AppRole newRole = new() { Name = "Member", CreatedDate = DateTime.Now, Status = DataStatus.Inserted };
-                    await _roleManager.CreateAsync(newRole);
-                    existingRole = newRole; // Yeni rolü deðiþkene atýyoruz
-                }
+                await AssignUserRole(appUser, "Member", _context);
 
-                // Kullanýcýya "Member" rolünü atamak için AppUserRole nesnesi oluþtur
-                AppUserRole appUserRole = new()
-                {
-                    Id = 0, // EF Core tarafýndan otomatik atanacak
-                    UserId = appUser.Id,
-                    RoleId = existingRole.Id,
-                    CreatedDate = DateTime.Now,
-                    Status = DataStatus.Inserted
-                };
-
-                // **_context ile manuel olarak AppUserRole ekliyoruz**
-                await _context.AppUserRoles.AddAsync(appUserRole);
-                await _context.SaveChangesAsync();
-                #endregion
-
-                // Kullanýcýya aktivasyon e-postasý gönder
+                // **Aktivasyon Maili Gönder**
                 string activationLink = $"<a href='http://localhost:5114/Home/ConfirmEmail?specId={specId}&id={appUser.Id}'>Hesabýnýzý doðrulamak için buraya týklayýn</a>";
                 string message = $"<p>Hesabýnýz oluþturulmuþtur.</p><p>Üyeliðinizi tamamlamak için aþaðýdaki baðlantýya týklayýn:</p>{activationLink}";
 
@@ -135,7 +120,7 @@ namespace Project.MvcUI.Controllers
                 return RedirectToAction("RedirectPanel");
             }
 
-            // Kayýt baþarýsýz olursa hata mesajlarýný ekle
+            // **Hata mesajlarýný UI tarafýna ekleyelim**
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError("", error.Description);
@@ -143,6 +128,30 @@ namespace Project.MvcUI.Controllers
 
             return View(model);
         }
+
+
+        private async Task AssignUserRole(AppUser appUser, string roleName, MyContext _context)
+        {
+            AppRole existingRole = await _roleManager.FindByNameAsync(roleName);
+            if (existingRole == null)
+            {
+                AppRole newRole = new() { Name = roleName, CreatedDate = DateTime.Now, Status = DataStatus.Inserted };
+                await _roleManager.CreateAsync(newRole);
+                existingRole = newRole;
+            }
+
+            AppUserRole appUserRole = new()
+            {
+                UserId = appUser.Id,
+                RoleId = existingRole.Id,
+                CreatedDate = DateTime.Now,
+                Status = DataStatus.Inserted
+            };
+
+            await _context.AppUserRoles.AddAsync(appUserRole);
+            await _context.SaveChangesAsync();
+        }
+
 
 
         // Kullanýcýya yönlendirme mesajý göstermek için basit bir sayfa
@@ -191,28 +200,27 @@ namespace Project.MvcUI.Controllers
 
             // Kullanýcýyý UserName ile bul
             AppUser appUser = await _userManager.FindByNameAsync(model.UserName);
-            SignInManager result = await _signInManager.PasswordSignInAsync(appUser, model.Password, true, true);
 
             if (appUser == null)
             {
-                TempData["Message"] = "Kullanýcý bulunamadý.";
-                return RedirectToAction("SignIn");
+                ModelState.AddModelError("", "Böyle bir kullanýcý bulunamadý.");
+                return View(model);
             }
 
             // Kullanýcýnýn e-posta doðrulamasý yapýlmýþ mý?
             if (!appUser.EmailConfirmed)
             {
-                TempData["Message"] = "Hesabýnýzý doðrulamadýnýz. Lütfen e-postanýzý kontrol edin.";
-                return RedirectToAction("MailPanel");
+                ModelState.AddModelError("", "Hesabýnýz doðrulanmamýþ! Lütfen e-postanýzý kontrol edin.");
+                return View(model);
             }
 
-            // Kullanýcýyý giriþ yaptýrma iþlemi
+            // Kullanýcý giriþ yapmayý deniyor, ancak baþarýsýz deneme sýnýrý var.
+            var result = await _signInManager.PasswordSignInAsync(appUser, model.Password, model.RememberMe, true);
 
             if (result.Succeeded)
             {
-                // Kullanýcýnýn rollerini al
+                // Kullanýcýnýn rollerini al ve yönlendir
                 IList<string> roles = await _userManager.GetRolesAsync(appUser);
-
                 if (roles.Contains("Admin"))
                 {
                     return RedirectToAction("Index", "Home", new { Area = "Admin" });
@@ -221,23 +229,128 @@ namespace Project.MvcUI.Controllers
                 {
                     return RedirectToAction("Privacy", "Home");
                 }
-
                 return RedirectToAction("Index", "Home");
             }
-            else if (result.IsNotAllowed)
+            else if (result.IsLockedOut)
             {
-                return RedirectToAction("MailPanel");
+                ModelState.AddModelError("", "Hesabýnýz çok fazla hatalý giriþ nedeniyle geçici olarak kilitlendi. Lütfen 10 dakika sonra tekrar deneyin.");
+                return View(model);
             }
 
-            TempData["Message"] = "Giriþ baþarýsýz. Kullanýcý adý veya þifre hatalý.";
-            return RedirectToAction("SignIn");
+            ModelState.AddModelError("", "Giriþ baþarýsýz! Kullanýcý adý veya þifre yanlýþ.");
+            return View(model);
         }
+
 
         // **MailPanel Sayfasý**
         public IActionResult MailPanel()
         {
             return View();
         }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                TempData["Message"] = "Eðer bu e-posta sistemimizde kayýtlýysa, þifre sýfýrlama baðlantýsý gönderilmiþtir.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            // Þifre sýfýrlama token'ý oluþtur
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Kullanýcýya e-posta ile link gönder
+            string resetLink = Url.Action("ResetPassword", "Home", new { email = user.Email, token = token }, Request.Scheme);
+            string message = $"Þifrenizi sýfýrlamak için <a href='{resetLink}'>buraya týklayýn</a>.";
+
+            MailService.Send(user.Email, body: message);
+            TempData["Message"] = "Þifre sýfýrlama baðlantýsý e-posta adresinize gönderildi.";
+
+            return RedirectToAction("ForgotPassword");
+        }
+
+
+        public IActionResult ResetPassword(string email, string token)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            {
+                TempData["Message"] = "Geçersiz þifre sýfýrlama baðlantýsý.";
+                return RedirectToAction("SignIn");
+            }
+
+            var model = new ResetPasswordRequestModel
+            {
+                Email = email,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequestModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Kullanýcýyý e-posta adresiyle bul
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                TempData["Message"] = "Geçersiz þifre sýfýrlama isteði.";
+                return RedirectToAction("SignIn");
+            }
+
+            // Kullanýcýdan gelen token deðerini decode edelim (Bazý sistemlerde token URL encoding ile gelebilir)
+            var decodedToken = model.Token.Replace(" ", "+");
+
+            // Þifre sýfýrlama iþlemi
+            var resetResult = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
+
+            if (resetResult.Succeeded)
+            {
+                // **Status ve ModifiedDate Güncelleniyor**
+                user.ModifiedDate = DateTime.Now;
+                user.Status = DataStatus.Updated; // Eðer `DataStatus` enum'ýnda Updated varsa
+
+                await _userManager.UpdateAsync(user); // Kullanýcý güncelleniyor
+                await _userManager.UpdateSecurityStampAsync(user); // Güvenlik damgasý güncelleniyor
+
+                TempData["Message"] = "Þifreniz baþarýyla güncellendi. Yeni þifrenizle giriþ yapabilirsiniz.";
+                return RedirectToAction("SignIn");
+            }
+
+            // Eðer hata olursa kullanýcýya göster
+            foreach (var error in resetResult.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            TempData["Message"] = "Baþarýyla çýkýþ yaptýnýz.";
+            return RedirectToAction("SignIn");
+        }
+
 
     }
 }

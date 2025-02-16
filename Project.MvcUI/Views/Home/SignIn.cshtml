@@ -30,10 +30,21 @@
     </div>
 
     <button type="submit" class="btn btn-primary btn-block mt-3">Giriş Yap</button>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mt-3">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
 </form>
 
 <div class="text-center mt-3">
     <p>Hesabınız yok mu? <a href="@Url.Action("Register", "Home")">Kayıt Ol</a></p>
+    <p><a href="@Url.Action("ForgotPassword", "Home")">Şifremi Unuttum</a></p>
 </div>
-
-

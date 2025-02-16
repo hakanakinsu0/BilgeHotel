@@ -18,10 +18,12 @@ namespace Project.MvcUI.Models.PureVms.AppUsers
 
         [Required(ErrorMessage = "Şifre zorunludur.")]
         [MinLength(6, ErrorMessage = "Şifre en az 6 karakter olmalıdır.")]
-        public string Password { get; set; } // Şifre
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
+                   ErrorMessage = "Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.")]
+        public string Password { get; set; }
 
         [Required(ErrorMessage = "Şifre tekrarı zorunludur.")]
         [Compare("Password", ErrorMessage = "Şifreler uyuşmuyor.")]
-        public string ConfirmPassword { get; set; } // Şifre doğrulama
+        public string ConfirmPassword { get; set; }
     }
 }
