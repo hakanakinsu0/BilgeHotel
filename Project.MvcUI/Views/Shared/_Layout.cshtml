@@ -18,12 +18,37 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/Home/Index">Ana Sayfa</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Reservation/Index">Rezervasyon Yap</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Auth/Login">Giriş Yap</a>
-                    </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a href="/Reservation/Create" class="nav-link text-warning">Rezervasyon Yap</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a href="/Auth/Login?returnUrl=/Reservation/Create" class="nav-link text-warning">Rezervasyon Yap</a>
+                        </li>
+                    }
+
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- Kullanıcı giriş yaptıysa Çıkış Yap butonunu göster -->
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="/Auth/Logout">Çıkış Yap</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- Kullanıcı giriş yapmadıysa Giriş Yap ve Kayıt Ol butonlarını göster -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Auth/Login">Giriş Yap</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Auth/Register">Kayıt Ol</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
@@ -33,8 +58,9 @@
         @RenderBody()
     </div>
 
-    <footer class="bg-dark text-white text-center p-3 mt-4">
+    <footer class="bg-dark text-white text-center p-3 mt-5">
         <p>&copy; 2025 Bilge Hotel | Tüm Hakları Saklıdır.</p>
+        <p>📍 Adres: İstanbul, Türkiye | 📞 Telefon: +90 555 123 45 67 | ✉️ E-posta: info@bilgehotel.com</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

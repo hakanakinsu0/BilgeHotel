@@ -1,36 +1,42 @@
 ﻿@model UserLoginRequestModel
 
-<h2>Giriş Yap</h2>
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
-    </div>
+@{
+    ViewData["Title"] = "Giriş Yap";
 }
 
-<form asp-action="Login" method="post">
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label">E-posta</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+<div class="container mt-5">
+    <h2 class="text-center">Giriş Yap</h2>
 
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label">Şifre</label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-danger text-center">
+            @TempData["Message"]
+        </div>
+    }
 
-    <div class="form-check">
-        <input asp-for="RememberMe" class="form-check-input" />
-        <label asp-for="RememberMe" class="form-check-label">Beni Hatırla</label>
-    </div>
+    <form asp-action="Login" method="post" class="w-50 mx-auto border p-4 rounded shadow bg-light">
+        <input type="hidden" asp-for="ReturnUrl" value="@Context.Request.Query["returnUrl"]" /> <!-- returnUrl Saklandı -->
 
-    <button type="submit" class="btn btn-primary">Giriş Yap</button>
-</form>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">E-Posta</label>
+            <input asp-for="Email" type="email" class="form-control" placeholder="E-posta adresinizi girin">
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
 
-<p>Hesabınız yok mu? <a href="/Auth/Register">Buradan kayıt olun</a>.</p>
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Şifre</label>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Şifrenizi girin">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+
+        <div class="mt-3 text-center">
+            <p>Hesabınız yok mu? <a href="/Auth/Register">Kayıt Ol</a></p>
+        </div>
+
+        <div class="mt-3 text-center">
+            <p>Şifrenizi mi unuttunuz? <a href="/Auth/ForgotPassword">Yeni Şifre Oluştur</a></p>
+        </div>
+    </form>
+</div>
