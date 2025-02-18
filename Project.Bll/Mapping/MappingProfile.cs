@@ -20,8 +20,7 @@ namespace Project.Bll.Mapping
             // Kullanıcı ve Rol
             CreateMap<AppUser, AppUserDto>().ReverseMap();
             CreateMap<AppUserProfile, AppUserProfileDto>().ReverseMap();
-            CreateMap<AppRole, AppRoleDto>().ReverseMap();
-            CreateMap<AppUserRole, AppUserRoleDto>().ReverseMap();
+
 
             // Müşteri ve Detayları
             CreateMap<Customer, CustomerDto>().ReverseMap();

@@ -29,10 +29,7 @@ namespace Project.Configuration.Options
                    .WithOne(x => x.AppUser)
                    .HasForeignKey<AppUserProfile>(x => x.AppUserId);
 
-            builder.HasMany(x => x.UserRoles) // Junction Table: 1 AppUser N AppRole, 1 AppRole N AppUser
-                   .WithOne(x => x.User)
-                   .HasForeignKey(x => x.UserId)
-                   .IsRequired();
+           
 
             builder.HasMany(x => x.Customers) // 1 AppUser N Customer, 1 Customer 1 AppUser
                    .WithOne(x => x.AppUser)

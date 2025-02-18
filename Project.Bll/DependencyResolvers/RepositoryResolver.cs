@@ -2,10 +2,6 @@
 using Project.Dal.Repositories.Abstracts;
 using Project.Dal.Repositories.Concretes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Bll.DependencyResolvers
 {
@@ -23,9 +19,11 @@ namespace Project.Bll.DependencyResolvers
         {
             // Kullanıcı ve rol yönetimi repository bağımlılıkları
             services.AddScoped<IAppUserRepository, AppUserRepository>(); // 1 AppUser N Repository
-            services.AddScoped<IAppRoleRepository, AppRoleRepository>(); // 1 AppRole N Repository
             services.AddScoped<IAppUserProfileRepository, AppUserProfileRepository>(); // 1 AppUserProfile N Repository
-            services.AddScoped<IAppUserRoleRepository, AppUserRoleRepository>(); // 1 AppUserRole N Repository
+
+            // **Kaldırılan Repository'ler:**
+            // services.AddScoped<IAppRoleRepository, AppRoleRepository>(); ❌ SİLİNDİ
+            // services.AddScoped<IAppUserRoleRepository, AppUserRoleRepository>(); ❌ SİLİNDİ
 
             // Müşteri yönetimi repository bağımlılıkları
             services.AddScoped<ICustomerRepository, CustomerRepository>(); // 1 Customer N Repository

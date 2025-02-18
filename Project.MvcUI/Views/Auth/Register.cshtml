@@ -1,0 +1,40 @@
+﻿@model UserRegisterRequestModel
+
+<h2>Kayıt Ol</h2>
+
+<form asp-action="Register" method="post">
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">E-posta</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Şifre</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label">Telefon Numarası</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+</form>
+
+@if (ViewData.ModelState.ContainsKey("Message"))
+{
+    <div class="alert alert-danger mt-3">
+        @ViewData.ModelState["Message"].Errors.FirstOrDefault()?.ErrorMessage
+    </div>
+}
+
+<p>Zaten bir hesabınız var mı? <a href="/Auth/Login">Buradan giriş yapın</a>.</p>

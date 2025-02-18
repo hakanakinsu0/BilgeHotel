@@ -23,7 +23,7 @@ namespace Project.Bll.DependencyResolvers
         /// </summary>
         public static void AddIdentityService(this IServiceCollection services)
         {
-            services.AddIdentity<AppUser, AppRole>(x =>
+            services.AddIdentity<AppUser, IdentityRole<int>>(x =>
             {
                 // **Şifre Politikaları**
                 x.Password.RequireDigit = true;  // En az bir rakam içermeli.
@@ -34,7 +34,7 @@ namespace Project.Bll.DependencyResolvers
 
                 // **Hesap Kilitleme Politikaları**
                 x.Lockout.MaxFailedAccessAttempts = 3;  // 3 başarısız giriş denemesi sonrası kilitlenme.
-                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);  // Kilitlenme süresi 10 dakika.
+                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);  // Kilitlenme süresi 10 dakika.
 
                 // **Giriş ve Kullanıcı Politikaları**
                 x.SignIn.RequireConfirmedEmail = true;  // Kullanıcı e-posta onayı olmadan giriş yapamaz.

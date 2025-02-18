@@ -12,24 +12,10 @@ namespace Project.Bll.Managers.Concretes
 {
     public class AppUserManager : BaseManager<AppUserDto, AppUser>, IAppUserManager
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<AppRole> _roleManager;
-
-        public AppUserManager(IAppUserRepository repository, IMapper mapper, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
-            : base(repository, mapper)
+        readonly IAppUserRepository _repository;
+        public AppUserManager(IAppUserRepository repository, IMapper mapper) : base(repository, mapper)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-        }
-
-        public async Task<bool> IsEmailTakenAsync(string email)
-        {
-            return await _userManager.FindByEmailAsync(email) != null;
-        }
-
-        public async Task<bool> IsUserNameTakenAsync(string userName)
-        {
-            return await _userManager.FindByNameAsync(userName) != null;
+            _repository = repository;
         }
     }
 }

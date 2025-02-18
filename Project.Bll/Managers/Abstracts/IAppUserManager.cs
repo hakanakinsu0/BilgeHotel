@@ -7,7 +7,9 @@ namespace Project.Bll.Managers.Abstracts
 {
     public interface IAppUserManager : IManager<AppUserDto, AppUser>
     {
-        Task<bool> IsEmailTakenAsync(string email);
-        Task<bool> IsUserNameTakenAsync(string userName);
+     
     }
 }
+
+
+

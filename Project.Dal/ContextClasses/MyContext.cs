@@ -17,7 +17,7 @@ namespace Project.Dal.ContextClasses
     /// Veritabanı ile bağlantıyı yöneten DbContext sınıfıdır.
     /// IdentityDbContext'ten miras alarak kullanıcı (AppUser), roller (AppRole) ve kimlik doğrulama işlemlerini yönetir.
     /// </summary>
-    public class MyContext : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
+    public class MyContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
     {
         /// <summary>
         /// MyContext constructor'ı, dışarıdan gelen DbContextOptions ile başlatılır.
@@ -38,10 +38,8 @@ namespace Project.Dal.ContextClasses
             base.OnModelCreating(builder); // Identity ile ilgili varsayılan konfigürasyonları uygular
 
             // **Tüm entity'lerin konfigürasyonları burada çağrılıyor**
-            builder.ApplyConfiguration(new AppRoleConfiguration());
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppUserProfileConfiguration());
-            builder.ApplyConfiguration(new AppUserRoleConfiguration());
             builder.ApplyConfiguration(new CustomerConfiguration());
             builder.ApplyConfiguration(new CustomerDetailConfiguration());
             builder.ApplyConfiguration(new EmployeeConfiguration());
@@ -64,9 +62,7 @@ namespace Project.Dal.ContextClasses
 
         // **Veritabanı Tabloları**
         public DbSet<AppUser> AppUsers { get; set; }
-        public DbSet<AppRole> AppRoles { get; set; }
         public DbSet<AppUserProfile> AppUserProfiles { get; set; }
-        public DbSet<AppUserRole> AppUserRoles { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerDetail> CustomerDetails { get; set; }
         public DbSet<Employee> Employees { get; set; }

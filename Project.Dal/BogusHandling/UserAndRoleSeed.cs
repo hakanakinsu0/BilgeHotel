@@ -3,10 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Project.Entities.Enums;
 using Project.Entities.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Dal.BogusHandling
 {
@@ -14,18 +10,24 @@ namespace Project.Dal.BogusHandling
     {
         public static void SeedUsersAndRoles(ModelBuilder modelBuilder)
         {
-            // **IdentityRole<int> yerine AppRole kullanıldı!**
-            AppRole adminRole = new()
+            // **IdentityRole<int> Kullanımı**
+            IdentityRole<int> adminRole = new()
             {
                 Id = 1,
                 Name = "Admin",
                 NormalizedName = "ADMIN",
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
-                CreatedDate = DateTime.Now,
-                Status = DataStatus.Inserted
+                ConcurrencyStamp = Guid.NewGuid().ToString()
             };
 
-            modelBuilder.Entity<AppRole>().HasData(adminRole);
+            IdentityRole<int> memberRole = new()
+            {
+                Id = 2,
+                Name = "Member",
+                NormalizedName = "MEMBER",
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
+
+            modelBuilder.Entity<IdentityRole<int>>().HasData(adminRole, memberRole);
 
             // **Şifre Hashleme İşlemi**
             PasswordHasher<AppUser> passwordHasher = new PasswordHasher<AppUser>();
@@ -45,17 +47,14 @@ namespace Project.Dal.BogusHandling
 
             modelBuilder.Entity<AppUser>().HasData(adminUser);
 
-            // **IdentityUserRole<int> yerine AppUserRole Kullanıldı!**
-            AppUserRole adminUserRole = new()
+            // **IdentityUserRole<int> Kullanımı**
+            IdentityUserRole<int> adminUserRole = new()
             {
-                Id = 1,
-                RoleId = 1,
-                UserId = 1,
-                CreatedDate = DateTime.Now,
-                Status = DataStatus.Inserted
+                RoleId = 1, // Admin rolü
+                UserId = 1  // Admin kullanıcı
             };
 
-            modelBuilder.Entity<AppUserRole>().HasData(adminUserRole);
+            modelBuilder.Entity<IdentityUserRole<int>>().HasData(adminUserRole);
         }
     }
 }

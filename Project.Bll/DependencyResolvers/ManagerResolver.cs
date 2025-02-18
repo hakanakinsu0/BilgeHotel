@@ -21,8 +21,6 @@ namespace Project.Bll.DependencyResolvers
         {
             services.AddScoped<IAppUserManager, AppUserManager>();
             services.AddScoped<IAppUserProfileManager, AppUserProfileManager>();
-            services.AddScoped<IAppRoleManager, AppRoleManager>();
-            services.AddScoped<IAppUserRoleManager, AppUserRoleManager>();
 
             services.AddScoped<ICustomerManager, CustomerManager>();
             services.AddScoped<ICustomerDetailManager, CustomerDetailManager>();
