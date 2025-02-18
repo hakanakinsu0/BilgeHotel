@@ -26,7 +26,7 @@ builder.Services.AddSession(x =>
 
 builder.Services.ConfigureApplicationCookie(x =>
 {
-    x.AccessDeniedPath = "/Home/SignInd"; //Authorization hatalari icin gidilecek path
+    x.AccessDeniedPath = "/Home/SignIn"; //Authorization hatalari icin gidilecek path
     x.LoginPath = "/Home/SignIn"; //Authentication hatalari icin gidilecek path
 });
 
@@ -49,6 +49,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Register}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

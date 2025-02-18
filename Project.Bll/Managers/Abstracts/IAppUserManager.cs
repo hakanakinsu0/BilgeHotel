@@ -1,13 +1,13 @@
 ﻿using Project.Bll.DtoClasses;
 using Project.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Project.Bll.Managers.Abstracts
 {
-    public interface IAppUserManager : IManager<AppUserDto, AppUser> { }
-
+    public interface IAppUserManager : IManager<AppUserDto, AppUser>
+    {
+        Task<bool> IsEmailTakenAsync(string email);
+        Task<bool> IsUserNameTakenAsync(string userName);
+    }
 }
