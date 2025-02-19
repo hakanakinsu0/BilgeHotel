@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Data\" />
     <Folder Include="wwwroot\OutherTools\assets\jquery-file-upload\server\php\files\thumbnail\" />
   </ItemGroup>
 
