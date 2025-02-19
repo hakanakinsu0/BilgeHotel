@@ -1,5 +1,4 @@
-﻿using Project.Dal.ContextClasses;
-using Project.Entities.Models;
+﻿using Project.MvcUI.DependencyResolvers;
 using Project.Bll.DependencyResolvers;
 
 
@@ -15,6 +14,8 @@ builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
 builder.Services.AddMapperServices();
 builder.Services.AddManagerService();
+builder.Services.AddVmMapperService();
+
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(x =>
