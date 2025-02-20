@@ -1,5 +1,4 @@
-﻿using Project.MvcUI.DependencyResolvers;
-using Project.Bll.DependencyResolvers;
+﻿using Project.Bll.DependencyResolvers;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,6 @@ builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
 builder.Services.AddMapperServices();
 builder.Services.AddManagerService();
-builder.Services.AddVmMapperService();
 
 
 builder.Services.AddDistributedMemoryCache();
