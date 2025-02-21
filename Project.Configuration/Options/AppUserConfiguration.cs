@@ -29,12 +29,6 @@ namespace Project.Configuration.Options
                    .WithOne(x => x.AppUser)
                    .HasForeignKey<AppUserProfile>(x => x.AppUserId);
 
-           
-
-            builder.HasMany(x => x.Customers) // 1 AppUser N Customer, 1 Customer 1 AppUser
-                   .WithOne(x => x.AppUser)
-                   .HasForeignKey(x => x.AppUserId)
-                   .IsRequired();
         }
     }
 }

@@ -24,10 +24,6 @@ namespace Project.Configuration.Options
         {
             base.Configure(builder);
 
-            builder.HasOne(x => x.Customer) // 1 Customer N Reservation, 1 Reservation 1 Customer
-                   .WithMany(x => x.Reservations)
-                   .HasForeignKey(x => x.CustomerId);
-
             builder.HasOne(x => x.Room) // 1 Room N Reservation, 1 Reservation 1 Room
                    .WithMany(x => x.Reservations)
                    .HasForeignKey(x => x.RoomId);
