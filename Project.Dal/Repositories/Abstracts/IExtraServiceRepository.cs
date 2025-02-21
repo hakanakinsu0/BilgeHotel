@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
-    public interface IEmployeeShiftRepository : IRepository<EmployeeShift>
+    public interface IExtraServiceRepository : IRepository<ExtraService>
     {
     }
 }

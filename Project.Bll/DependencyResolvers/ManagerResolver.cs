@@ -22,23 +22,16 @@ namespace Project.Bll.DependencyResolvers
             services.AddScoped<IAppUserManager, AppUserManager>();
             services.AddScoped<IAppUserProfileManager, AppUserProfileManager>();
 
-            services.AddScoped<ICustomerManager, CustomerManager>();
-            services.AddScoped<ICustomerDetailManager, CustomerDetailManager>();
 
             services.AddScoped<IEmployeeManager, EmployeeManager>();
-            services.AddScoped<IEmployeeDetailManager, EmployeeDetailManager>();
-            services.AddScoped<IEmployeeShiftManager, EmployeeShiftManager>();
 
             services.AddScoped<IRoomManager, RoomManager>();
             services.AddScoped<IRoomTypeManager, RoomTypeManager>();
-            services.AddScoped<IFeatureManager, FeatureManager>();
-            services.AddScoped<IRoomFeatureManager, RoomFeatureManager>();
 
             services.AddScoped<IReservationManager, ReservationManager>();
             services.AddScoped<IPaymentManager, PaymentManager>();
             services.AddScoped<IPackageManager, PackageManager>();
 
-            services.AddScoped<IShiftManager, ShiftManager>();
         }
     }
 }

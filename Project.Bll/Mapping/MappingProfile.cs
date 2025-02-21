@@ -23,19 +23,13 @@ namespace Project.Bll.Mapping
 
 
             // Müşteri ve Detayları
-            CreateMap<Customer, CustomerDto>().ReverseMap();
-            CreateMap<CustomerDetail, CustomerDetailDto>().ReverseMap();
 
             // Çalışanlar ve Detayları
             CreateMap<Employee, EmployeeDto>().ReverseMap();
-            CreateMap<EmployeeDetail, EmployeeDetailDto>().ReverseMap();
-            CreateMap<EmployeeShift, EmployeeShiftDto>().ReverseMap();
 
             // Oda ve Özellikleri
             CreateMap<Room, RoomDto>().ReverseMap();
             CreateMap<RoomType, RoomTypeDto>().ReverseMap();
-            CreateMap<Feature, FeatureDto>().ReverseMap();
-            CreateMap<RoomFeature, RoomFeatureDto>().ReverseMap();
 
             // Rezervasyon, Ödeme ve Paketler
             CreateMap<Reservation, ReservationDto>().ReverseMap();
@@ -43,7 +37,6 @@ namespace Project.Bll.Mapping
             CreateMap<Package, PackageDto>().ReverseMap();
 
             // Vardiya
-            CreateMap<Shift, ShiftDto>().ReverseMap();
         }
     }
 }

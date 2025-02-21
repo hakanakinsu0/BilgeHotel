@@ -26,25 +26,18 @@ namespace Project.Bll.DependencyResolvers
             // services.AddScoped<IAppUserRoleRepository, AppUserRoleRepository>(); ❌ SİLİNDİ
 
             // Müşteri yönetimi repository bağımlılıkları
-            services.AddScoped<ICustomerRepository, CustomerRepository>(); // 1 Customer N Repository
-            services.AddScoped<ICustomerDetailRepository, CustomerDetailRepository>(); // 1 CustomerDetail N Repository
 
             // Çalışan yönetimi repository bağımlılıkları
             services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // 1 Employee N Repository
-            services.AddScoped<IEmployeeDetailRepository, EmployeeDetailRepository>(); // 1 EmployeeDetail N Repository
-            services.AddScoped<IEmployeeShiftRepository, EmployeeShiftRepository>(); // 1 EmployeeShift N Repository
 
             // Oda ve özellik yönetimi repository bağımlılıkları
-            services.AddScoped<IFeatureRepository, FeatureRepository>(); // 1 Feature N Repository
             services.AddScoped<IRoomRepository, RoomRepository>(); // 1 Room N Repository
-            services.AddScoped<IRoomFeatureRepository, RoomFeatureRepository>(); // 1 RoomFeature N Repository
             services.AddScoped<IRoomTypeRepository, RoomTypeRepository>(); // 1 RoomType N Repository
 
             // Otel hizmetleri yönetimi repository bağımlılıkları
             services.AddScoped<IPackageRepository, PackageRepository>(); // 1 Package N Repository
             services.AddScoped<IPaymentRepository, PaymentRepository>(); // 1 Payment N Repository
             services.AddScoped<IReservationRepository, ReservationRepository>(); // 1 Reservation N Repository
-            services.AddScoped<IShiftRepository, ShiftRepository>(); // 1 Shift N Repository
         }
     }
 }

@@ -31,6 +31,8 @@ namespace Project.Dal.BogusHandling
 
             // **Şifre Hashleme İşlemi**
             PasswordHasher<AppUser> passwordHasher = new PasswordHasher<AppUser>();
+
+            // **Admin Kullanıcısı**
             AppUser adminUser = new()
             {
                 Id = 1,
@@ -45,16 +47,38 @@ namespace Project.Dal.BogusHandling
                 Status = DataStatus.Inserted
             };
 
-            modelBuilder.Entity<AppUser>().HasData(adminUser);
+            // **Örnek Member Kullanıcısı**
+            AppUser memberUser = new()
+            {
+                Id = 2,
+                UserName = "testmember",
+                Email = "testmember@email.com",
+                NormalizedEmail = "TESTMEMBER@EMAIL.COM",
+                NormalizedUserName = "TESTMEMBER",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                PasswordHash = passwordHasher.HashPassword(null, "testmember"),
+                CreatedDate = DateTime.Now,
+                Status = DataStatus.Inserted
+            };
 
-            // **IdentityUserRole<int> Kullanımı**
+            modelBuilder.Entity<AppUser>().HasData(adminUser, memberUser);
+
+            // **Admin Kullanıcısına Rol Ataması**
             IdentityUserRole<int> adminUserRole = new()
             {
                 RoleId = 1, // Admin rolü
                 UserId = 1  // Admin kullanıcı
             };
 
-            modelBuilder.Entity<IdentityUserRole<int>>().HasData(adminUserRole);
+            // **Member Kullanıcısına Rol Ataması**
+            IdentityUserRole<int> memberUserRole = new()
+            {
+                RoleId = 2, // Member rolü
+                UserId = 2  // Test müşteri kullanıcı
+            };
+
+            modelBuilder.Entity<IdentityUserRole<int>>().HasData(adminUserRole, memberUserRole);
         }
     }
 }

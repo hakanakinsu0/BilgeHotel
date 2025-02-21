@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Concretes
 {
-    public class ShiftRepository : BaseRepository<Shift>, IShiftRepository
+    public class ExtraServiceRepository : BaseRepository<ExtraService>, IExtraServiceRepository
     {
-        public ShiftRepository(MyContext context) : base(context) { }
+        public ExtraServiceRepository(MyContext context) : base(context) { }
     }
 }

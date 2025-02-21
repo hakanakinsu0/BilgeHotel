@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Concretes
 {
-    public class EmployeeShiftRepository : BaseRepository<EmployeeShift>, IEmployeeShiftRepository
+    public class ReservationExtraServiceRepository : BaseRepository<ReservationExtraService>, IReservationExtraServiceRepository
     {
-        public EmployeeShiftRepository(MyContext context) : base(context) { }
+        public ReservationExtraServiceRepository(MyContext context) : base(context) { }
     }
 }
