@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Project.Bll.Managers.Abstracts;
 using Project.Bll.Managers.Concretes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Bll.DependencyResolvers
 {
@@ -21,19 +16,14 @@ namespace Project.Bll.DependencyResolvers
         {
             services.AddScoped<IAppUserManager, AppUserManager>();
             services.AddScoped<IAppUserProfileManager, AppUserProfileManager>();
-
-
             services.AddScoped<IEmployeeManager, EmployeeManager>();
-
             services.AddScoped<IRoomManager, RoomManager>();
             services.AddScoped<IRoomTypeManager, RoomTypeManager>();
-
             services.AddScoped<IReservationManager, ReservationManager>();
             services.AddScoped<IPaymentManager, PaymentManager>();
             services.AddScoped<IPackageManager, PackageManager>();
-
+            services.AddScoped<IExtraServiceManager, ExtraServiceManager>();
+            services.AddScoped<IReservationExtraServiceManager, ReservationExtraServiceManager>();
         }
     }
 }
-
-

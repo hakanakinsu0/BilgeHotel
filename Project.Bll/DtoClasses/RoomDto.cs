@@ -1,17 +1,8 @@
-﻿using Project.Bll.DtoClasses;
-using Project.Entities.Enums;
+﻿using Project.Entities.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Bll.DtoClasses
 {
-    /// <summary>
-    /// Otel odası verilerini taşımak için kullanılan DTO.
-    /// Oda numarası, kat bilgisi, fiyat, durumu ve oda tipi ile ilgili bilgileri içerir.
-    /// </summary>
     public class RoomDto : BaseDto
     {
         public string RoomNumber { get; set; } // Odanın numarası
@@ -20,5 +11,13 @@ namespace Project.Bll.DtoClasses
         public RoomStatus RoomStatus { get; set; } // Odanın durumu (Boş, Dolu, Bakımda)
         public int RoomTypeId { get; set; } // Oda türünün ID'si
         public string RoomTypeName { get; set; } // Oda türü adı
+
+        // **Yeni Eklenen Alanlar**
+        public bool HasBalcony { get; set; }
+        public bool HasMinibar { get; set; }
+        public bool HasAirConditioner { get; set; }
+        public bool HasTV { get; set; }
+        public bool HasHairDryer { get; set; }
+        public bool HasWifi { get; set; }
     }
 }

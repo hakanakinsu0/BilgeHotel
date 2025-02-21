@@ -1,16 +1,8 @@
-﻿using Project.Bll.DtoClasses;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Bll.DtoClasses
 {
-    /// <summary>
-    /// Rezervasyon verilerini taşımak için kullanılan DTO.
-    /// Otel rezervasyonlarını temsil eder.
-    /// </summary>
     public class ReservationDto : BaseDto
     {
         public DateTime StartDate { get; set; } // Rezervasyon başlangıç tarihi
@@ -26,5 +18,7 @@ namespace Project.Bll.DtoClasses
         public string RoomNumber { get; set; } // Oda numarası
         public string PackageName { get; set; } // Seçilen paket adı
         public string EmployeeName { get; set; } // Rezervasyonu yöneten çalışanın adı
+
+        public List<ReservationExtraServiceDto> ExtraServices { get; set; } // Ekstra hizmetler listesi
     }
 }

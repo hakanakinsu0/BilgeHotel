@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Project.Dal.ContextClasses;
 using Project.Entities.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Project.Dal.ContextClasses;
 
 namespace Project.Bll.DependencyResolvers
 {
@@ -34,11 +29,14 @@ namespace Project.Bll.DependencyResolvers
 
                 // **Hesap Kilitleme Politikaları**
                 x.Lockout.MaxFailedAccessAttempts = 3;  // 3 başarısız giriş denemesi sonrası kilitlenme.
-                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);  // Kilitlenme süresi 10 dakika.
+                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);  // Kilitlenme süresi 3 dakika.
 
                 // **Giriş ve Kullanıcı Politikaları**
                 x.SignIn.RequireConfirmedEmail = true;  // Kullanıcı e-posta onayı olmadan giriş yapamaz.
                 x.User.RequireUniqueEmail = true;  // E-posta adresi benzersiz olmalı.
+
+                // **Kullanıcı Adı Politikası**
+                x.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             })
             .AddEntityFrameworkStores<MyContext>()
             .AddDefaultTokenProviders(); // Şifre sıfırlama ve e-posta doğrulama için token üretimi sağlar.
