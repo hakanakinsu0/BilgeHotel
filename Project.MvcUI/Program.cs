@@ -1,11 +1,9 @@
 ﻿using Project.Bll.DependencyResolvers;
 
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
 
 // **Dependency Resolvers Kullanımı**
 builder.Services.AddDbContextService();
@@ -14,36 +12,34 @@ builder.Services.AddRepositoryService();
 builder.Services.AddMapperServices();
 builder.Services.AddManagerService();
 
-
+// **Session Yapılandırması (5 Dakika)**
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(x =>
 {
-    x.IdleTimeout = TimeSpan.FromSeconds(1);
+    x.IdleTimeout = TimeSpan.FromMinutes(5); // Oturum süresi 5 dakika
     x.Cookie.HttpOnly = true;
     x.Cookie.IsEssential = true;
 });
 
+// **Kimlik Doğrulama ve Yetkilendirme**
 builder.Services.ConfigureApplicationCookie(x =>
 {
-    x.AccessDeniedPath = "/Home/SignIn"; //Authorization hatalari icin gidilecek path
-    x.LoginPath = "/Home/SignIn"; //Authentication hatalari icin gidilecek path
+    x.AccessDeniedPath = "/Home/SignIn";
+    x.LoginPath = "/Home/SignIn";
 });
 
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// **Hata Yönetimi (Sadece Yönlendirme)**
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseSession();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
