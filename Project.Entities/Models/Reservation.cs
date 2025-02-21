@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,8 @@ namespace Project.Entities.Models
         public int RoomId { get; set; } // Rezerve edilen oda.
         public int? PackageId { get; set; } // Rezervasyon için seçilen paket.
         public int? EmployeeId { get; set; } // Rezervasyonu yöneten Employee (Opsiyonel)
+        public ReservationStatus ReservationStatus { get; set; }
+
 
         // Relational Properties
         public virtual AppUser Reservations { get; set; }
@@ -28,5 +31,7 @@ namespace Project.Entities.Models
         public virtual Package Package { get; set; } // 1 Package N Reservation, 1 Reservation 1 Package
         public virtual Payment Payment { get; set; } // 1 Reservation 1 Payment, 1 Payment 1 Reservation
         public virtual Employee Employee { get; set; } // 1 Employee N Reservation, 1 Reservation 1 Employee
+        public virtual ICollection<ReservationExtraService> ReservationExtraServices { get; set; }
+
     }
 }
