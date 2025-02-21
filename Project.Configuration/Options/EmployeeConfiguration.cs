@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,9 @@ namespace Project.Configuration.Options
         public override void Configure(EntityTypeBuilder<Employee> builder)
         {
             base.Configure(builder);
+
+            builder.Property(x => x.Salary)
+                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
 
             builder.HasMany(x => x.ManagedReservations) // 1 Employee N Reservation, 1 Reservation 1 Employee
                    .WithOne(x => x.Employee)
