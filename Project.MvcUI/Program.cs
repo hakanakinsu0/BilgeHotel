@@ -1,4 +1,5 @@
 ﻿using Project.Bll.DependencyResolvers;
+using Project.MvcUI.DependencyResolvers;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
 builder.Services.AddMapperServices();
 builder.Services.AddManagerService();
+
+builder.Services.AddVmMapperService(); // AutoMapper'ı MvcUI için ekliyoruz
 
 // **Session Yapılandırması (5 Dakika)**
 builder.Services.AddDistributedMemoryCache();

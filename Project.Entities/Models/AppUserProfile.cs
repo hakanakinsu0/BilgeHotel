@@ -17,8 +17,8 @@ namespace Project.Entities.Models
         public string LastName { get; set; } // Kullanıcının soyadı.
         public Gender Gender { get; set; } // Kullanıcının cinsiyeti (ör. "Male", "Female").
         public string Address { get; set; }
-        public string Nationality { get; set; }
-        public string IdentityNumber { get; set; }
+        public string? Nationality { get; set; }
+        public string? IdentityNumber { get; set; }
 
         //Foreign Keys
         public int AppUserId { get; set; } // AppUser ile bire bir ilişki için kullanılan yabancı anahtar (Foreign Key).

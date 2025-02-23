@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Project.Entities.Enums;
+using System;
 
 namespace Project.Bll.DtoClasses
 {
-    /// <summary>
-    /// Kullanıcı verilerini taşımak için kullanılan DTO.
-    /// Sistemdeki kullanıcıları temsil eder.
-    /// </summary>
     public class AppUserDto : BaseDto
     {
-        public string UserName { get; set; } // Kullanıcı adı
-        public string Email { get; set; } // E-posta adresi
-        public bool EmailConfirmed { get; set; } // E-posta doğrulandı mı?
-        public string PhoneNumber { get; set; } // Telefon numarası
-        public bool PhoneNumberConfirmed { get; set; } // Telefon numarası doğrulandı mı?
-        public Guid ActivationCode { get; set; } // E-posta doğrulama kodu
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string PhoneNumber { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public Guid ActivationCode { get; set; }
+        public string NormalizedEmail { get; set; }
+        public string SecurityStamp { get; set; }
+
+        // **AppUserProfile Alanları**
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address { get; set; }
+        public string Nationality { get; set; } // **Uyruğu**
+        public Gender Gender { get; set; } // **Cinsiyet**
+        public string IdentityNumber { get; set; }
     }
 }

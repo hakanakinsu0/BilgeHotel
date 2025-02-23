@@ -31,12 +31,19 @@
                         </li>
                     }
 
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a href="/Profile/Index" class="nav-link">Profil</a>
+                        </li>
+                    }
+
 
                     @if (User.Identity.IsAuthenticated)
                     {
                         <!-- Kullanıcı giriş yaptıysa Çıkış Yap butonunu göster -->
                         <li class="nav-item">
-                            <a class="nav-link text-danger" href="/Auth/Logout">Çıkış Yap</a>
+                            <a class="nav-link text-danger" asp-controller="Auth" asp-action="Logout">Çıkış Yap</a>
                         </li>
                     }
                     else

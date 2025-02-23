@@ -1,15 +1,14 @@
-﻿using Project.Bll.DtoClasses;
+﻿using System.Threading.Tasks;
+using Project.Bll.DtoClasses;
 using Project.Entities.Models;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 
 namespace Project.Bll.Managers.Abstracts
 {
     public interface IAppUserManager : IManager<AppUserDto, AppUser>
     {
-     
+        Task<AppUserDto> GetUserProfileAsync(int userId); // Kullanıcı Profilini Getir
+        Task<bool> UpdateUserProfileAsync(AppUserDto userDto); // Kullanıcı Profilini Güncelle
+        Task<bool> ChangeUserPasswordAsync(int userId, string currentPassword, string newPassword);
+
     }
 }
-
-
-

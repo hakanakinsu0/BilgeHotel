@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Project.Bll.Managers.Abstracts;
 using Project.Common.Tools;
 using Project.Entities.Enums;
 using Project.Entities.Models;
 using Project.MvcUI.Models.PureVms.AppUsers.RequestModels;
+using Project.MvcUI.Models.PureVms.AppUsers.ResponseModels;
 using SignInManager = Microsoft.AspNetCore.Identity.SignInResult;
 
 
@@ -17,13 +19,16 @@ namespace Project.MvcUI.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly IMapper _mapper;
+        private readonly IAppUserManager _appUserManager;
 
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IdentityRole<int>> roleManager, IMapper mapper)
+
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IdentityRole<int>> roleManager, IMapper mapper, IAppUserManager appUserManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _mapper = mapper;
+            _appUserManager = appUserManager;
         }
 
         public IActionResult Register()
@@ -34,7 +39,18 @@ namespace Project.MvcUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterRequestModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                TempData["Message"] = "Lütfen eksik veya hatalı alanları kontrol edin.";
+                return View(model);
+            }
+
+            AppUser? existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                TempData["Message"] = "Bu e-posta adresi zaten kullanımda.";
+                return View(model);
+            }
 
             Guid activationCode = Guid.NewGuid();
 
@@ -108,22 +124,47 @@ namespace Project.MvcUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserLoginRequestModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            UserLoginResponseModel response = new();
+
+            if (!ModelState.IsValid)
+            {
+                response.Success = false;
+                response.Message = "Lütfen eksik veya hatalı alanları kontrol edin.";
+
+                // ModelState içindeki tüm hata mesajlarını al ve TempData içinde göster
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                TempData["Message"] = string.Join(" ", errors);
+
+                return RedirectToAction("Login");
+            }
+
 
             AppUser? user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                TempData["Message"] = "Geçersiz e-posta veya şifre.";
+                response.Success = false;
+                response.Message = "Geçersiz e-posta veya şifre.";
+                TempData["Message"] = response.Message;
                 return RedirectToAction("Login");
             }
 
             if (!user.EmailConfirmed)
             {
-                TempData["Message"] = "Lütfen e-postanızı onaylayın.";
+                response.Success = false;
+                response.Message = "Lütfen e-postanızı onaylayın.";
+                TempData["Message"] = response.Message;
                 return RedirectToAction("MailPanel");
             }
 
             SignInManager result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
+
+            if (result.IsLockedOut)
+            {
+                response.Success = false;
+                response.Message = "Çok fazla hatalı giriş yaptınız. Lütfen 3 dakika sonra tekrar deneyin.";
+                TempData["Message"] = response.Message;
+                return RedirectToAction("Login");
+            }
 
             if (result.Succeeded)
             {
@@ -131,6 +172,13 @@ namespace Project.MvcUI.Controllers
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                 {
                     return Redirect(model.ReturnUrl);
+                }
+
+                // **IdentityNumber kontrolü ekleyelim**
+                var userProfile = await _appUserManager.GetUserProfileAsync(user.Id);
+                if (string.IsNullOrEmpty(userProfile.IdentityNumber)) // Eğer kimlik numarası girilmemişse
+                {
+                    return RedirectToAction("Edit", "Profile"); // Profil düzenleme sayfasına yönlendir
                 }
 
                 // Kullanıcının rolüne göre yönlendirme yap
@@ -147,12 +195,10 @@ namespace Project.MvcUI.Controllers
                 }
                 return RedirectToAction("Index", "Home");
             }
-            else if (result.IsNotAllowed)
-            {
-                return RedirectToAction("MailPanel");
-            }
 
-            TempData["Message"] = "Geçersiz giriş bilgileri.";
+            response.Success = false;
+            response.Message = "Geçersiz giriş bilgileri.";
+            TempData["Message"] = response.Message;
             return RedirectToAction("Login");
         }
 
@@ -170,12 +216,22 @@ namespace Project.MvcUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(UserForgotPasswordRequestModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            UserForgotPasswordResponseModel response = new();
+
+            if (!ModelState.IsValid)
+            {
+                response.Success = false;
+                response.Message = "Lütfen eksik veya hatalı alanları kontrol edin.";
+                TempData["Message"] = response.Message;
+                return View(model);
+            }
 
             AppUser? user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
             {
-                TempData["Message"] = "Bu e-posta adresi ile kayıtlı bir kullanıcı bulunamadı veya e-posta doğrulanmamış.";
+                response.Success = true;
+                response.Message = "Eğer bu e-posta adresi sistemde kayıtlı ise şifre sıfırlama bağlantısı gönderilmiştir.";
+                TempData["Message"] = response.Message;
                 return RedirectToAction("ForgotPassword");
             }
 
@@ -188,19 +244,20 @@ namespace Project.MvcUI.Controllers
             string message = $"<p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:</p>" +
                              $"<p><a href='{resetLink}' style='color:blue; text-decoration:underline;'>Şifreyi Sıfırla</a></p>";
 
-            MailService.Send(user.Email, body: message, subject: "Şifre Sıfırlama");
+            MailService.Send(user.Email, body: message, subject: "BilgeHotel Şifre Sıfırlama");
 
-
-            TempData["Message"] = "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.";
+            response.Success = true;
+            response.Message = "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.";
+            TempData["Message"] = response.Message;
             return RedirectToAction("ForgotPassword");
         }
 
         public IActionResult ResetPassword(string token, string email)
         {
-            if (token == null || email == null)
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
             {
-                TempData["Message"] = "Geçersiz şifre sıfırlama bağlantısı.";
-                return RedirectToAction("ForgotPassword");
+                ModelState.AddModelError("", "Geçersiz şifre sıfırlama bağlantısı.");
+                return View();
             }
 
             UserResetPasswordRequestModel model = new UserResetPasswordRequestModel { Token = token, Email = email };
@@ -210,7 +267,15 @@ namespace Project.MvcUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(UserResetPasswordRequestModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            UserResetPasswordResponseModel response = new();
+
+            if (!ModelState.IsValid)
+            {
+                response.Success = false;
+                response.Message = "Lütfen eksik veya hatalı alanları kontrol edin.";
+                TempData["Message"] = response.Message;
+                return View(model);
+            }
 
             AppUser? user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
@@ -232,19 +297,19 @@ namespace Project.MvcUI.Controllers
                 return RedirectToAction("Login");
             }
 
-            TempData["Message"] = "Şifre sıfırlama başarısız";
+            response.Success = false;
+            response.Message = string.Join(" ", result.Errors.Select(e => e.Description));
+            TempData["Message"] = response.Message;
             return View(model);
         }
 
 
         public async Task<IActionResult> Logout()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                await _signInManager.SignOutAsync();
-            }
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
 
 
     }

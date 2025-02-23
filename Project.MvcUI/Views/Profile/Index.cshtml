@@ -1,0 +1,55 @@
+﻿@model UserProfileResponseModel
+
+<div class="container mt-5">
+    <h2 class="text-center">Profil Bilgilerim</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="card shadow p-4">
+        <div class="mb-3">
+            <label class="form-label"><strong>Ad Soyad:</strong></label>
+            <p class="form-control">@Model.FirstName @Model.LastName</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>E-Posta:</strong></label>
+            <p class="form-control">@Model.Email</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Telefon Numarası:</strong></label>
+            <p class="form-control">@Model.PhoneNumber</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Adres:</strong></label>
+            <p class="form-control">@Model.Address</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Uyruğunuz:</strong></label>
+            <p class="form-control">@Model.Nationality</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>Cinsiyet:</strong></label>
+            <p class="form-control">@Model.Gender</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><strong>TC Kimlik Numarası:</strong></label>
+            <p class="form-control">@Model.IdentityNumber</p>
+        </div>
+
+
+        <div class="d-flex justify-content-between">
+            <a asp-action="Edit" class="btn btn-warning">Profili Düzenle</a>
+            <a asp-action="ChangePassword" class="btn btn-primary">Şifre Değiştir</a>
+        </div>
+    </div>
+</div>
