@@ -12,8 +12,8 @@ namespace Project.Entities.Enums
     /// </summary>
     public enum DataStatus
     {
-        Inserted = 1, // Yeni eklenen veri. Varsayılan başlangıç durumu.
-        Updated = 2,  // Güncellenmiş veri.
-        Deleted = 3   // Pasif hale getirilmiş veri (Soft delete). Veritabanında fiziksel olarak silinmez.
+        Inserted = 1,   // Yeni eklenen veri. Varsayılan başlangıç durumu.
+        Updated = 2,    // Güncellenmiş veri.
+        Deleted = 3     // Pasif hale getirilmiş veri (Soft delete). Veritabanında fiziksel olarak silinmez.
     }
 }

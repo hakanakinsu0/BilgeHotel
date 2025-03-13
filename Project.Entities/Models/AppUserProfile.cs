@@ -9,28 +9,21 @@ namespace Project.Entities.Models
 {
     /// <summary>
     /// Kullanıcıların profil bilgilerini tutar.
-    /// AppUser ile bire bir ilişkilidir.
     /// </summary>
+    /// 
     public class AppUserProfile : BaseEntity
     {
-        public string FirstName { get; set; } // Kullanıcının adı.
-        public string LastName { get; set; } // Kullanıcının soyadı.
-        public Gender Gender { get; set; } // Kullanıcının cinsiyeti (ör. "Male", "Female").
-        public string Address { get; set; }
-        public string? Nationality { get; set; }
-        public string? IdentityNumber { get; set; }
+        public string FirstName { get; set; }           // Kullanıcının adı.
+        public string LastName { get; set; }            // Kullanıcının soyadı.
+        public Gender Gender { get; set; }              // Kullanıcının cinsiyeti (ör. "Male", "Female").
+        public string Address { get; set; }             // Kullanıcının adres bilgisi.
+        public string? Nationality { get; set; }        // Kullanıcının uyruğu (isteğe bağlı).
+        public string? IdentityNumber { get; set; }     // Kullanıcının kimlik veya pasaport numarası (isteğe bağlı).
 
-        //Foreign Keys
-        public int AppUserId { get; set; } // AppUser ile bire bir ilişki için kullanılan yabancı anahtar (Foreign Key).
-        // AppUserId: Bu alan, AppUser tablosundaki bir kullanıcıyı temsil eder.
-        // Bire bir ilişkiyi yönetmek için gerekli olup, AppUser ile ilişkili profil verisinin kolayca eşleştirilmesini sağlar.
+        // Foreign Key
+        public int AppUserId { get; set; }              // AppUserId, AppUser tablosundaki bir kullanıcıyı temsil eder ve profilin hangi kullanıcıya ait olduğunu belirler.
 
-
-        // Relational Property
-        public virtual AppUser AppUser { get; set; } // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser 
-
-
-
-
+        // Relational Properties
+        public virtual AppUser AppUser { get; set; }    // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser
     }
 }

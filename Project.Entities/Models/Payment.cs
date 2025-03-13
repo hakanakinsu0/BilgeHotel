@@ -13,16 +13,14 @@ namespace Project.Entities.Models
     /// </summary>
     public class Payment : BaseEntity
     {
-        public DateTime PaymentDate { get; set; } // Ödemenin yapıldığı tarih.
-        public decimal PaymentAmount { get; set; } // Ödenen toplam tutar.
-        public PaymentMethod PaymentMethod { get; set; } // Ödeme yöntemi (Kredi Kartı, Nakit, Banka Havalesi).
+        public DateTime PaymentDate { get; set; }            // Ödemenin yapıldığı tarih.
+        public decimal PaymentAmount { get; set; }           // Ödenen toplam tutar.
+        public PaymentMethod PaymentMethod { get; set; }     // Ödeme yöntemi (Kredi Kartı, Nakit, Banka Havalesi).
 
         // Foreign Keys
-        public int ReservationId { get; set; } // Ödemeye bağlı rezervasyon.
+        public int ReservationId { get; set; }               // Ödemenin hangi rezervasyona ait olduğunu belirtir.
 
         // Relational Properties
-        public virtual Reservation Reservation { get; set; } // 1 Reservation 1 Payment, 1 Payment 1 Reservation
-
-
+        public virtual Reservation Reservation { get; set; } // 1 Reservation 1 Payment, 1 Payment 1 Reservation (Bir rezervasyonun bir ödemesi olabilir.)
     }
 }

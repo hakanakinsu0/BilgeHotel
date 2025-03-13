@@ -14,11 +14,10 @@ namespace Project.Entities.Models
     /// </summary>
     public abstract class BaseEntity : IEntity
     {
-        public int Id { get; set; } // Veritabanı tablolarında birincil anahtar (Primary Key) olarak kullanılır.
-        public DateTime CreatedDate { get; set; } // Verinin oluşturulduğu tarih.
+        public int Id { get; set; }                 // Veritabanı tablolarında birincil anahtar (Primary Key) olarak kullanılır.
+        public DateTime CreatedDate { get; set; }   // Verinin oluşturulduğu tarih.
         public DateTime? ModifiedDate { get; set; } // Verinin en son güncellendiği tarih. Null olabilir.
-        public DateTime? DeletedDate { get; set; } // Verinin silindiği tarih. Null olabilir.
-        public DataStatus Status { get; set; } // Verinin durumunu (Inserted, Updated, Deleted) belirler.
+        public DateTime? DeletedDate { get; set; }  // Verinin silindiği tarih. Null olabilir.
+        public DataStatus Status { get; set; }      // Verinin durumunu (Inserted, Updated, Deleted) belirler.
     }
-
 }
