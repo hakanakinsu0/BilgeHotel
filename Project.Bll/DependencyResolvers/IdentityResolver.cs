@@ -16,30 +16,30 @@ namespace Project.Bll.DependencyResolvers
         /// Identity bağımlılıklarını IServiceCollection'a ekler.
         /// Identity sistemi için kullanıcı, rol ve kimlik doğrulama yapılandırmalarını belirler.
         /// </summary>
+        /// <param name="services">Bağımlılık enjeksiyonuna eklenecek servis koleksiyonu.</param>
         public static void AddIdentityService(this IServiceCollection services)
         {
-            services.AddIdentity<AppUser, IdentityRole<int>>(x =>
+            services.AddIdentity<AppUser, IdentityRole<int>>(options =>
             {
-                // **Şifre Politikaları**
-                x.Password.RequireDigit = true;  // En az bir rakam içermeli.
-                x.Password.RequiredLength = 6;   // Minimum şifre uzunluğu 6 karakter.
-                x.Password.RequireLowercase = true;  // Küçük harf zorunlu.
-                x.Password.RequireUppercase = true;  // Büyük harf zorunlu.
-                x.Password.RequireNonAlphanumeric = false;  // Özel karakter gerekmiyor.
+                // Şifre Politikaları
+                options.Password.RequireDigit = true;               // En az bir rakam içermeli.
+                options.Password.RequiredLength = 6;                // Minimum şifre uzunluğu 6 karakter.
+                options.Password.RequireLowercase = true;           // Küçük harf zorunlu.
+                options.Password.RequireUppercase = true;           // Büyük harf zorunlu.
+                options.Password.RequireNonAlphanumeric = false;    // Özel karakter gerekmiyor.
 
-                // **Hesap Kilitleme Politikaları**
-                x.Lockout.MaxFailedAccessAttempts = 3;  // 3 başarısız giriş denemesi sonrası kilitlenme.
-                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);  // Kilitlenme süresi 3 dakika.
+                // Hesap Kilitleme Politikaları
+                options.Lockout.MaxFailedAccessAttempts = 3;                        // 3 başarısız giriş denemesi sonrası kilitlenme.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);   // Kilitlenme süresi 3 dakika.
 
-                // **Giriş ve Kullanıcı Politikaları**
-                x.SignIn.RequireConfirmedEmail = true;  // Kullanıcı e-posta onayı olmadan giriş yapamaz.
-                x.User.RequireUniqueEmail = true;  // E-posta adresi benzersiz olmalı.
+                // Giriş ve Kullanıcı Politikaları
+                options.SignIn.RequireConfirmedEmail = true;    // Kullanıcı e-posta onayı olmadan giriş yapamaz.
+                options.User.RequireUniqueEmail = true;         // E-posta adresi benzersiz olmalı.
 
-                // **Kullanıcı Adı Politikası**
-                x.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                // Kullanıcı Adı Politikası
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             })
-            .AddEntityFrameworkStores<MyContext>()
-            .AddDefaultTokenProviders(); // Şifre sıfırlama ve e-posta doğrulama için token üretimi sağlar.
+            .AddEntityFrameworkStores<MyContext>().AddDefaultTokenProviders(); // Şifre sıfırlama ve e-posta doğrulama için token üretimi sağlar.
         }
     }
 }
