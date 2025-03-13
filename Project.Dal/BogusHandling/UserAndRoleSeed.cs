@@ -6,17 +6,24 @@ using System;
 
 namespace Project.Dal.BogusHandling
 {
+    /// <summary>
+    /// Kullanıcı ve rol verilerini başlangıçta veritabanına eklemek için kullanılır.
+    /// Admin ve Member rollerini oluşturur, kullanıcıları ekler ve rollerini atar.
+    /// </summary>
     public static class UserAndRoleSeed
     {
+        /// <summary>
+        /// ModelBuilder kullanarak kullanıcı ve rol verilerini seed (ön yükleme) yapar.
+        /// </summary>
         public static void SeedUsersAndRoles(ModelBuilder modelBuilder)
         {
-            // **IdentityRole<int> Kullanımı**
+            // Rolleri Tanımlıyoruz
             IdentityRole<int> adminRole = new()
             {
                 Id = 1,
                 Name = "Admin",
                 NormalizedName = "ADMIN",
-                ConcurrencyStamp = Guid.NewGuid().ToString()
+                ConcurrencyStamp = Guid.NewGuid().ToString() // Rol için benzersiz bir kimlik oluşturuluyor
             };
 
             IdentityRole<int> memberRole = new()
@@ -29,10 +36,10 @@ namespace Project.Dal.BogusHandling
 
             modelBuilder.Entity<IdentityRole<int>>().HasData(adminRole, memberRole);
 
-            // **Şifre Hashleme İşlemi**
+            // Şifre Hashleme İşlemi İçin PasswordHasher Kullanımı
             PasswordHasher<AppUser> passwordHasher = new PasswordHasher<AppUser>();
 
-            // **Admin Kullanıcısı**
+            // Admin Kullanıcısını Oluşturuyoruz
             AppUser adminUser = new()
             {
                 Id = 1,
@@ -40,14 +47,14 @@ namespace Project.Dal.BogusHandling
                 Email = "bilgehotel@email.com",
                 NormalizedEmail = "BILGEHOTEL@EMAIL.COM",
                 NormalizedUserName = "BILGEHOTEL",
-                EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                PasswordHash = passwordHasher.HashPassword(null, "bilgehotel"),
+                EmailConfirmed = true, // E-posta onaylandı olarak işaretlendi
+                SecurityStamp = Guid.NewGuid().ToString(), // Güvenlik mührü
+                PasswordHash = passwordHasher.HashPassword(null, "bilgehotel"), // Şifre hashleniyor
                 CreatedDate = DateTime.Now,
                 Status = DataStatus.Inserted
             };
 
-            // **Örnek Member Kullanıcısı**
+            // Örnek Member Kullanıcısını Oluşturuyoruz
             AppUser memberUser = new()
             {
                 Id = 2,
@@ -64,14 +71,14 @@ namespace Project.Dal.BogusHandling
 
             modelBuilder.Entity<AppUser>().HasData(adminUser, memberUser);
 
-            // **Admin Kullanıcısına Rol Ataması**
+            // Admin Kullanıcısına Rol Ataması
             IdentityUserRole<int> adminUserRole = new()
             {
                 RoleId = 1, // Admin rolü
                 UserId = 1  // Admin kullanıcı
             };
 
-            // **Member Kullanıcısına Rol Ataması**
+            // Member Kullanıcısına Rol Ataması
             IdentityUserRole<int> memberUserRole = new()
             {
                 RoleId = 2, // Member rolü

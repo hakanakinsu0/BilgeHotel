@@ -7,57 +7,64 @@ using System.Collections.Generic;
 
 namespace Project.Dal.BogusHandling
 {
+    /// Sahte (fake) çalışan verileri oluşturur ve veritabanına ekler.
+    /// Faker kütüphanesi kullanılarak rastgele çalışanlar oluşturulur.
     public static class EmployeeSeed
     {
+        /// <summary>
+        /// ModelBuilder kullanarak çalışan verilerini seed (ön yükleme) yapar.
+        /// </summary>
         public static void SeedEmployees(ModelBuilder modelBuilder)
         {
-            var faker = new Faker("tr"); // Türkçe dil desteği eklendi
-            List<Employee> employees = new();
+            Faker faker = new Faker("tr");      // Türkçe dil desteği ile rastgele veri üret
+            List<Employee> employees = new();   // Çalışan listesi
 
-            int employeeId = 1;
+            int employeeId = 1; // Çalışan ID başlangıç değeri
 
-            // **Pozisyonlara göre çalışanları ekleyelim**
+            // Pozisyonlara göre çalışanların eklenmesi
             var positions = new Dictionary<string, (int count, decimal minRate, decimal maxRate, bool hasNightShift)>
             {
-                { "Resepsiyonist", (7, 120, 160, true) },
-                { "Temizlik Görevlisi", (11, 110, 140, false) },
-                { "Aşçı", (11, 130, 170, false) },
-                { "Garson", (13, 100, 140, false) },
-                { "Elektrikçi", (1, 140, 180, true) },
-                { "IT Sorumlusu", (1, 150, 190, true) }
+                { "Resepsiyonist", (7, 40000, 60000, true) },
+                { "Temizlik Görevlisi", (11, 25000, 35000, false) },
+                { "Aşçı", (11, 100000, 120000, false) },
+                { "Garson", (13, 70000, 100000, false) },
+                { "Elektrikçi", (1, 110000, 180000, true) },
+                { "IT Sorumlusu", (1, 150000, 190000, true) }
             };
 
-            foreach (var position in positions)
+            foreach (var position in positions) // Her pozisyon için çalışan ekle
             {
-                for (int i = 0; i < position.Value.count; i++)
+                for (int i = 0; i < position.Value.count; i++)  // Belirtilen sayıda çalışan oluştur
                 {
-                    var firstName = faker.Name.FirstName();
-                    var lastName = faker.Name.LastName();
-                    var shiftType = position.Value.hasNightShift
-                        ? faker.PickRandom<ShiftType>() // Eğer gece vardiyası varsa rastgele seç
-                        : faker.PickRandom(new List<ShiftType> { ShiftType.Morning, ShiftType.Evening }); // Sadece sabah ve akşam vardiyası seç
-                    var hourlyRate = faker.Finance.Amount(position.Value.minRate, position.Value.maxRate, 2);
+                    string firstName = faker.Name.FirstName();  // Rastgele isim
+                    string lastName = faker.Name.LastName();    // Rastgele soyisim
+
+                    ShiftType shiftType = position.Value.hasNightShift
+                        ? faker.PickRandom<ShiftType>()         // Rastgele vardiya seç
+                        : faker.PickRandom(new List<ShiftType> { ShiftType.Morning, ShiftType.Evening });           // Sadece sabah ve akşam vardiyası seç
+
+                    decimal monthlyRate = faker.Finance.Amount(position.Value.minRate, position.Value.maxRate, 2);  // Maaşı belirle
 
                     employees.Add(new Employee
                     {
-                        Id = employeeId,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Address = faker.Address.FullAddress(), // Tam adres bilgisi
-                        PhoneNumber = faker.Phone.PhoneNumber(), // Telefon numarası
-                        Salary = hourlyRate, // Saatlik ücret
-                        Shift = shiftType, // Çalışma vardiyası
-                        HireDate = faker.Date.Past(10, DateTime.Now.AddYears(-1)), // 1 yıldan fazla süredir çalışanlar
-                        BirthDate = faker.Date.Past(40, DateTime.Now.AddYears(-18)), // 18 yaşından büyükler
-                        CreatedDate = DateTime.Now,
-                        Status = DataStatus.Inserted
+                        Id = employeeId,        //Primary Key
+                        FirstName = firstName,  // Adı
+                        LastName = lastName,    // Soyadı
+                        Address = faker.Address.FullAddress(),      // Tam adres bilgisi
+                        PhoneNumber = faker.Phone.PhoneNumber(),    // Telefon numarası
+                        Salary = monthlyRate,   // Aylik ücret
+                        Shift = shiftType,      // Çalışma vardiyası
+                        HireDate = faker.Date.Past(10, DateTime.Now.AddYears(-1)),      // 1 yıldan fazla süredir çalışanlar, en fazla 10 yıl önce işe başlamış olabilir
+                        BirthDate = faker.Date.Past(40, DateTime.Now.AddYears(-18)),    // 18 ile 58 yaş arasında olmalı (58 = 18 + 40)
+                        CreatedDate = DateTime.Now,     // Çalışan oluşturulma zamanı
+                        Status = DataStatus.Inserted    // Varsayılan olarak "Inserted" (Eklenmiş) durumu atanıyor
                     });
 
-                    employeeId++;
+                    employeeId++; //Primary Key'i 1 arttir.
                 }
             }
 
-            modelBuilder.Entity<Employee>().HasData(employees);
+            modelBuilder.Entity<Employee>().HasData(employees); // Çalışanları EF Core ile seed et
         }
     }
 }

@@ -21,8 +21,6 @@ namespace Project.Configuration.Options
         /// Tüm entity sınıflarında ortak ayarlamaların yapılmasını sağlar.
         /// Türeyen sınıflar; burada tanimlanan virtual keywordu (pollymorphism prensibi) sayesinde, bu metodu override ederek ek konfigürasyonlar ekleyebilir.
         /// </summary>
-        public virtual void Configure(EntityTypeBuilder<T> builder)
-        {
-        }
+        public virtual void Configure(EntityTypeBuilder<T> builder) {}
     }
 }

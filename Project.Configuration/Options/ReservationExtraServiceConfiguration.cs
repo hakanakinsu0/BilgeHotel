@@ -17,7 +17,6 @@ namespace Project.Configuration.Options
     {
         /// <summary>
         /// ReservationExtraService yapılandırmasını belirler.
-        /// Reservation ve ExtraService ile ilişkiler tanımlandı.
         /// </summary>
         public override void Configure(EntityTypeBuilder<ReservationExtraService> builder)
         {

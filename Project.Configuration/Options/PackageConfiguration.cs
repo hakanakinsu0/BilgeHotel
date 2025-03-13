@@ -11,7 +11,6 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında Package tablosunun yapılandırılmasını sağlar.
-    /// Package, rezervasyonlar (Reservation) ile bire çok (1:N) ilişkilidir.
     /// </summary>
     public class PackageConfiguration : BaseConfiguration<Package>
     {
@@ -21,6 +20,8 @@ namespace Project.Configuration.Options
         public override void Configure(EntityTypeBuilder<Package> builder)
         {
             base.Configure(builder);
+
+            builder.Property(x => x.PriceMultiplier).HasColumnType("money"); // PriceMultiplier tutarı, veritabanında "money" türünde saklanır.
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında Payment tablosunun yapılandırılmasını sağlar.
-    /// Payment, rezervasyonlar (Reservation) ile bire bir (1:1) ilişkilidir.
     /// </summary>
     public class PaymentConfiguration : BaseConfiguration<Payment>
     {

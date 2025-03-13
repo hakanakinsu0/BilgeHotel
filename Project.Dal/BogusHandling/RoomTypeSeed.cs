@@ -22,26 +22,40 @@ namespace Project.Dal.BogusHandling
                 new RoomType {
                     Id = 2,
                     Name = "Çift Kişilik (Duble)",
-                    Description = "1 adet büyük (duble) yatak. Minibar bulunur. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
+                    Description = "1 adet büyük (duble) yatak. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                     CreatedDate = DateTime.Now,
                     Status = DataStatus.Inserted
                 },
                 new RoomType {
                     Id = 3,
-                    Name = "Üç Kişilik",
-                    Description = "3 adet tek kişilik yatak. Balkon ve minibar bulunmaz. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
+                    Name = "Çift Kişilik (Tek Kişilik 2 Yataklı)",
+                    Description = "2 adet tek kişilik yatak. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                     CreatedDate = DateTime.Now,
                     Status = DataStatus.Inserted
                 },
                 new RoomType {
                     Id = 4,
-                    Name = "Dört Kişilik",
-                    Description = "1 adet büyük (duble) yatak + 2 adet tek kişilik yatak. Balkon ve minibar bulunur. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
+                    Name = "Üç Kişilik (Tek Kişilik 3 Yataklı)",
+                    Description = "3 adet tek kişilik yatak.  Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                     CreatedDate = DateTime.Now,
                     Status = DataStatus.Inserted
                 },
                 new RoomType {
                     Id = 5,
+                    Name = "Üç Kişilik (1 Tek, 1 Duble Yataklı)",
+                    Description = "Bir tek bir duble yatak.  Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
+                    CreatedDate = DateTime.Now,
+                    Status = DataStatus.Inserted
+                },
+                new RoomType {
+                    Id = 6,
+                    Name = "Dört Kişilik",
+                    Description = "1 adet büyük (duble) yatak + 2 adet tek kişilik yatak. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
+                    CreatedDate = DateTime.Now,
+                    Status = DataStatus.Inserted
+                },
+                new RoomType {
+                    Id = 7,
                     Name = "Kral Dairesi",
                     Description = "Geniş ve lüks oda. Özel oturma alanı, büyük yatak, balkon, minibar, özel banyo ve lüks hizmetler. Klima, TV, saç kurutma makinesi, WiFi ve özel hizmetler mevcuttur.",
                     CreatedDate = DateTime.Now,

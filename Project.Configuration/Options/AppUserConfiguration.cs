@@ -16,7 +16,6 @@ namespace Project.Configuration.Options
     {
         /// <summary>
         /// AppUser ile ilişkili yapılandırmaları belirler.
-        /// AppUser ile AppUserProfile bire bir (1:1) ilişki.
         /// </summary>
         public override void Configure(EntityTypeBuilder<AppUser> builder)
         {

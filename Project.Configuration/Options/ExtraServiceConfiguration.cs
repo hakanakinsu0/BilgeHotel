@@ -11,7 +11,6 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında ExtraService tablosunun yapılandırılmasını sağlar.
-    /// ExtraService, otelde sunulan ek hizmetleri temsil eder (ör. Spa, Oda Servisi, Minibar Kullanımı).
     /// </summary>
     public class ExtraServiceConfiguration : BaseConfiguration<ExtraService>
     {
