@@ -17,14 +17,10 @@ namespace Project.Configuration.Options
     {
         /// <summary>
         /// Package yapılandırmasını belirler.
-        /// - Decimal tipli PriceMultiplier alanı "money" türüne çevrildi.
         /// </summary>
         public override void Configure(EntityTypeBuilder<Package> builder)
         {
             base.Configure(builder);
-
-            builder.Property(x => x.PriceMultiplier) 
-                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
         }
     }
 }

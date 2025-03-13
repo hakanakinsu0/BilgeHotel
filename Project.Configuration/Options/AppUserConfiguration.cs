@@ -11,24 +11,19 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında AppUser tablosunun yapılandırılmasını sağlar.
-    /// AppUser, kullanıcı profili (AppUserProfile) ve kullanıcı rolleri (AppUserRole) ile ilişkilidir.
     /// </summary>
     public class AppUserConfiguration : BaseConfiguration<AppUser>
     {
         /// <summary>
         /// AppUser ile ilişkili yapılandırmaları belirler.
-        /// - AppUser ↔ AppUserProfile bire bir (1:1) ilişki.
-        /// - AppUser ↔ AppUserRole çoktan-çoğa (n:m) ilişki.
-        /// - AppUser ↔ Customer bire çok (1:N) ilişki.
+        /// AppUser ile AppUserProfile bire bir (1:1) ilişki.
         /// </summary>
         public override void Configure(EntityTypeBuilder<AppUser> builder)
         {
             base.Configure(builder);
 
-            builder.HasOne(x => x.AppUserProfile) // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser
-                   .WithOne(x => x.AppUser)
-                   .HasForeignKey<AppUserProfile>(x => x.AppUserId);
-
+            // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser
+            builder.HasOne(x => x.AppUserProfile).WithOne(x => x.AppUser).HasForeignKey<AppUserProfile>(x => x.AppUserId);
         }
     }
 }

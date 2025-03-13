@@ -10,7 +10,6 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında RoomType tablosunun yapılandırılmasını sağlar.
-    /// RoomType, odalar (Room) ile bire çok (1:N) ilişkilidir.
     /// </summary>
     public class RoomTypeConfiguration : BaseConfiguration<RoomType>
     {
@@ -20,8 +19,6 @@ namespace Project.Configuration.Options
         public override void Configure(EntityTypeBuilder<RoomType> builder)
         {
             base.Configure(builder);
-
-            // RoomType'a özel ek ayarlamalar bulunmamaktadır.
         }
     }
 }

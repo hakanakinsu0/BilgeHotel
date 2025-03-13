@@ -11,20 +11,18 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// Veritabanında Room tablosunun yapılandırılmasını sağlar.
-    /// Room, oda türü (RoomType), oda özellikleri (RoomFeature) ve rezervasyonlar (Reservation) ile ilişkilidir.
     /// </summary>
     public class RoomConfiguration : BaseConfiguration<Room>
     {
         /// <summary>
         /// Room yapılandırmasını belirler.
-        /// - Decimal tipli PricePerNight alanı "money" türüne çevrildi.
+        /// Decimal tipli PricePerNight alanı "money" türüne çevrildi.
         /// </summary>
         public override void Configure(EntityTypeBuilder<Room> builder)
         {
             base.Configure(builder);
 
-            builder.Property(x => x.PricePerNight) 
-                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
+            builder.Property(x => x.PricePerNight).HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
         }
     }
 }

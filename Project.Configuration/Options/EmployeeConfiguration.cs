@@ -17,20 +17,16 @@ namespace Project.Configuration.Options
     {
         /// <summary>
         /// Employee ile ilişkili yapılandırmaları belirler.
-        /// - Employee ↔ EmployeeDetail bire bir (1:1) ilişki.
-        /// - Employee ↔ Reservation bire çok (1:N) ilişki.
+        /// Employee ile Reservation bire çok (1:N) ilişki.
         /// </summary>
         public override void Configure(EntityTypeBuilder<Employee> builder)
         {
             base.Configure(builder);
 
-            builder.Property(x => x.Salary)
-                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
+            builder.Property(x => x.Salary).HasColumnType("money"); // Çalışanın maaşı veritabanında money türünde saklanır.
 
-            builder.HasMany(x => x.ManagedReservations) // 1 Employee N Reservation, 1 Reservation 1 Employee
-                   .WithOne(x => x.Employee)
-                   .HasForeignKey(x => x.EmployeeId)
-                   .IsRequired();
+            // 1 Employee N Reservation, 1 Reservation 1 Employee
+            builder.HasMany(x => x.ManagedReservations).WithOne(x => x.Employee).HasForeignKey(x => x.EmployeeId).IsRequired();
         }
     }
 }

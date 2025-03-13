@@ -17,14 +17,13 @@ namespace Project.Configuration.Options
     {
         /// <summary>
         /// Payment yapılandırmasını belirler.
-        /// - Decimal tipli PaymentAmount alanı "money" türüne çevrildi.
+        /// PaymentAmount alanı "money" türüne çevrildi.
         /// </summary>
         public override void Configure(EntityTypeBuilder<Payment> builder)
         {
             base.Configure(builder);
 
-            builder.Property(x => x.PaymentAmount) 
-                   .HasColumnType("money"); // Decimal veri tipi, veritabanında money olarak saklanır.
+            builder.Property(x => x.PaymentAmount).HasColumnType("money"); // Ödeme tutarı, veritabanında "money" türünde saklanır.
         }
     }
 }

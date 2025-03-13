@@ -19,8 +19,6 @@ namespace Project.Configuration.Options
         public override void Configure(EntityTypeBuilder<AppUserProfile> builder)
         {
             base.Configure(builder);
-
-            // AppUserProfile'a özel ekstra yapılandırma yok.
         }
     }
 }
