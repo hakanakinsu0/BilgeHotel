@@ -29,7 +29,7 @@ namespace Project.Dal.ContextClasses
         }
 
         /// <summary>
-        /// Fluent API kullanılarak veritabanı konfigürasyonlarını uygular.
+        /// Veritabani konfigurasyon ayarlamalari uygulanir.
         /// Tüm entity'lerin yapılandırmaları ApplyConfiguration() ile yüklenir.
         /// </summary>
         /// <param name="builder">Model yapılandırması</param>
@@ -37,18 +37,19 @@ namespace Project.Dal.ContextClasses
         {
             base.OnModelCreating(builder); // Identity ile ilgili varsayılan konfigürasyonları uygular
 
-            // **Tüm entity'lerin konfigürasyonları burada çağrılıyor**
-            builder.ApplyConfiguration(new AppUserConfiguration());
-            builder.ApplyConfiguration(new AppUserProfileConfiguration());
-            builder.ApplyConfiguration(new EmployeeConfiguration());
-            builder.ApplyConfiguration(new PackageConfiguration());
-            builder.ApplyConfiguration(new PaymentConfiguration());
-            builder.ApplyConfiguration(new ReservationConfiguration());
-            builder.ApplyConfiguration(new RoomConfiguration());
-            builder.ApplyConfiguration(new RoomTypeConfiguration());
-            builder.ApplyConfiguration(new ExtraServiceConfiguration());
-            builder.ApplyConfiguration(new ReservationExtraServiceConfiguration());
+            // Tüm entity'lerin konfigürasyonları burada çağrılır
+            builder.ApplyConfiguration(new AppUserConfiguration());                 // Kullanıcı ayarları
+            builder.ApplyConfiguration(new AppUserProfileConfiguration());          // Kullanıcı profil ayarları
+            builder.ApplyConfiguration(new EmployeeConfiguration());                // Çalışan ayarları
+            builder.ApplyConfiguration(new PackageConfiguration());                 // Konaklama paket ayarları
+            builder.ApplyConfiguration(new PaymentConfiguration());                 // Ödeme ayarları
+            builder.ApplyConfiguration(new ReservationConfiguration());             // Rezervasyon ayarları
+            builder.ApplyConfiguration(new RoomConfiguration());                    // Oda ayarları
+            builder.ApplyConfiguration(new RoomTypeConfiguration());                // Oda türleri ayarları
+            builder.ApplyConfiguration(new ExtraServiceConfiguration());            // Ekstra hizmet ayarları
+            builder.ApplyConfiguration(new ReservationExtraServiceConfiguration()); // Ekstra hizmet-rezervasyon ilişkisi
 
+            // Seed (Başlangıç) Verileri Burada Çağrılır
             RoomTypeSeed.SeedRoomTypes(builder);
             RoomSeed.SeedRooms(builder);
             EmployeeSeed.SeedEmployees(builder);
@@ -58,17 +59,17 @@ namespace Project.Dal.ContextClasses
 
         }
 
-        // **Veritabanı Tabloları**
-        public DbSet<AppUser> AppUsers { get; set; }
-        public DbSet<AppUserProfile> AppUserProfiles { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<ExtraService> ExtraServices { get; set; }
-        public DbSet<Package> Packages { get; set; }
-        public DbSet<Payment> Payments { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<ReservationExtraService> ReservationExtraServices { get; set; }
-        public DbSet<Room> Rooms { get; set; }
-        public DbSet<RoomType> RoomTypes { get; set; }
+        // Veritabanı Tabloları
+        public DbSet<AppUser> AppUsers { get; set; }               // Kullanıcılar
+        public DbSet<AppUserProfile> AppUserProfiles { get; set; } // Kullanıcı Profilleri
+        public DbSet<Employee> Employees { get; set; }             // Çalışanlar
+        public DbSet<ExtraService> ExtraServices { get; set; }     // Ekstra Hizmetler
+        public DbSet<Package> Packages { get; set; }               // Konaklama Paketleri
+        public DbSet<Payment> Payments { get; set; }               // Ödemeler
+        public DbSet<Reservation> Reservations { get; set; }       // Rezervasyonlar
+        public DbSet<ReservationExtraService> ReservationExtraServices { get; set; } // Ekstra Hizmet - Rezervasyon Junction Tablosu
+        public DbSet<Room> Rooms { get; set; }                     // Odalar
+        public DbSet<RoomType> RoomTypes { get; set; }             // Oda Türleri
 
 
     }
