@@ -11,8 +11,8 @@ namespace Project.Entities.Enums
     /// </summary>
     public enum RoomStatus
     {
-        Empty = 1, // Oda boş.
-        Occupied = 2, // Oda dolu.
+        Empty = 1,      // Oda boş.
+        Occupied = 2,   // Oda dolu.
         Maintenance = 3 // Oda bakımda.
     }
 }

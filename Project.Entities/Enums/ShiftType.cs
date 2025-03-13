@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Project.Entities.Enums
 {
+    /// <summary>
+    /// Çalışma vardiyalarını temsil eder.
+    /// </summary>
     public enum ShiftType
     {
         Morning = 1,  // Sabah (08:00 - 16:00)

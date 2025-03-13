@@ -11,8 +11,8 @@ namespace Project.Entities.Enums
     /// </summary>
     public enum PaymentMethod
     {
-        CreditCard = 1, // Kredi Kartı ile ödeme.
-        Cash = 2, // Nakit ödeme.
+        CreditCard = 1,  // Kredi Kartı ile ödeme.
+        Cash = 2,        // Nakit ödeme.
         BankTransfer = 3 // Banka Havalesi ile ödeme.
     }
 }

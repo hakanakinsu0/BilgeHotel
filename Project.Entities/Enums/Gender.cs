@@ -11,8 +11,8 @@ namespace Project.Entities.Enums
     /// </summary>
     public enum Gender
     {
-        Male = 1, // Erkek.
+        Male = 1,   // Erkek.
         Female = 2, // Kadın.
-        Other = 3 // Diğer.
+        Other = 3   // Diğer.
     }
 }

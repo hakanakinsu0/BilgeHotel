@@ -8,12 +8,12 @@ namespace Project.Entities.Enums
 {
     /// <summary>
     /// Verinin durumunu belirlemek için kullanılan enumdur.
-    /// Verilerin eklenme, güncellenme ve silinme durumlarını izlemek.
+    /// Bu enum ile verilerin eklenme, güncellenme ve pasif hale getirilme durumlarını izleriz.
     /// </summary>
     public enum DataStatus
     {
-        Inserted = 1, // Verinin yeni eklendiği durum.
-        Updated = 2,  // Verinin güncellendiği durum.
-        Deleted = 3   // Verinin silindiği durum.
+        Inserted = 1, // Yeni eklenen veri. Varsayılan başlangıç durumu.
+        Updated = 2,  // Güncellenmiş veri.
+        Deleted = 3   // Pasif hale getirilmiş veri (Soft delete). Veritabanında fiziksel olarak silinmez.
     }
 }
