@@ -47,13 +47,14 @@ namespace Project.Dal.BogusHandling
 
                     employees.Add(new Employee
                     {
-                        Id = employeeId,        //Primary Key
-                        FirstName = firstName,  // Adı
-                        LastName = lastName,    // Soyadı
+                        Id = employeeId,            //Primary Key
+                        FirstName = firstName,      // Adı
+                        LastName = lastName,        // Soyadı
+                        Position = position.Key,    // Çalışanın görevi
                         Address = faker.Address.FullAddress(),      // Tam adres bilgisi
                         PhoneNumber = faker.Phone.PhoneNumber(),    // Telefon numarası
-                        Salary = monthlyRate,   // Aylik ücret
-                        Shift = shiftType,      // Çalışma vardiyası
+                        Salary = monthlyRate,       // Aylik ücret
+                        Shift = shiftType,          // Çalışma vardiyası
                         HireDate = faker.Date.Past(10, DateTime.Now.AddYears(-1)),      // 1 yıldan fazla süredir çalışanlar, en fazla 10 yıl önce işe başlamış olabilir
                         BirthDate = faker.Date.Past(40, DateTime.Now.AddYears(-18)),    // 18 ile 58 yaş arasında olmalı (58 = 18 + 40)
                         CreatedDate = DateTime.Now,     // Çalışan oluşturulma zamanı

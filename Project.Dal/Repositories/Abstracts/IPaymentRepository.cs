@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
+    /// <summary>
+    /// Otel ödemeleri (Payment) için veri erişim işlemlerini yöneten repository interface'i.
+    /// Tüm temel CRUD işlemleri `IRepository<Payment>` aracılığıyla sağlanır.
+    /// </summary>
     public interface IPaymentRepository : IRepository<Payment>
     {
     }

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
+    /// <summary>
+    /// Otel oda türleri (RoomType) için veri erişim işlemlerini yöneten repository interface'i.
+    /// Tüm temel CRUD işlemleri `IRepository<RoomType>` aracılığıyla sağlanır.
+    /// </summary>
     public interface IRoomTypeRepository : IRepository<RoomType>
     {
     }

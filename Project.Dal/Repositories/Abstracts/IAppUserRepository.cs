@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
+    /// <summary>
+    /// Kullanıcılar (AppUser) için veri erişim işlemlerini yöneten repository interfacei.
+    /// Tüm temel CRUD işlemleri `IRepository<AppUser>` aracılığıyla sağlanır.
+    /// </summary>
     public interface IAppUserRepository : IRepository<AppUser>
     {
     }

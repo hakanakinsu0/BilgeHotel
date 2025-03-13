@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
+    /// <summary>
+    /// Otel rezervasyonları (Reservation) için veri erişim işlemlerini yöneten repository interface'i.
+    /// Tüm temel CRUD işlemleri `IRepository<Reservation>` aracılığıyla sağlanır.
+    /// </summary>
     public interface IReservationRepository : IRepository<Reservation>
     {
     }

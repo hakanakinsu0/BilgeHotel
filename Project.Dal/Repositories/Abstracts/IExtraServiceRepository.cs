@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
+    /// <summary>
+    /// Otelde sunulan ekstra hizmetler (ExtraService) için veri erişim işlemlerini yöneten repository interfacei.
+    /// Tüm temel CRUD işlemleri `IRepository<ExtraService>` aracılığıyla sağlanır.
+    /// </summary>
     public interface IExtraServiceRepository : IRepository<ExtraService>
     {
     }

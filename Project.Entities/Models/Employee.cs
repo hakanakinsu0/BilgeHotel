@@ -11,6 +11,7 @@ namespace Project.Entities.Models
     {
         public string FirstName { get; set; }       // Çalışanın adı.
         public string LastName { get; set; }        // Çalışanın soyadı.
+        public string Position { get; set; }        // Çalışanın görevi (Örn: Resepsiyonist, Aşçı, Garson, Temizlik Görevlisi).
         public string Address { get; set; }         // Çalışanın adresi.
         public string PhoneNumber { get; set; }     // Çalışanın telefon numarası.
         public decimal Salary { get; set; }         // Çalışanın maaşı.

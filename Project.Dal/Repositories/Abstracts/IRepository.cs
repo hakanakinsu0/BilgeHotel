@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 namespace Project.Dal.Repositories.Abstracts
 {
     /// <summary>
-    /// Tüm entity’ler için temel CRUD işlemlerini sağlayan generic repository interface’i.
+    /// Veritabanı erişimi için tüm entity’lerde ortak kullanılan Generic Repository interfacei.
+    /// Temel CRUD işlemlerini ve dinamik sorgulamayı içerir.
     /// </summary>
     /// <typeparam name="T">IEntity’den türeyen herhangi bir entity.</typeparam>
     public interface IRepository<T> where T : class, IEntity
     {
         // Queries (Veri Çekme İşlemleri)
-        Task<List<T>> GetAllAsync(); // Tüm verileri getir.
-        Task<T> GetByIdAsync(int id); // ID'ye göre veri getir.
-        IQueryable<T> Where(Expression<Func<T, bool>> exp); // Dinamik filtreleme yap.
+        Task<List<T>> GetAllAsync();    // Tüm verileri getir.
+        Task<T> GetByIdAsync(int id);   // ID'ye göre veri getir.
+        IQueryable<T> Where(Expression<Func<T, bool>> exp); // Belirli bir koşula göre dinamik filtreleme yap.
 
         // Command (Veri Manipülasyon İşlemleri)
         Task CreateAsync(T entity); // Yeni kayıt ekle.

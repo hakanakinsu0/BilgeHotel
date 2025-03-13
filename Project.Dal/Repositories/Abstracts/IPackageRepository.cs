@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Abstracts
 {
+    /// <summary>
+    /// Otelde sunulan konaklama paketleri (Package) için veri erişim işlemlerini yöneten repository interface'i.
+    /// Tüm temel CRUD işlemleri `IRepository<Package>` aracılığıyla sağlanır.
+    /// </summary>
     public interface IPackageRepository : IRepository<Package>
     {
     }
