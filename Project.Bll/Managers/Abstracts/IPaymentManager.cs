@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Abstracts
 {
-    public interface IPaymentManager : IManager<PaymentDto, Payment> { }
+    public interface IPaymentManager : IManager<PaymentDto, Payment> 
+    {
+        Task<decimal> GetTotalRevenueAsync();
+        Task<decimal> GetRevenueLast30DaysAsync();
+        Task<decimal> GetPendingPaymentsAsync();
+    }
 
 }

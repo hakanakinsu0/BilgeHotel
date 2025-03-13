@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Abstracts
 {
-    public interface IAppUserProfileManager : IManager<AppUserProfileDto, AppUserProfile> { }
+    public interface IAppUserProfileManager : IManager<AppUserProfileDto, AppUserProfile> 
+    {
+        Task<AppUserProfileDto> GetByAppUserIdAsync(int appUserId); // 🔥 AppUserId'ye göre profil getir
+
+    }
 
 }

@@ -3,6 +3,7 @@ using Project.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,5 +30,10 @@ namespace Project.Bll.Managers.Abstracts
         Task CreateRangeAsync(List<T> dtoList); // Toplu ekleme işlemi
         Task UpdateRangeAsync(List<T> dtoList); // Toplu güncelleme işlemi
         Task<string> RemoveRangeAsync(List<T> dtoList); // Toplu silme işlemi
+
+        //
+
+        Task<int> CountAsync(Expression<Func<U, bool>> predicate = null);
+        Task<decimal> SumAsync(Expression<Func<U, decimal>> selector, Expression<Func<U, bool>> predicate = null);
     }
 }

@@ -1,0 +1,137 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Rooms.RoomListResponseModel
+
+@{
+    ViewData["Title"] = "Oda Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>🏨 Oda Yönetimi</h2>
+<p>Otelinizdeki odaları buradan yönetebilirsiniz.</p>
+
+<!-- 🔎 Arama & Filtreleme -->
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-2">
+            <select name="roomTypeId" class="form-control" asp-items="ViewBag.RoomTypes">
+                <option value="">Oda Türü Seç</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-control" asp-items="ViewBag.Statuses">
+                <option value="">Oda Durumunu Seç</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="pageSize" class="form-control">
+                <option value="10" selected>10 Oda</option>
+                <option value="30">30 Oda</option>
+                <option value="50">50 Oda</option>
+                <option value="70">70 Oda</option>
+                <option value="90">90 Oda</option>
+            </select>
+        </div>
+        <div class="col-md-2 mt-2">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
+        </div>
+    </div>
+</form>
+
+<div>
+
+    <!-- 🆕 Yeni Oda Ekle -->
+    <a asp-area="Admin" asp-controller="Room" asp-action="Create" class="btn btn-success mt-3">
+        <i class="fas fa-plus"></i> Yeni Oda Ekle
+    </a>
+</div><br /> <br/>
+
+
+<!-- 📋 Oda Listesi -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Oda No</th>
+            <th>Oda Türü</th>
+            <th>Kat</th>
+            <th>Fiyat</th>
+            <th>Durum</th>
+            <th>Özellikler</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Rooms != null && Model.Rooms.Any())
+        {
+            int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1; // ✅ Sayfalama desteği eklendi.
+            @foreach (var room in Model.Rooms)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@room.RoomNumber</td>
+                    <td>@room.RoomType</td>
+                    <td>@room.Floor</td>
+                    <td>@room.PricePerNight.ToString("C")</td>
+                    <td>
+                        @if (room.RoomStatus == "Occupied")
+                        {
+                            <span class="badge bg-danger">Dolu</span>
+                        }
+                        else if (room.RoomStatus == "Maintenance")
+                        {
+                            <span class="badge bg-warning text-dark">Bakımda</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Boş</span>
+                        }
+                    </td>
+                    <td>
+                        <span class="badge @(room.HasBalcony ? "bg-success" : "bg-danger")">Balkon</span>
+                        <span class="badge @(room.HasMinibar ? "bg-success" : "bg-danger")">Minibar</span>
+                        <span class="badge @(room.HasAirConditioner ? "bg-success" : "bg-danger")">Klima</span>
+                        <span class="badge @(room.HasTV ? "bg-success" : "bg-danger")">TV</span>
+                        <span class="badge @(room.HasHairDryer ? "bg-success" : "bg-danger")">Saç Kurutma</span>
+                        <span class="badge @(room.HasWifi ? "bg-success" : "bg-danger")">WiFi</span>
+                    </td>
+                    <td>
+                        <a asp-area="Admin" asp-controller="Room" asp-action="Edit" asp-route-id="@room.Id" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <a asp-area="Admin" asp-controller="Room" asp-action="Delete" asp-route-id="@room.Id" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Sil
+                        </a>
+                        <a asp-area="Admin" asp-controller="Room" asp-action="StatusUpdate" asp-route-id="@room.Id" class="btn btn-info btn-sm">
+                            <i class="fas fa-sync"></i> Durum Güncelle
+                        </a>
+                    </td>
+
+                </tr>
+                count++; // ✅ Sayı her satırda artacak.
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8" class="text-center text-muted">🚫 Oda bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<!-- 🔄 Sayfalama -->
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = Model.PageSize })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+

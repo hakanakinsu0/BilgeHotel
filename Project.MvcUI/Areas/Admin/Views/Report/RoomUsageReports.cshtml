@@ -1,0 +1,80 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports.RoomUsageReportResponseModel
+
+@{
+    ViewData["Title"] = "🛏️ Oda Kullanım Raporları";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>🛏️ Oda Kullanım Raporları</h2>
+<p>Otelinizdeki odaların doluluk durumlarını inceleyebilirsiniz.</p>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card text-black bg-warning mb-3">
+            <div class="card-header">📊 Toplam Oda Sayısı</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.TotalRooms</h3>
+                <p class="card-text">Otelinizdeki toplam oda sayısı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-black bg-success mb-3">
+            <div class="card-header">🛑 Dolu Odalar</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.OccupiedRooms</h3>
+                <p class="card-text">Şu anda dolu olan odaların sayısı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-black bg-danger mb-3">
+            <div class="card-header">📆 Bu Ay Rezervasyonu Olan Odalar</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.MonthlyOccupiedRooms</h3>
+                <p class="card-text">Bu ay rezervasyon yapılmış oda sayısı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-black bg-info mb-3">
+            <div class="card-header">✅ Boş Odalar</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.EmptyRooms</h3>
+                <p class="card-text">Şu anda boş olan odaların sayısı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-black bg-secondary mb-3">
+            <div class="card-header">🔧 Bakımda Olan Odalar</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.MaintenanceRooms</h3>
+                <p class="card-text">Şu anda bakımda olan odaların sayısı.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card text-dark bg-light mb-3">
+    <div class="card-header">📈 Anlık Doluluk Oranı</div>
+    <div class="card-body">
+        <h3 class="card-title">@Model.OccupiedPercentage.ToString("0.##")%</h3>
+        <p class="card-text">Otelde şu an dolu olan odaların yüzdesi.</p>
+    </div>
+</div>
+
+<div class="card text-dark bg-light mb-3">
+    <div class="card-header">📆 Bu Ay Rezervasyonu Olan Odaların Yüzdesi</div>
+    <div class="card-body">
+        <h3 class="card-title">@Model.MonthlyOccupiedRoomsPercentage.ToString("0.##")%</h3>
+        <p class="card-text">Bu ay en az bir rezervasyon almış odaların oranı.</p>
+    </div>
+</div>
+
+
+<a asp-area="Admin" asp-controller="Report" asp-action="Index" class="btn btn-secondary mt-3">🔙 Geri Dön</a>

@@ -1,0 +1,68 @@
+﻿@model Project.MvcUI.Models.PureVms.Reservations.RequestModels.ReservationCreateRequestModel
+
+@{
+    ViewData["Title"] = "Yeni Rezervasyon Oluştur";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="StartDate">Giriş Tarihi</label>
+        <input asp-for="StartDate" class="form-control" type="date" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="EndDate">Çıkış Tarihi</label>
+        <input asp-for="EndDate" class="form-control" type="date" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <!-- Kat Bilgileri -->
+    <h4>Kat Bilgileri:</h4>
+    <div class="alert alert-info">
+        @if (ViewBag.FloorsInfo != null)
+        {
+            @foreach (var floor in ViewBag.FloorsInfo)
+            {
+                <p><strong>@floor.Key. Kat:</strong> @floor.Value</p>
+            }
+        }
+        else
+        {
+            <p>Kat bilgileri mevcut değil.</p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="RoomId">Oda Seçimi</label>
+        <select asp-for="RoomId" class="form-control" asp-items="ViewBag.Rooms">
+            <option value="">Lütfen bir oda seçin</option>
+        </select>
+        <span asp-validation-for="RoomId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="PackageId">Paket Seçimi (Opsiyonel)</label>
+        <select asp-for="PackageId" class="form-control" asp-items="ViewBag.Packages">
+            <option value="">Paket seçilmedi</option>
+        </select>
+        <span asp-validation-for="PackageId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Rezervasyonu Oluştur</button>
+</form>

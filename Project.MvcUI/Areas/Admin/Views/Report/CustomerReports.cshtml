@@ -1,0 +1,80 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports.CustomerReportListResponseModel
+
+@{
+    ViewData["Title"] = "👤 Müşteri Raporları";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>👤 Müşteri Raporları</h2>
+<p>Otelinizdeki müşterilere ait istatistikleri ve detayları buradan görüntüleyebilirsiniz.</p>
+
+<!-- 📊 Müşteri Kartları -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">👥 Toplam Müşteri Sayısı</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.TotalCustomers</h3>
+                <p class="card-text">Otel sistemine kayıtlı toplam müşteri sayısı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">✅ Rezervasyon Yapan Müşteriler</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.CustomersWithReservations</h3>
+                <p class="card-text">Otelde rezervasyon yapmış müşteri sayısı.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-header">❌ Rezervasyon Yapmayan Müşteriler</div>
+            <div class="card-body">
+                <h3 class="card-title">@Model.CustomersWithoutReservations</h3>
+                <p class="card-text">Henüz rezervasyon yapmamış müşteri sayısı.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 📋 Müşteri Detayları -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Ad Soyad</th>
+            <th>Email</th>
+            <th>Kimlik Numarası</th>
+            <th>Rezervasyon Sayısı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Customers != null && Model.Customers.Any())
+        {
+            int count = 1;
+            @foreach (var customer in Model.Customers)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@customer.FullName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.IdentityNumber</td>
+                    <td>@customer.ReservationCount</td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">🚫 Kayıtlı müşteri bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-area="Admin" asp-controller="Report" asp-action="Index" class="btn btn-secondary mt-3">🔙 Geri Dön</a>

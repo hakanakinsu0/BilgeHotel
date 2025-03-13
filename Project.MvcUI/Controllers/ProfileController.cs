@@ -41,10 +41,6 @@ namespace Project.MvcUI.Controllers
             return View(model);
         }
 
-
-
-
-
         // 📌 2️⃣ Kullanıcı Profili Güncelleme - GET
         public async Task<IActionResult> Edit()
         {
@@ -78,8 +74,6 @@ namespace Project.MvcUI.Controllers
             ModelState.AddModelError("", "Profil güncellenirken hata oluştu.");
             return View(model);
         }
-
-
 
 
         // 📌 3️⃣ Kullanıcı Şifre Değiştirme - GET

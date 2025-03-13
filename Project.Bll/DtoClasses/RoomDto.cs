@@ -19,5 +19,8 @@ namespace Project.Bll.DtoClasses
         public bool HasTV { get; set; }
         public bool HasHairDryer { get; set; }
         public bool HasWifi { get; set; }
+
+        public bool IsReserved { get; set; } // Oda şu an rezerve edilmiş mi?
+
     }
 }

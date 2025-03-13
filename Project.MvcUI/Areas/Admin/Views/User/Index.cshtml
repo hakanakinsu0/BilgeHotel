@@ -1,0 +1,97 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.UserListViewModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>👥 Kullanıcı Yönetimi</h2>
+<p>Buradan sistemdeki kullanıcıları yönetebilirsiniz.</p>
+
+<!-- 🔎 Arama & Filtreleme -->
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Ad veya e-posta ile ara" value="@Context.Request.Query["search"]" />
+        </div>
+        <div class="col-md-3">
+            <select name="role" class="form-control">
+                <option value="">Tüm Roller</option>
+                <option value="Admin" selected="@(Context.Request.Query["role"] == "Admin")">Admin</option>
+                <option value="Member" selected="@(Context.Request.Query["role"] == "Member")">Üye</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-control">
+                <option value="">Tüm Durumlar</option>
+                <option value="Aktif" selected="@(Context.Request.Query["status"] == "Aktif")">Aktif</option>
+                <option value="Pasif" selected="@(Context.Request.Query["status"] == "Pasif")">Pasif</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
+        </div>
+    </div>
+</form>
+
+<!-- 🆕 Yeni Kullanıcı Ekleme -->
+<a asp-area="Admin" asp-controller="User" asp-action="Create" class="btn btn-success mb-3">
+    <i class="fas fa-user-plus"></i> Yeni Kullanıcı Ekle
+</a>
+
+<!-- 📋 Kullanıcı Listesi -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Ad Soyad</th>
+            <th>E-Posta</th>
+            <th>Rol</th>
+            <th>Durum</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Users != null && Model.Users.Any())
+        {
+            int count = 1;
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Role</td>
+                    <td>
+                        @if (user.Status != Project.Entities.Enums.DataStatus.Deleted)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Pasif</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-area="Admin" asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <a asp-area="Admin" asp-controller="User" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Sil
+                        </a>
+                        <a asp-area="Admin" asp-controller="User" asp-action="ChangePassword" asp-route-id="@user.Id" class="btn btn-primary btn-sm">
+                            <i class="fas fa-key"></i> Şifre Değiştir
+                        </a>
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted">🚫 Kullanıcı bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>

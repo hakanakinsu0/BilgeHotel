@@ -1,0 +1,47 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports.RevenueReportResponseModel
+
+@{
+    ViewData["Title"] = "💰 Gelir Raporları";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>💰 Gelir Raporları</h2>
+<p>Bu sayfadan otelinizin toplam ve aylık gelirlerini inceleyebilirsiniz.</p>
+
+<!-- 📌 Toplam Gelir Kartı -->
+<div class="alert alert-success text-center">
+    <h4>Toplam Gelir: <strong>@Model.TotalRevenue.ToString("C")</strong></h4>
+</div>
+
+<!-- 📋 Aylık Gelir Tablosu -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>📅 Yıl</th>
+            <th>📆 Ay</th>
+            <th>💵 Aylık Gelir</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.MonthlyRevenueReports != null && Model.MonthlyRevenueReports.Any())
+        {
+            @foreach (var report in Model.MonthlyRevenueReports)
+            {
+                <tr>
+                    <td>@report.Year</td>
+                    <td>@report.Month</td>
+                    <td>@report.TotalRevenue.ToString("C")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center text-muted">🚫 Kayıtlı gelir bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- 🔙 Geri Dön -->
+<a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Geri Dön</a>

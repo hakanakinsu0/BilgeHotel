@@ -21,9 +21,7 @@ namespace Project.Bll.Mapping
             CreateMap<RoomType, RoomTypeDto>().ReverseMap();
 
             // Rezervasyon, Ödeme ve Paketler
-            CreateMap<Reservation, ReservationDto>()
-                .ForMember(dest => dest.ExtraServices, opt => opt.MapFrom(src => src.ReservationExtraServices))
-                .ReverseMap();
+            CreateMap<Reservation, ReservationDto>();
 
             CreateMap<Payment, PaymentDto>().ReverseMap();
             CreateMap<Package, PackageDto>().ReverseMap();

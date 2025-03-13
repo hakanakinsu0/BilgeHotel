@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports.ReservationReportResponseModel>
+
+@{
+    ViewData["Title"] = "📅 Rezervasyon Raporları";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>📅 Rezervasyon Raporları</h2>
+<p>Bu sayfadan otelinizdeki tüm rezervasyonları görüntüleyebilirsiniz.</p>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Müşteri Adı</th>
+            <th>Oda Numarası</th>
+            <th>Giriş Tarihi</th>
+            <th>Çıkış Tarihi</th>
+            <th>Durum</th>
+            <th>Toplam Ücret</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            int count = 1;
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@reservation.CustomerName</td>
+                    <td>@reservation.RoomNumber</td>
+                    <td>@reservation.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@reservation.EndDate.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @if (reservation.ReservationStatus == "Confirmed")
+                        {
+                            <span class="badge bg-success">Onaylandı</span>
+                        }
+                        else if (reservation.ReservationStatus == "PendingPayment")
+                        {
+                            <span class="badge bg-warning text-dark">Ödeme Bekleniyor</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">İptal Edildi</span>
+                        }
+                    </td>
+                    <td>@reservation.TotalPrice.ToString("C")</td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">🚫 Kayıtlı rezervasyon bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Geri Dön</a>

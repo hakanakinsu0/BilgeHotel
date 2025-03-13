@@ -1,0 +1,131 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.CreateUserRequestModel
+
+@{
+    ViewData["Title"] = "Yeni Kullanıcı Ekle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Yeni Kullanıcı Ekle</h2>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <!-- Ad -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="FirstName" class="form-label">Ad</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Soyad -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="LastName" class="form-label">Soyad</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <!-- E-posta -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">E-posta</label>
+                <input asp-for="Email" type="email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Telefon Numarası -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label">Telefon Numarası</label>
+                <input asp-for="PhoneNumber" type="tel" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Şifre -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Şifre</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Şifre Tekrar -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label">Şifre (Tekrar)</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Cinsiyet -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Gender" class="form-label">Cinsiyet</label>
+                <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Project.Entities.Enums.Gender>()">
+                    <option value="">Seçiniz</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Rol Seçimi -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label">Rol</label>
+                <select asp-for="Role" class="form-control" asp-items="ViewBag.Roles">
+                    <option value="">Rol Seçiniz</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Adres -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label">Adres</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Uyruğu -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Nationality" class="form-label">Uyruğu</label>
+                <input asp-for="Nationality" class="form-control" />
+                <span asp-validation-for="Nationality" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Kimlik Numarası -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="IdentityNumber" class="form-label">Kimlik Numarası</label>
+                <input asp-for="IdentityNumber" class="form-control" />
+                <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kullanıcı Ekle</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>
+
+@* @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

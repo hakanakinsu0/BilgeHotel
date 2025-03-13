@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Dal.Repositories.Abstracts;
@@ -18,5 +19,12 @@ namespace Project.Bll.Managers.Concretes
         {
             _repository = repository;
         }
+
+        public async Task<AppUserProfileDto> GetByAppUserIdAsync(int appUserId)
+        {
+            var profile = await _repository.Where(x => x.AppUserId == appUserId).FirstOrDefaultAsync();
+            return _mapper.Map<AppUserProfileDto>(profile);
+        }
+
     }
 }

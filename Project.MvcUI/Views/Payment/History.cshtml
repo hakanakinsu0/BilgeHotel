@@ -1,0 +1,47 @@
+﻿@model List<Project.MvcUI.Models.PureVms.Payments.ResponseModels.PaymentHistoryResponseModel>
+
+@{
+    ViewData["Title"] = "💰 Ödeme Geçmişi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>💰 Ödeme Geçmişi</h2>
+<p>Yaptığınız ödemelerin listesini aşağıda görebilirsiniz.</p>
+
+@if (Model == null || !Model.Any())
+{
+    <p>Henüz bir ödeme kaydınız bulunmamaktadır.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>📌 Kart Sahibi</th>
+                <th>💳 Kart Numarası</th>
+                <th>🏨 Oda Numarası</th>
+                <th>💰 Ödeme Tutarı</th>
+                <th>❌ İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CardUserName</td>
+                    <td>@item.CardNumber</td>
+                    <td>@item.RoomNumber</td>
+                    <td>@item.PaymentAmount ₺</td>
+                    <td>
+                        <a asp-action="CancelPaymentConfirm" asp-route-reservationId="@item.ReservationId" class="btn btn-danger btn-sm">
+                            ❌ İptal Et
+                        </a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-action="Index" class="btn btn-primary">🔙 Geri Dön</a>

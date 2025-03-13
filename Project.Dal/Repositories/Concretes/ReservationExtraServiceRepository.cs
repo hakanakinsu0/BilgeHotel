@@ -12,5 +12,11 @@ namespace Project.Dal.Repositories.Concretes
     public class ReservationExtraServiceRepository : BaseRepository<ReservationExtraService>, IReservationExtraServiceRepository
     {
         public ReservationExtraServiceRepository(MyContext context) : base(context) { }
+
+        public async Task CreateRangeAsync(List<ReservationExtraService> entities)
+        {
+            await _context.Set<ReservationExtraService>().AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
     }
 }

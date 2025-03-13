@@ -1,4 +1,5 @@
-﻿using Project.Dal.ContextClasses;
+﻿using Microsoft.EntityFrameworkCore;
+using Project.Dal.ContextClasses;
 using Project.Dal.Repositories.Abstracts;
 using Project.Entities.Models;
 using System;
@@ -11,6 +12,16 @@ namespace Project.Dal.Repositories.Concretes
 {
     public class RoomRepository : BaseRepository<Room>, IRoomRepository
     {
-        public RoomRepository(MyContext context) : base(context) { }
+        private readonly MyContext _context;
+
+        public RoomRepository(MyContext context) : base(context)
+        {
+            _context = context;
+        }
+
+        public async Task<Room> GetByRoomNumberAsync(string roomNumber)
+        {
+            return await _context.Set<Room>().FirstOrDefaultAsync(r => r.RoomNumber == roomNumber);
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace Project.Dal.Repositories.Abstracts
 {
     public interface IRoomRepository : IRepository<Room>
     {
+        Task<Room> GetByRoomNumberAsync(string roomNumber);
+
     }
 }

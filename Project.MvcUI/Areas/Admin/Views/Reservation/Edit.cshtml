@@ -1,0 +1,75 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations.ReservationUpdateRequestModel
+
+@{
+    ViewData["Title"] = "Rezervasyon İptali";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Rezervasyonu Güncelle</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ReservationId" />
+
+    <div class="mb-3">
+        <label asp-for="CustomerName" class="form-label">Müşteri Adı</label>
+        <input asp-for="CustomerName" class="form-control" readonly />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CustomerEmail" class="form-label">E-Posta</label>
+        <input asp-for="CustomerEmail" class="form-control" readonly />
+        <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RoomId" class="form-label">Oda</label>
+        <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-control"></select>
+        <span asp-validation-for="RoomId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartDate" class="form-label">Başlangıç Tarihi</label>
+        <input asp-for="StartDate" type="date" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EndDate" class="form-label">Bitiş Tarihi</label>
+        <input asp-for="EndDate" type="date" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PackageId" class="form-label">Paket</label>
+        <select asp-for="PackageId" asp-items="ViewBag.Packages" class="form-control">
+            <option value="">Paket Seç</option>
+        </select>
+        <span asp-validation-for="PackageId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Ekstra Hizmetler</label>
+        <div class="form-check">
+            @foreach (var extraService in ViewBag.ExtraServices as List<SelectListItem>)
+            {
+                <div class="form-check">
+                    <input type="checkbox" name="ExtraServiceIds" value="@extraService.Value"
+                           class="form-check-input"
+                    @(extraService.Selected ? "checked" : "")>
+                    <label class="form-check-label">@extraService.Text</label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="ExtraServiceIds" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="ReactivateReservation" name="ReactivateReservation" value="true">
+        <label class="form-check-label" for="ReactivateReservation">Rezervasyonu tekrar aktif yap</label>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

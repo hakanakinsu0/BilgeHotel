@@ -1,0 +1,32 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.DeleteUserResponseModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Sil";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="text-danger">⚠️ Kullanıcıyı Sil</h2>
+<p>Bu kullanıcıyı silmek istediğinizden emin misiniz?</p>
+
+<div class="card border-danger mb-3">
+    <div class="card-header bg-danger text-white">Kullanıcı Bilgileri</div>
+    <div class="card-body">
+        <h5 class="card-title">@Model.FullName</h5>
+        <p class="card-text">
+            <strong>Email:</strong> @Model.Email <br>
+            <strong>Rol:</strong> @Model.Role
+        </p>
+    </div>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">
+        <i class="fas fa-trash-alt"></i> Sil
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> İptal
+    </a>
+</form>

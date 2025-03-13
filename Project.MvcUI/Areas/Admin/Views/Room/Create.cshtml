@@ -1,0 +1,114 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms.RoomCreateRequestModel
+
+@{
+    ViewData["Title"] = "Yeni Oda Ekle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>🆕 Yeni Oda Ekle</h2>
+<p>Yeni bir oda eklemek için aşağıdaki bilgileri doldurun.</p>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="RoomNumber" class="form-label">Oda Numarası</label>
+        <input asp-for="RoomNumber" class="form-control" />
+        <span asp-validation-for="RoomNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Floor" class="form-label">Kat Seçimi</label>
+        <select asp-for="Floor" class="form-control" id="floorSelect">
+            <option value="">Lütfen bir kat seçin</option>
+            @for (int i = 1; i <= 4; i++) // **Sadece 1-4 kat arası**
+            {
+                <option value="@i">@i. Kat</option>
+            }
+        </select>
+        <span asp-validation-for="Floor" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PricePerNight" class="form-label">Gecelik Fiyat</label>
+        <input asp-for="PricePerNight" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="PricePerNight" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RoomTypeId" class="form-label">Oda Tipi</label>
+        <select asp-for="RoomTypeId" asp-items="ViewBag.RoomTypes" class="form-control" id="roomTypeSelect">
+            <option value="">Lütfen oda tipi seçin</option>
+        </select>
+        <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Oda Özellikleri</label>
+        <div class="form-check">
+            <input type="checkbox" asp-for="HasBalcony" class="form-check-input" id="hasBalcony" />
+            <label asp-for="HasBalcony" class="form-check-label">Balkon</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" asp-for="HasMinibar" class="form-check-input" id="hasMinibar" />
+            <label asp-for="HasMinibar" class="form-check-label">Minibar</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" asp-for="HasAirConditioner" class="form-check-input" id="hasAirConditioner" checked />
+            <label asp-for="HasAirConditioner" class="form-check-label">Klima</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" asp-for="HasTV" class="form-check-input" id="hasTV" checked />
+            <label asp-for="HasTV" class="form-check-label">TV</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" asp-for="HasHairDryer" class="form-check-input" id="hasHairDryer" checked />
+            <label asp-for="HasHairDryer" class="form-check-label">Saç Kurutma Makinesi</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" asp-for="HasWifi" class="form-check-input" id="hasWifi" checked />
+            <label asp-for="HasWifi" class="form-check-label">WiFi</label>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Kaydet</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>
+
+<script>
+    document.getElementById("floorSelect").addEventListener("change", function () {
+        let floor = parseInt(this.value);
+
+        // **Balkon Kuralları**
+        if (floor === 1 || floor === 2) {
+            document.getElementById("hasBalcony").checked = false;
+            document.getElementById("hasBalcony").disabled = true;
+        } else if (floor === 3 || floor === 4) {
+            document.getElementById("hasBalcony").checked = true;
+            document.getElementById("hasBalcony").disabled = false;
+        }
+
+        // **Klima, TV, Saç Kurutma Makinesi, WiFi HER ODADA VAR (Devre dışı bırak)**
+        document.getElementById("hasAirConditioner").checked = true;
+        document.getElementById("hasAirConditioner").disabled = true;
+
+        document.getElementById("hasTV").checked = true;
+        document.getElementById("hasTV").disabled = true;
+
+        document.getElementById("hasHairDryer").checked = true;
+        document.getElementById("hasHairDryer").disabled = true;
+
+        document.getElementById("hasWifi").checked = true;
+        document.getElementById("hasWifi").disabled = true;
+    });
+
+    document.getElementById("roomTypeSelect").addEventListener("change", function () {
+        let roomTypeId = parseInt(this.value);
+
+        // **Tek kişilik odalarda minibar yok**
+        if (roomTypeId === 1) {
+            document.getElementById("hasMinibar").checked = false;
+            document.getElementById("hasMinibar").disabled = true;
+        } else {
+            document.getElementById("hasMinibar").disabled = false;
+        }
+    });
+</script>

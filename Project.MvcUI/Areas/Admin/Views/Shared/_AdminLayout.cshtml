@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <title>Admin Paneli - Bilge Hotel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+                padding: 10px 15px;
+                display: block;
+            }
+
+                .sidebar a:hover {
+                    background-color: #495057;
+                }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ✅ Sidebar (Yan Menü) 🛠️  -->
+    <div class="sidebar">
+        <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Ana Sayfa</a>
+        <hr>
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a asp-area="Admin" asp-controller="User" asp-action="Index"><i class="fas fa-users"></i> Kullanıcı Yönetimi</a>
+        <a asp-area="Admin" asp-controller="Reservation" asp-action="Index"><i class="fas fa-calendar-check"></i> Rezervasyon ve Ödeme Yönetimi</a>
+        <a asp-area="Admin" asp-controller="Room" asp-action="Index"><i class="fas fa-bed"></i> Oda Yönetimi</a>
+        @* <a asp-area="Admin" asp-controller="Payment" asp-action="Index"><i class="fas fa-credit-card"></i> Ödeme Yönetimi</a> *@
+        <a asp-area="Admin" asp-controller="Report" asp-action="Index"><i class="fas fa-file-alt"></i> Raporlama</a>
+        <hr>
+        <a asp-area="" asp-controller="Auth" asp-action="Logout" class="text-danger"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+    </div>
+
+    <!-- ✅ İçerik Alanı -->
+    <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Bilge Hotel | Admin Paneli</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-warning" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Paneli</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">Profil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" asp-area="" asp-controller="Auth" asp-action="Logout">Çıkış Yap</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            @RenderBody()
+        </div>
+
+        <footer class="bg-dark text-white text-center p-3 mt-5">
+            <p>&copy; 2025 Bilge Hotel | Admin Paneli</p>
+            <p>📍 Adres: Kemer, Antalya, Türkiye | 📞 Telefon: +90 555 123 45 67 | ✉️ E-posta: info@bilgehotel.com</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

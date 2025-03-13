@@ -10,5 +10,12 @@ namespace Project.Bll.Managers.Abstracts
         Task<bool> UpdateUserProfileAsync(AppUserDto userDto); // Kullanıcı Profilini Güncelle
         Task<bool> ChangeUserPasswordAsync(int userId, string currentPassword, string newPassword);
 
+        //
+
+        Task<int> GetTotalUserCountAsync();
+        Task<int> GetActiveUserCountAsync();
+
+
+
     }
 }

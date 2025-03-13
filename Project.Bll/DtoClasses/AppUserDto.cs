@@ -13,6 +13,8 @@ namespace Project.Bll.DtoClasses
         public Guid ActivationCode { get; set; }
         public string NormalizedEmail { get; set; }
         public string SecurityStamp { get; set; }
+        public string Role { get; set; } // **✅ Role Alanı Eklendi**
+
 
         // **AppUserProfile Alanları**
         public string FirstName { get; set; }

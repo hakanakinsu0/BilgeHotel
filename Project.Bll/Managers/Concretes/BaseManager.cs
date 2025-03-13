@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Dal.Repositories.Abstracts;
@@ -7,6 +8,7 @@ using Project.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -93,15 +95,29 @@ namespace Project.Bll.Managers.Concretes
         }
 
         // **Pasife çekme işlemi**
+        //public async Task MakePassiveAsync(T dto)
+        //{
+        //    dto.DeletedDate = DateTime.Now;
+        //    dto.Status = DataStatus.Deleted;
+
+        //    U newEntity = _mapper.Map<U>(dto);
+        //    U existingEntity = await _repository.GetByIdAsync(newEntity.Id);
+        //    await _repository.UpdateAsync(existingEntity, newEntity);
+        //}
+
         public async Task MakePassiveAsync(T dto)
         {
-            dto.DeletedDate = DateTime.Now;
-            dto.Status = DataStatus.Deleted;
+            var entity = await _repository.GetByIdAsync(dto.Id);
+            if (entity != null)
+            {
+                entity.DeletedDate = DateTime.Now;
+                entity.Status = DataStatus.Deleted;
 
-            U newEntity = _mapper.Map<U>(dto);
-            U existingEntity = await _repository.GetByIdAsync(newEntity.Id);
-            await _repository.UpdateAsync(existingEntity, newEntity);
+                await _repository.UpdateAsync(entity, entity); // ✅ Veritabanında güncelleme yap
+            }
         }
+
+
 
         // **Silme işlemi**
         public async Task<string> RemoveAsync(T dto)
@@ -126,5 +142,24 @@ namespace Project.Bll.Managers.Concretes
             foreach (T dto in dtoList) await RemoveAsync(dto);
             return "Liste başarıyla silindi.";
         }
+
+        //
+
+        public async Task<int> CountAsync(Expression<Func<U, bool>> predicate = null)
+        {
+            var entities = await _repository.GetAllAsync();
+            return predicate == null
+                ? entities.Count  // **GetAllAsync() sonucu liste olduğu için Count() kullanıyoruz**
+                : entities.Count(predicate.Compile());  // **Expression<Func<U, bool>>'ı Func<U, bool> haline getiriyoruz**
+        }
+
+        public async Task<decimal> SumAsync(Expression<Func<U, decimal>> selector, Expression<Func<U, bool>> predicate = null)
+        {
+            var entities = await _repository.GetAllAsync();
+            return predicate == null
+                ? entities.Sum(selector.Compile())  // **GetAllAsync() sonucu liste olduğu için Sum() kullanıyoruz**
+                : entities.Where(predicate.Compile()).Sum(selector.Compile());
+        }
+
     }
 }

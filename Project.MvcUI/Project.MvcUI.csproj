@@ -17,9 +17,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Project.Bll\Project.Bll.csproj" />
     <ProjectReference Include="..\Project.Common\Project.Common.csproj" />
+    <ProjectReference Include="..\Project.WebApi\Project.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
     <Folder Include="wwwroot\OutherTools\assets\jquery-file-upload\server\php\files\thumbnail\" />
   </ItemGroup>
 

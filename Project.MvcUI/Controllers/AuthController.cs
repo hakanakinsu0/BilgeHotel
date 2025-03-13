@@ -185,8 +185,8 @@ namespace Project.MvcUI.Controllers
                 IList<string> roles = await _userManager.GetRolesAsync(user);
                 if (roles.Contains("Admin"))
                 {
-                    return RedirectToAction("Index", "Dashboard", new { Area = "Admin" }); 
-                    //return RedirectToAction("Privacy", "Home");
+                    return RedirectToAction("Index", "Dashboard", new { Area = "Admin" });
+                //return RedirectToAction("Privacy", "Home");
                 }
                 else if (roles.Contains("Member"))
                 {

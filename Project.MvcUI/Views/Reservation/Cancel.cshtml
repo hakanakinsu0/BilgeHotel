@@ -1,0 +1,10 @@
+﻿@model int
+
+<h2>Rezervasyon İptali</h2>
+
+<p>Bu rezervasyonu iptal etmek istediğinize emin misiniz?</p>
+
+<form asp-action="ConfirmCancel" asp-route-id="@Model" method="post">
+    <button type="submit" class="btn btn-danger">Evet, İptal Et</button>
+    <a href="@Url.Action("MyReservations", "Reservation")" class="btn btn-secondary">Hayır, Geri Dön</a>
+</form>

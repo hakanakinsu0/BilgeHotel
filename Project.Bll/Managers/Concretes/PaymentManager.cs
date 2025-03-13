@@ -18,5 +18,24 @@ namespace Project.Bll.Managers.Concretes
         {
             _repository = repository;
         }
+
+        //
+
+        public async Task<decimal> GetTotalRevenueAsync()
+        {
+            return await SumAsync(p => p.PaymentAmount);
+        }
+
+        public async Task<decimal> GetRevenueLast30DaysAsync()
+        {
+            var startDate = DateTime.Today.AddDays(-30);
+            return await SumAsync(p => p.PaymentAmount, p => p.PaymentDate >= startDate);
+        }
+
+        public async Task<decimal> GetPendingPaymentsAsync()
+        {
+            return await SumAsync(p => p.PaymentAmount, p => p.Reservation.ReservationStatus == Entities.Enums.ReservationStatus.PendingPayment);
+        }
     }
 }
+

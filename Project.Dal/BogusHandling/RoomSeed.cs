@@ -11,22 +11,21 @@ namespace Project.Dal.BogusHandling
     {
         public static void SeedRooms(ModelBuilder modelBuilder)
         {
-            var faker = new Faker();
             List<Room> rooms = new();
-
             int roomId = 1;
+            int roomNumber = 100;
 
-            // **1. Kat - Tek Kişilik ve Üç Kişilik Odalar (Balkon ve minibar yok)**
+            // **1. Kat - Tek Kişilik (10) & Üç Kişilik (10)**
             for (int i = 0; i < 10; i++)
             {
                 rooms.Add(new Room
                 {
                     Id = roomId++,
-                    RoomNumber = faker.Random.Int(100, 199).ToString(),
+                    RoomNumber = roomNumber++.ToString(),
                     Floor = 1,
-                    PricePerNight = faker.Finance.Amount(50, 150, 2),
-                    RoomStatus = faker.PickRandom<RoomStatus>(),
-                    RoomTypeId = faker.PickRandom(new int[] { 1, 3 }), // Tek Kişilik (1) veya Üç Kişilik (3)
+                    PricePerNight = 1000,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 1, // Tek Kişilik (1)
                     HasBalcony = false,
                     HasMinibar = false,
                     HasAirConditioner = true,
@@ -38,20 +37,18 @@ namespace Project.Dal.BogusHandling
                 });
             }
 
-            // **2. Kat - Tek Kişilik ve Çift Kişilik Odalar (Balkon yok, minibar sadece çift kişilik odalarda var)**
             for (int i = 0; i < 10; i++)
             {
-                var roomType = faker.PickRandom(new int[] { 1, 2 }); // Tek Kişilik (1) veya Çift Kişilik (2)
                 rooms.Add(new Room
                 {
                     Id = roomId++,
-                    RoomNumber = faker.Random.Int(200, 299).ToString(),
-                    Floor = 2,
-                    PricePerNight = faker.Finance.Amount(100, 200, 2),
-                    RoomStatus = faker.PickRandom<RoomStatus>(),
-                    RoomTypeId = roomType,
+                    RoomNumber = roomNumber++.ToString(),
+                    Floor = 1,
+                    PricePerNight = 1500,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 3, // Üç Kişilik (Tek kişilik üç yatak) (3)
                     HasBalcony = false,
-                    HasMinibar = roomType == 2, // Çift kişilik odalarda minibar var
+                    HasMinibar = false,
                     HasAirConditioner = true,
                     HasTV = true,
                     HasHairDryer = true,
@@ -61,17 +58,62 @@ namespace Project.Dal.BogusHandling
                 });
             }
 
-            // **3. Kat - Çift Kişilik (Duble) ve Üç Kişilik Odalar (Balkon var, minibar var)**
+            // **2. Kat - Tek Kişilik (10) & İki Kişilik (10)**
+            roomNumber = 200;
             for (int i = 0; i < 10; i++)
             {
                 rooms.Add(new Room
                 {
                     Id = roomId++,
-                    RoomNumber = faker.Random.Int(300, 399).ToString(),
+                    RoomNumber = roomNumber++.ToString(),
+                    Floor = 2,
+                    PricePerNight = 1200,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 1, // Tek Kişilik (1)
+                    HasBalcony = false,
+                    HasMinibar = false,
+                    HasAirConditioner = true,
+                    HasTV = true,
+                    HasHairDryer = true,
+                    HasWifi = true,
+                    CreatedDate = DateTime.Now,
+                    Status = DataStatus.Inserted
+                });
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                rooms.Add(new Room
+                {
+                    Id = roomId++,
+                    RoomNumber = roomNumber++.ToString(),
+                    Floor = 2,
+                    PricePerNight = 1800,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 2, // İki Kişilik (Tek kişilik iki yataklı) (2)
+                    HasBalcony = false,
+                    HasMinibar = true,
+                    HasAirConditioner = true,
+                    HasTV = true,
+                    HasHairDryer = true,
+                    HasWifi = true,
+                    CreatedDate = DateTime.Now,
+                    Status = DataStatus.Inserted
+                });
+            }
+
+            // **3. Kat - İki Kişilik (10) & Üç Kişilik (10)**
+            roomNumber = 300;
+            for (int i = 0; i < 10; i++)
+            {
+                rooms.Add(new Room
+                {
+                    Id = roomId++,
+                    RoomNumber = roomNumber++.ToString(),
                     Floor = 3,
-                    PricePerNight = faker.Finance.Amount(150, 300, 2),
-                    RoomStatus = faker.PickRandom<RoomStatus>(),
-                    RoomTypeId = faker.PickRandom(new int[] { 2, 3 }), // Çift Kişilik (2) veya Üç Kişilik (3)
+                    PricePerNight = 2200,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 2, // İki Kişilik (Duble yataklı) (2)
                     HasBalcony = true,
                     HasMinibar = true,
                     HasAirConditioner = true,
@@ -83,17 +125,16 @@ namespace Project.Dal.BogusHandling
                 });
             }
 
-            // **4. Kat - Çift Kişilik, Dört Kişilik ve Kral Dairesi (Balkon var, minibar var)**
             for (int i = 0; i < 10; i++)
             {
                 rooms.Add(new Room
                 {
                     Id = roomId++,
-                    RoomNumber = faker.Random.Int(400, 499).ToString(),
-                    Floor = 4,
-                    PricePerNight = faker.Finance.Amount(200, 500, 2),
-                    RoomStatus = faker.PickRandom<RoomStatus>(),
-                    RoomTypeId = faker.PickRandom(new int[] { 2, 4 }), // Çift Kişilik (2) veya Dört Kişilik (4)
+                    RoomNumber = roomNumber++.ToString(),
+                    Floor = 3,
+                    PricePerNight = 2500,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 3, // Üç Kişilik (1 Tek, 1 Duble yatak) (3)
                     HasBalcony = true,
                     HasMinibar = true,
                     HasAirConditioner = true,
@@ -105,13 +146,57 @@ namespace Project.Dal.BogusHandling
                 });
             }
 
-            // **Özel Kral Dairesi (4. Kat)**
+            // **4. Kat - İki Kişilik (10) & Dört Kişilik (6) & Kral Dairesi (1)**
+            roomNumber = 400;
+            for (int i = 0; i < 10; i++)
+            {
+                rooms.Add(new Room
+                {
+                    Id = roomId++,
+                    RoomNumber = roomNumber++.ToString(),
+                    Floor = 4,
+                    PricePerNight = 2800,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 2, // İki Kişilik (Duble yataklı) (2)
+                    HasBalcony = true,
+                    HasMinibar = true,
+                    HasAirConditioner = true,
+                    HasTV = true,
+                    HasHairDryer = true,
+                    HasWifi = true,
+                    CreatedDate = DateTime.Now,
+                    Status = DataStatus.Inserted
+                });
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                rooms.Add(new Room
+                {
+                    Id = roomId++,
+                    RoomNumber = roomNumber++.ToString(),
+                    Floor = 4,
+                    PricePerNight = 3500,
+                    RoomStatus = RoomStatus.Empty,
+                    RoomTypeId = 4, // Dört Kişilik (1 Duble, 2 Tek kişilik) (4)
+                    HasBalcony = true,
+                    HasMinibar = true,
+                    HasAirConditioner = true,
+                    HasTV = true,
+                    HasHairDryer = true,
+                    HasWifi = true,
+                    CreatedDate = DateTime.Now,
+                    Status = DataStatus.Inserted
+                });
+            }
+
+            // **Özel Kral Dairesi**
             rooms.Add(new Room
             {
                 Id = roomId++,
-                RoomNumber = "500",
+                RoomNumber = "417",
                 Floor = 4,
-                PricePerNight = 1000, // Kral Dairesi için sabit fiyat
+                PricePerNight = 10000,
                 RoomStatus = RoomStatus.Empty,
                 RoomTypeId = 5, // Kral Dairesi (5)
                 HasBalcony = true,

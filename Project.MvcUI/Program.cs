@@ -12,8 +12,18 @@ builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
 builder.Services.AddMapperServices();
 builder.Services.AddManagerService();
-
 builder.Services.AddVmMapperService(); // AutoMapper'ı MvcUI için ekliyoruz
+//builder.Services.AddHttpClient(); //Eger bir API consume edilecekse HTTP client tarafında oldugumuz ifadesini Middleware'e bildirmeliyiz...
+builder.Services.AddHttpClient("NoSSL", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5114/");
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+});
 
 // **Session Yapılandırması (5 Dakika)**
 builder.Services.AddDistributedMemoryCache();

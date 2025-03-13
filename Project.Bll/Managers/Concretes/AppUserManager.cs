@@ -126,8 +126,18 @@ namespace Project.Bll.Managers.Concretes
             return true;
         }
 
-    
 
+        //
+
+        public async Task<int> GetTotalUserCountAsync()
+        {
+            return await CountAsync();
+        }
+
+        public async Task<int> GetActiveUserCountAsync()
+        {
+            return await CountAsync(u => u.Status == DataStatus.Inserted || u.Status == DataStatus.Updated);
+        }
 
 
     }

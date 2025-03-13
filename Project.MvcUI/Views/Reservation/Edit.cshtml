@@ -1,0 +1,67 @@
+﻿@model Project.MvcUI.Models.PureVms.Reservations.RequestModels.ReservationUpdateRequestModel
+
+@{
+    ViewData["Title"] = "Rezervasyonu Güncelle";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ReservationId" />
+
+    <div class="form-group">
+        <label for="StartDate">Giriş Tarihi</label>
+        <input asp-for="StartDate" class="form-control" type="date" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="EndDate">Çıkış Tarihi</label>
+        <input asp-for="EndDate" class="form-control" type="date" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="RoomId">Oda Seçimi</label>
+        <select asp-for="RoomId" class="form-control" asp-items="ViewBag.Rooms">
+            <option value="">Lütfen bir oda seçin</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="PackageId">Paket Seçimi</label>
+        <select asp-for="PackageId" class="form-control" asp-items="ViewBag.Packages">
+            <option value="">Paket seçilmedi</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Ekstra Hizmetler</label>
+        <div>
+            @if (ViewBag.ExtraServices != null)
+            {
+                foreach (var service in ViewBag.ExtraServices as List<SelectListItem>)
+                {
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="ExtraServiceIds" value="@service.Value" id="service_@service.Value"
+                        @(Model.ExtraServiceIds.Contains(int.Parse(service.Value)) ? "checked" : "") />
+                        <label class="form-check-label" for="service_@service.Value">@service.Text</label>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="TotalPrice">Toplam Fiyat</label>
+        <input asp-for="TotalPrice" class="form-control" type="text" readonly />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+    <a asp-action="MyReservations" class="btn btn-secondary">İptal</a>
+</form>

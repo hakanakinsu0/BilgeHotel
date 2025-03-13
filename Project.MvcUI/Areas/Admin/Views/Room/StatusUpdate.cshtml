@@ -1,0 +1,34 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms.RoomStatusUpdateRequestModel
+
+@{
+    ViewData["Title"] = "Oda Durumu Güncelle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>🔄 Oda Durumu Güncelle</h2>
+<p>Bu sayfadan odanın durumunu güncelleyebilirsiniz.</p>
+
+<form asp-action="StatusUpdate" method="post">
+    <input type="hidden" asp-for="RoomId" />
+
+    <div class="mb-3">
+        <label class="form-label">Oda Numarası</label>
+        <input class="form-control" value="@Model.RoomNumber" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NewStatus" class="form-label">Yeni Durum</label>
+        <select asp-for="NewStatus" class="form-control">
+            @foreach (var status in Enum.GetValues(typeof(Project.Entities.Enums.RoomStatus)))
+            {
+                <option value="@status" selected="@(status.Equals(Model.CurrentStatus) ? "selected" : null)">
+                    @status
+                </option>
+            }
+        </select>
+        <span asp-validation-for="NewStatus" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary"><i class="fas fa-sync"></i> Güncelle</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

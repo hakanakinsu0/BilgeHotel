@@ -1,0 +1,124 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.DashboardViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h4>Hoş geldiniz, buradan sistemdeki genel istatistikleri görebilirsiniz. <br /> <br />  </h4>
+
+<div class="row">
+    <h2>Kullanıcı İstatistikleri</h2>
+    <div class="col-md-4">
+        <div class="card bg-primary text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">👤 Toplam Kullanıcı</h5>
+                <p class="card-text">@Model.TotalUsers</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-success  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">🟢 Aktif Kullanıcı</h5>
+                <p class="card-text">@Model.ActiveUsers</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>Rezervasyon İstatistikleri</h2>
+
+    <div class="col-md-4">
+        <div class="card bg-info  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">📅 Toplam Rezervasyon</h5>
+                <p class="card-text">@Model.TotalReservations</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-warning  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">📆 Son 7 Günlük Rezervasyon</h5>
+                <p class="card-text">@Model.ReservationsLast7Days</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-danger  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">⏳ Bekleyen Rezervasyon</h5>
+                <p class="card-text">@Model.PendingReservations</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>Oda İstatistikleri</h2>
+
+    <div class="col-md-4">
+        <div class="card bg-warning  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">🏨 Toplam Oda</h5>
+                <p class="card-text">@Model.TotalRooms</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-danger text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">✅ Boş Odalar</h5>
+                <p class="card-text">@Model.EmptyRooms</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-secondary  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">❌ Dolu Odalar</h5>
+                <p class="card-text">@Model.OccupiedRooms</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-dark  text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">⚠️ Bakımda Olan Odalar</h5>
+                <p class="card-text">@Model.MaintenanceRooms</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>Ödeme İstatistikleri</h2>
+
+    <div class="col-md-4">
+        <div class="card bg-primary text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">💰 Toplam Gelir</h5>
+                <p class="card-text">@Model.TotalRevenue.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-success text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">📊 Son 30 Günlük Gelir</h5>
+                <p class="card-text">@Model.RevenueLast30Days.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-info text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">⏳ Bekleyen Ödemeler</h5>
+                <p class="card-text">@Model.PendingPayments.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+</div>

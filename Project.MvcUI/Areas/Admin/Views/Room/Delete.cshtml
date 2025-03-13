@@ -1,0 +1,38 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms.RoomDeleteRequestModel
+
+@{
+    ViewData["Title"] = "Oda Silme";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>🚨 Oda Silme</h2>
+
+<div class="alert alert-warning">
+    <p><strong>Oda No:</strong> @Model.RoomNumber</p>
+    <p><strong>Kat:</strong> @Model.Floor</p>
+    <p><strong>Fiyat:</strong> @Model.PricePerNight ₺</p>
+    <p><strong>Oda Tipi:</strong> @Model.RoomTypeName</p>
+</div>
+
+@if (Model.HasActiveReservations)
+{
+    <div class="alert alert-danger">
+        <p>Bu oda aktif rezervasyonlara sahip olduğu için <strong>silinemez</strong>. Ancak bakım moduna alınacaktır.</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-success">
+        <p>Bu oda silinebilir.</p>
+    </div>
+}
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.RoomId" />
+
+    <p>Bu odayı silmek istediğinizden emin misiniz?</p>
+
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>
+

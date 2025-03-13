@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "📊 Raporlama Paneli";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>📊 Raporlama Paneli</h2>
+<p>Bu sayfadan otelinize ait çeşitli raporları görüntüleyebilirsiniz.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">📅 Rezervasyon Raporları</div>
+            <div class="card-body">
+                <p class="card-text">Rezervasyonların tarih bazlı analizini görüntüleyin.</p>
+                <a asp-area="Admin" asp-controller="Report" asp-action="ReservationReports" class="btn btn-light">Görüntüle</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">💰 Gelir Raporları</div>
+            <div class="card-body">
+                <p class="card-text">Gelirlerinizi analiz edin.</p>
+                <a asp-area="Admin" asp-controller="Report" asp-action="RevenueReports" class="btn btn-light">Görüntüle</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">🛏️ Oda Kullanım Raporları</div>
+            <div class="card-body">
+                <p class="card-text">Odaların doluluk durumlarını inceleyin.</p>
+                <a asp-area="Admin" asp-controller="Report" asp-action="RoomUsageReports" class="btn btn-light">Görüntüle</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">👤 Müşteri Raporları</div>
+            <div class="card-body">
+                <p class="card-text">Müşterilerinizin rezervasyon durumlarını ve detaylarını görüntüleyin.</p>
+                <a asp-area="Admin" asp-controller="Report" asp-action="CustomerReports" class="btn btn-light">Görüntüle</a>
+            </div>
+        </div>
+    </div>
+
+</div>

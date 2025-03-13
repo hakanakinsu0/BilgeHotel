@@ -9,5 +9,7 @@ namespace Project.Dal.Repositories.Abstracts
 {
     public interface IReservationExtraServiceRepository : IRepository<ReservationExtraService>
     {
+        Task CreateRangeAsync(List<ReservationExtraService> entities); // Çoklu kayıt ekleme metodu
+
     }
 }

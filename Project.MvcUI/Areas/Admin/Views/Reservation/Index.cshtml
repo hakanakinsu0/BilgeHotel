@@ -1,0 +1,130 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.ReservationListResponseModel
+
+@{
+    ViewData["Title"] = "Rezervasyon Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning">@TempData["WarningMessage"]</div>
+}
+
+
+<h2>📅 Rezervasyon Yönetimi</h2>
+<p>Buradan sistemdeki rezervasyonları yönetebilirsiniz.</p>
+
+<!-- 🔎 Arama & Filtreleme -->
+<form method="get" class="mb-4">
+    <div class="row">
+        <!-- Kullanıcı Adı / E-Posta ile Arama -->
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Müşteri adı veya e-posta ile ara" value="@Context.Request.Query["search"]" />
+        </div>
+
+        <!-- Oda Numarası Seçimi -->
+        <div class="col-md-2">
+            <select name="roomId" class="form-control" asp-items="ViewBag.Rooms">
+                <option value="">Tüm Odalar</option>
+            </select>
+        </div>
+
+        <!-- Rezervasyon Durumu -->
+        <div class="col-md-2">
+            <select name="status" class="form-control" asp-items="ViewBag.Statuses">
+                <option value="">Tüm Durumlar</option>
+            </select>
+        </div>
+
+        <!-- Ödeme Durumu -->
+        <div class="col-md-2">
+            <select name="isPaid" class="form-control">
+                <option value="">Tüm Ödemeler</option>
+                <option value="true">Ödenmiş</option>
+                <option value="false">Bekliyor</option>
+            </select>
+        </div>
+
+        <!-- Filtrele Butonu -->
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
+        </div>
+    </div>
+</form>
+
+<!-- 📋 Rezervasyon Listesi -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Müşteri Adı</th>
+            <th>E-Posta</th>
+            <th>Oda No</th>
+            <th>Başlangıç</th>
+            <th>Bitiş</th>
+            <th>Toplam Ücret</th>
+            <th>Durum</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Reservations != null && Model.Reservations.Any())
+        {
+            int count = 1;
+            @foreach (var reservation in Model.Reservations)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@reservation.CustomerName</td>
+                    <td>@reservation.CustomerEmail</td>
+                    <td>@reservation.RoomNumber</td>
+                    <td>@reservation.StartDate.ToShortDateString()</td>
+                    <td>@reservation.EndDate.ToShortDateString()</td>
+                    <td>@reservation.TotalPrice.ToString("C")</td>
+           
+                    <td>
+                        @if (reservation.ReservationStatus == "Completed")
+                        {
+                            <span class="badge bg-secondary">Tamamlandı</span>
+                        }
+                        else if (reservation.ReservationStatus == "PendingPayment")
+                        {
+                            <span class="badge bg-warning text-dark">Ödeme Bekleniyor</span>
+                        }
+                        else if (reservation.ReservationStatus == "Canceled")
+                        {
+                            <span class="badge bg-danger">İptal Edildi</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-primary">@reservation.ReservationStatus</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-area="Admin" asp-controller="Reservation" asp-action="Edit" asp-route-id="@reservation.Id" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <a asp-area="Admin" asp-controller="Reservation" asp-action="PaymentUpdate" asp-route-id="@reservation.Id" class="btn btn-info btn-sm">
+                            <i class="fas fa-money-check-alt"></i> Ödeme Durumu
+                        </a>
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="10" class="text-center text-muted">🚫 Rezervasyon bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>
