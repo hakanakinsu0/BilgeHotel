@@ -9,8 +9,16 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Concretes
 {
+    /// <summary>
+    /// Çalışanlar (Employee) için veri erişim işlemlerini yöneten repository sınıfı.
+    /// Temel CRUD işlemleri `BaseRepository<Employee>` aracılığıyla sağlanır.
+    /// </summary>
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
+        /// <summary>
+        /// `EmployeeRepository` constructor'ı, veritabanı bağlantısını `BaseRepository`'ye iletir.
+        /// </summary>
+        /// <param name="context">Veritabanı bağlantısını sağlayan MyContext nesnesi.</param>
         public EmployeeRepository(MyContext context) : base(context) { }
     }
 }

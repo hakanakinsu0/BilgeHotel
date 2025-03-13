@@ -10,18 +10,26 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Concretes
 {
+    /// <summary>
+    /// Oteldeki odalar (Room) için veri erişim işlemlerini yöneten repository sınıfı.
+    /// Temel CRUD işlemleri `BaseRepository<Room>` aracılığıyla sağlanır.
+    /// </summary>
     public class RoomRepository : BaseRepository<Room>, IRoomRepository
     {
-        private readonly MyContext _context;
+        /// <summary>
+        /// `RoomRepository` constructor'ı, veritabanı bağlantısını `BaseRepository`'ye iletir.
+        /// </summary>
+        /// <param name="context">Veritabanı bağlantısını sağlayan MyContext nesnesi.</param>
+        public RoomRepository(MyContext context) : base(context) { }
 
-        public RoomRepository(MyContext context) : base(context)
-        {
-            _context = context;
-        }
-
+        /// <summary>
+        /// Oda numarasına göre belirli bir oda bilgisini getirir.
+        /// </summary>
+        /// <param name="roomNumber">Aranacak oda numarası.</param>
+        /// <returns>Belirtilen numaraya sahip oda bilgisi.</returns>
         public async Task<Room> GetByRoomNumberAsync(string roomNumber)
         {
-            return await _context.Set<Room>().FirstOrDefaultAsync(r => r.RoomNumber == roomNumber);
+            return await _dbSet.FirstOrDefaultAsync(r => r.RoomNumber == roomNumber); 
         }
     }
 }

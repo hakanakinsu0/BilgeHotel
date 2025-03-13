@@ -9,8 +9,16 @@ using System.Threading.Tasks;
 
 namespace Project.Dal.Repositories.Concretes
 {
+    /// <summary>
+    /// Kullanıcılar (AppUser) için veri erişim işlemlerini yöneten repository sınıfı.
+    /// Temel CRUD işlemleri `BaseRepository<AppUser>` aracılığıyla sağlanır.
+    /// </summary>
     public class AppUserRepository : BaseRepository<AppUser>, IAppUserRepository
     {
+        /// <summary>
+        /// `AppUserRepository` constructor'ı, veritabanı bağlantısını `BaseRepository`'ye iletir.
+        /// </summary>
+        /// <param name="context">Veritabanı bağlantısını sağlayan MyContext nesnesi.</param>
         public AppUserRepository(MyContext context) : base(context) { }
     }
 }
