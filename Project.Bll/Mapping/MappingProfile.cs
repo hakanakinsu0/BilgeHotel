@@ -8,7 +8,7 @@ namespace Project.Bll.Mapping
     {
         public MappingProfile()
         {
-            // Kullanıcı ve Profil
+            // Kullanıcı ve Profil Ayrımı Yapıldı
             CreateMap<AppUser, AppUserDto>().ReverseMap();
             CreateMap<AppUserProfile, AppUserProfileDto>().ReverseMap();
 
@@ -17,12 +17,10 @@ namespace Project.Bll.Mapping
 
             // Oda ve Özellikleri
             CreateMap<Room, RoomDto>().ReverseMap();
-
             CreateMap<RoomType, RoomTypeDto>().ReverseMap();
 
             // Rezervasyon, Ödeme ve Paketler
             CreateMap<Reservation, ReservationDto>();
-
             CreateMap<Payment, PaymentDto>().ReverseMap();
             CreateMap<Package, PackageDto>().ReverseMap();
 
