@@ -259,5 +259,36 @@ namespace Project.Bll.Managers.Concretes
             await _repository.UpdateAsync(reservation, reservation);
         }
 
+
+        public async Task UpdateReservationPriceWithExtraServices(int reservationId, List<int> extraServiceIds)
+        {
+            // Rezervasyonu veritabanından alıyoruz
+            var reservationEntity = await _repository.GetByIdAsync(reservationId);
+            if (reservationEntity == null)
+            {
+                throw new Exception("Rezervasyon bulunamadı.");
+            }
+
+            decimal extraTotal = 0m;
+
+            // Seçilen her ekstra hizmetin fiyatını topluyoruz
+            foreach (var extraId in extraServiceIds)
+            {
+                var extraService = await _extraServiceManager.GetByIdAsync(extraId);
+                if (extraService != null)
+                {
+                    extraTotal += extraService.Price;
+                }
+            }
+      
+            // Mevcut toplam fiyata ekstra hizmetlerin ücretini ekliyoruz
+            reservationEntity.TotalPrice += extraTotal;
+            reservationEntity.ModifiedDate = DateTime.Now;
+            reservationEntity.Status = DataStatus.Updated;
+
+            // Rezervasyonu güncelliyoruz
+            await _repository.UpdateAsync(reservationEntity, reservationEntity);
+        }
+
     }
 }

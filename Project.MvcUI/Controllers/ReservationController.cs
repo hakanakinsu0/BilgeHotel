@@ -63,13 +63,13 @@ namespace Project.MvcUI.Controllers
             if (dateValidationError != null)
             {
                 ModelState.AddModelError("", dateValidationError);
-                await LoadSelectListsAsync();
+                await LoadSelectListsAsync(model.StartDate, model.EndDate, model.RoomId, model.PackageId);
                 return View(model);
             }
 
             if (!ModelState.IsValid)
             {
-                await LoadSelectListsAsync();
+                await LoadSelectListsAsync(model.StartDate, model.EndDate, model.RoomId, model.PackageId);
                 return View(model);
             }
 
@@ -87,17 +87,10 @@ namespace Project.MvcUI.Controllers
                 Status = DataStatus.Inserted
             };
 
-            var employees = await _employeeManager.GetAllAsync();
-            if (employees.Any())
-            {
-                var random = new Random();
-                var randomEmployee = employees[random.Next(employees.Count)];
-                dto.EmployeeId = randomEmployee.Id;
-            }
-            else
-            {
-                dto.EmployeeId = null;
-            }
+            // Çalışan ataması için manager metodunu çağırıyoruz.
+            int receptionistId = await _employeeManager.GetRandomReceptionistEmployeeIdAsync();
+            dto.EmployeeId = receptionistId;
+
 
             string resultMessage = await _reservationManager.CreateReservation(dto);
 
@@ -120,22 +113,47 @@ namespace Project.MvcUI.Controllers
         }
 
         // Seçim listelerini yüklemek için yardımcı metot.
-        private async Task LoadSelectListsAsync(int? selectedRoomId = null, int? selectedPackageId = null, List<int> selectedExtraServiceIds = null)
+        private async Task LoadSelectListsAsync(DateTime? startDate = null,DateTime? endDate = null,int? selectedRoomId = null,int? selectedPackageId = null,List<int> selectedExtraServiceIds = null)
         {
-            var allRooms = await _roomManager.GetAllAsync();
-            var filteredRooms = allRooms
-                .Where(r => r.RoomStatus == RoomStatus.Empty || r.Id == selectedRoomId) // Oda seçilmişse göster
-                .Select(r => new SelectListItem
-                {
-                    Value = r.Id.ToString(),
-                    Text = $"Kat {r.Floor} - Oda {r.RoomNumber} - {r.PricePerNight} TL"
-                }).ToList();
-            ViewBag.Rooms = new SelectList(filteredRooms, "Value", "Text", selectedRoomId);
+            List<RoomDto> availableRooms = new List<RoomDto>();
 
+            // Eğer geçerli tarihler girildiyse, sadece müsait odaları getir.
+            if (startDate.HasValue && endDate.HasValue && startDate < endDate)
+            {
+                // Belirtilen tarihlerde müsait odaları döndüren metot.
+                availableRooms = await _roomManager.GetAvailableRoomsAsync(startDate.Value, endDate.Value);
+
+                // Daha önce seçilmiş oda varsa ve müsait listede yoksa, ekleyelim.
+                if (selectedRoomId.HasValue && !availableRooms.Any(r => r.Id == selectedRoomId.Value))
+                {
+                    var selectedRoom = await _roomManager.GetByIdAsync(selectedRoomId.Value);
+                    if (selectedRoom != null)
+                    {
+                        availableRooms.Add(selectedRoom);
+                    }
+                }
+            }
+
+            // Oda seçimi için SelectListItem listesi oluşturuluyor.
+            var roomSelectList = availableRooms.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = $"Kat {r.Floor} - Oda {r.RoomNumber} - {r.PricePerNight} TL"
+            }).ToList();
+
+            if (!availableRooms.Any())
+            {
+                roomSelectList.Insert(0, new SelectListItem { Value = "", Text = "Önce giriş ve çıkış tarihlerini seçiniz" });
+            }
+
+            ViewBag.Rooms = new SelectList(roomSelectList, "Value", "Text", selectedRoomId);
+
+            // Paketleri yükleyelim (tarihlerle ilgisi yok)
             var packages = await _packageManager.GetAllAsync();
             ViewBag.Packages = new SelectList(packages, "Id", "Name", selectedPackageId);
 
-            var extraServices = await _extraServiceManager.GetAllAsync();
+            // Ekstra hizmetleri yükleyelim.
+            var extraServices = _extraServiceManager.GetActives();
             ViewBag.ExtraServices = extraServices.Select(es => new SelectListItem
             {
                 Value = es.Id.ToString(),
@@ -143,6 +161,14 @@ namespace Project.MvcUI.Controllers
                 Selected = selectedExtraServiceIds != null && selectedExtraServiceIds.Contains(es.Id)
             }).ToList();
         }
+
+        public async Task<IActionResult> GetAvailableRooms(DateTime startDate, DateTime endDate)
+        {
+            var availableRooms = await _roomManager.GetAvailableRoomsAsync(startDate, endDate);
+            // Partial view veya JSON olarak dönebilirsiniz. Örneğin partial view:
+            return PartialView("_AvailableRoomsPartial", availableRooms);
+        }
+
 
         // GET: /Reservation/SelectExtras/{reservationId}
         [HttpGet]
@@ -155,8 +181,8 @@ namespace Project.MvcUI.Controllers
                 return NotFound("Rezervasyon bulunamadı.");
             }
 
-            // Ekstra hizmetleri alıp ViewBag üzerinden gönderiyoruz.
-            var extraServices = await _extraServiceManager.GetAllAsync();
+            // Aktif ekstra hizmetleri manager üzerinden alıyoruz.
+            var extraServices = _extraServiceManager.GetActives();
             ViewBag.ExtraServices = extraServices.Select(es => new SelectListItem
             {
                 Value = es.Id.ToString(),
@@ -180,12 +206,15 @@ namespace Project.MvcUI.Controllers
                 }).ToList();
 
                 await _reservationExtraServiceManager.CreateRangeAsync(extraServices);
+
+                // Rezervasyonun toplam fiyatına ekstra hizmet ücretlerini ekleyelim
+                await _reservationManager.UpdateReservationPriceWithExtraServices(model.ReservationId, model.ExtraServiceIds);
             }
 
             TempData["SuccessMessage"] = "Ekstra hizmetler başarıyla eklendi.";
             return RedirectToAction("Checkout", "Payment", new { reservationId = model.ReservationId });
-
         }
+
 
 
 
@@ -234,35 +263,38 @@ namespace Project.MvcUI.Controllers
                 return RedirectToAction("MyReservations");
             }
 
-            bool isPaymentConfirmed = reservation.ReservationStatus == ReservationStatus.Confirmed;
+            // 🚀 Ekstra servisleri iptal et (ortak işlem)
+            await CancelReservationExtraServicesAsync(id);
 
-            if (isPaymentConfirmed)
+            // Rezervasyonu iptal et (status'u Deleted olarak güncelliyor, DeletedDate = DateTime.Now)
+            var cancelResult = await _reservationManager.CancelReservationAsync(id);
+
+            if (!cancelResult)
             {
-                // 🚀 **Ödeme iptali işlemi için PaymentController'a yönlendir**
-                return RedirectToAction("CancelPaymentConfirm", "Payment", new { Id = reservation.Id });
+                TempData["ErrorMessage"] = "Bir hata oluştu. Lütfen tekrar deneyin.";
+                return RedirectToAction("MyReservations");
             }
 
-            // 🚀 **Ödeme yoksa rezervasyonu direkt iptal et**
-            var result = await _reservationManager.CancelReservationAsync(id);
-
-            if (result)
+            if (reservation.ReservationStatus == ReservationStatus.Confirmed)
             {
-                var existingServices = await _reservationExtraServiceManager.GetByReservationIdAsync(id);
-                foreach (var service in existingServices)
-                {
-                    service.Status = DataStatus.Deleted;
-                    service.DeletedDate = DateTime.Now;
-                    await _reservationExtraServiceManager.UpdateDeletedAsync(service);
-                }
-
-                TempData["SuccessMessage"] = "Rezervasyonunuz ve ek hizmetler başarıyla iptal edilmiştir.";
+                // Eğer rezervasyon onaylanmış (Confirmed) ise, ödeme iptali işlemi için PaymentController'a yönlendir
+                return RedirectToAction("CancelPaymentConfirm", "Payment", new { Id = reservation.Id });
             }
             else
             {
-                TempData["ErrorMessage"] = "Bir hata oluştu. Lütfen tekrar deneyin.";
+                TempData["SuccessMessage"] = "Rezervasyonunuz ve ek hizmetler başarıyla iptal edilmiştir.";
+                return RedirectToAction("MyReservations");
             }
+        }
 
-            return RedirectToAction("MyReservations");
+        // ✅ Private metot (Kod tekrarını önlemek için)
+        private async Task CancelReservationExtraServicesAsync(int reservationId)
+        {
+            var existingServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservationId);
+            foreach (var service in existingServices.Where(x => x.Status != DataStatus.Deleted))
+            {
+                await _reservationExtraServiceManager.UpdateDeletedAsync(service);
+            }
         }
 
 
@@ -290,7 +322,7 @@ namespace Project.MvcUI.Controllers
                 ExtraServiceIds = reservation.ExtraServices?.Select(es => es.ExtraServiceId).ToList() ?? new List<int>()
             };
 
-            await LoadSelectListsAsync(model.RoomId, model.PackageId, model.ExtraServiceIds);
+            await LoadSelectListsAsync(null,null,model.RoomId, model.PackageId, model.ExtraServiceIds);
             return View(model);
         }
 
@@ -300,7 +332,7 @@ namespace Project.MvcUI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await LoadSelectListsAsync(model.RoomId, model.PackageId, model.ExtraServiceIds);
+                await LoadSelectListsAsync(null, null, model.RoomId, model.PackageId, model.ExtraServiceIds);
                 return View(model);
             }
 
@@ -318,7 +350,7 @@ namespace Project.MvcUI.Controllers
             if (!isAvailable)
             {
                 ModelState.AddModelError("", "Seçtiğiniz tarihler arasında oda dolu.");
-                await LoadSelectListsAsync(model.RoomId, model.PackageId, model.ExtraServiceIds);
+                await LoadSelectListsAsync(null, null, model.RoomId, model.PackageId, model.ExtraServiceIds);
                 return View(model);
             }
 
@@ -364,7 +396,7 @@ namespace Project.MvcUI.Controllers
             }
 
             ModelState.AddModelError("", "Rezervasyon güncellenirken bir hata oluştu.");
-            await LoadSelectListsAsync(model.RoomId, model.PackageId, model.ExtraServiceIds);
+            await LoadSelectListsAsync(null, null, model.RoomId, model.PackageId, model.ExtraServiceIds);
             return View(model);
         }
 

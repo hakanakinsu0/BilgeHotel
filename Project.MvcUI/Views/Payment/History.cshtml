@@ -33,9 +33,8 @@ else
                     <td>@item.RoomNumber</td>
                     <td>@item.PaymentAmount ₺</td>
                     <td>
-                        <a asp-action="CancelPaymentConfirm" asp-route-reservationId="@item.ReservationId" class="btn btn-danger btn-sm">
-                            ❌ İptal Et
-                        </a>
+                        <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@item.ReservationId" class="btn btn-warning btn-sm">💳 Ödemeyi İptal Et</a>
+
                     </td>
 
                 </tr>
@@ -44,4 +43,4 @@ else
     </table>
 }
 
-<a asp-action="Index" class="btn btn-primary">🔙 Geri Dön</a>
+<a asp-action="MyReservations" asp-controller="Reservation" class="btn btn-primary">🔙 Geri Dön</a>

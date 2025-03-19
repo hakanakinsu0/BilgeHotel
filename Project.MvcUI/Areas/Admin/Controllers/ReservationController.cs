@@ -27,6 +27,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         private readonly IAppUserProfileManager _appUserProfileManager; // ✅ Kullanıcı profilleri için eklendi
         private readonly IRoomManager _roomManager; // ✅ Oda bilgileri için eklendi
         private readonly IPackageManager _packageManager;
+        private readonly IPaymentManager _paymentManager;
 
         public ReservationController(
             IReservationManager reservationManager,
@@ -35,15 +36,17 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             IRoomManager roomManager,
             IReservationExtraServiceManager reservationExtraServiceManager,
             IPackageManager packageManager,
-            IExtraServiceManager extraServiceManager)
+            IExtraServiceManager extraServiceManager,
+            IPaymentManager paymentManager)
         {
             _reservationManager = reservationManager;
             _appUserManager = appUserManager;
-            _appUserProfileManager = appUserProfileManager;
+            _appUserProfileManager = appUserProfileManager; // ✅ eklenmişti zaten
             _roomManager = roomManager;
-            _reservationExtraServiceManager = reservationExtraServiceManager;
+            _reservationExtraServiceManager = reservationExtraServiceManager; // ✅ düzeltildi, doğru yere eklendi
             _packageManager = packageManager;
             _extraServiceManager = extraServiceManager;
+            _paymentManager = paymentManager; ;
         }
 
         public async Task<IActionResult> Index(string search, int? roomId, string status, bool? isPaid)
@@ -298,9 +301,21 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         public async Task<IActionResult> PaymentUpdate(ReservationPaymentUpdateRequestModel model)
         {
             var reservation = await _reservationManager.GetByIdAsync(model.ReservationId);
+
+
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
+                return RedirectToAction("Index");
+            }
+
+            // ✅ ReservationId'ye göre payment çekiliyor
+            var payments = await _paymentManager.GetAllAsync();
+            var payment = payments.FirstOrDefault(p => p.ReservationId == model.ReservationId);
+
+            if (payment == null)
+            {
+                TempData["ErrorMessage"] = "Rezervasyona ait ödeme bilgisi bulunamadı.";
                 return RedirectToAction("Index");
             }
 
@@ -318,6 +333,10 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 reservation.DeletedDate = DateTime.Now;
                 reservation.ModifiedDate = null;
 
+                payment.Status = DataStatus.Deleted;
+                payment.DeletedDate = DateTime.Now;
+                payment.ModifiedDate = null;
+
                 // ✅ Oda boşaltılmalı
                 await _roomManager.UpdateRoomStatusAsync(reservation.RoomId, RoomStatus.Empty);
             }
@@ -327,11 +346,16 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 reservation.ModifiedDate = DateTime.Now;
                 reservation.DeletedDate = null;
 
+                payment.Status = DataStatus.Updated;
+                payment.ModifiedDate = DateTime.Now;
+                payment.DeletedDate = null;
+
                 // ✅ Oda dolu olmalı (Eğer daha önce boşaltıldıysa)
                 await _roomManager.UpdateRoomStatusAsync(reservation.RoomId, RoomStatus.Occupied);
             }
 
             await _reservationManager.UpdateAsync(reservation);
+            await _paymentManager.UpdateAsync(payment);
 
             TempData["SuccessMessage"] = "Ödeme durumu başarıyla güncellendi.";
             return RedirectToAction("Index");
@@ -346,17 +370,15 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             var packages = await _packageManager.GetAllAsync();
             ViewBag.Packages = new SelectList(packages, "Id", "Name", selectedPackageId);
 
-            var extraServices = await _extraServiceManager.GetAllAsync();
+            // Artık, aktif ekstra hizmetleri direkt manager üzerinden alıyoruz.
+            var extraServices = _extraServiceManager.GetActives();
+            ViewBag.ExtraServices = extraServices.Select(es => new SelectListItem
+            {
+                Value = es.Id.ToString(),
+                Text = $"{es.Name} - {es.Price} TL",
+                Selected = selectedExtraServiceIds != null && selectedExtraServiceIds.Contains(es.Id)
+            }).ToList();
 
-            // ✅ Silinmemiş (Deleted olmayan) ekstra hizmetleri filtreliyoruz
-            ViewBag.ExtraServices = extraServices
-                .Where(es => es.Status != DataStatus.Deleted) // ❌ Silinmiş olanları gösterme
-                .Select(es => new SelectListItem
-                {
-                    Value = es.Id.ToString(),
-                    Text = $"{es.Name} - {es.Price} TL",
-                    Selected = selectedExtraServiceIds != null && selectedExtraServiceIds.Contains(es.Id) // ✅ Seçili olanları işaretli getir
-                }).ToList();
         }
 
     }

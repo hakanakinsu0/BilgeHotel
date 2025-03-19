@@ -5,13 +5,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="aler t alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
 <h2>💳 Ödeme Yap</h2>
 <p>Rezervasyonunuz için ödeme yapabilirsiniz.</p>
 
 <form asp-action="ProcessPayment" method="post">
     <input type="hidden" asp-for="ReservationId" />
 
-@*     <div class="mb-3">
+    @*     <div class="mb-3">
         <label asp-for="CustomerName" class="form-label">Müşteri Adı</label>
         <input asp-for="CustomerName" class="form-control" readonly />
     </div> *@
@@ -63,6 +79,10 @@
             <span asp-validation-for="ExpiryYear" class="text-danger"></span>
         </div>
     </div>
-
     <button type="submit" class="btn btn-success mt-3"><i class="fas fa-credit-card"></i> Ödeme Yap</button>
+    <a asp-action="MyReservations" asp-controller="Reservation" class="btn btn-danger mt-3">Ödemeyi Daha Sonra Yap</a>
 </form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

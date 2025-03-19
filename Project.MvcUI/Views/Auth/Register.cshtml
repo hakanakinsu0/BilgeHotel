@@ -1,35 +1,46 @@
-﻿@model UserRegisterRequestModel
+﻿@using Project.MvcUI.Models.PageVms.AppUsers
+@model RegisterPageViewModel
 
 @{
-    ViewData["Title"] = "Kayıt Ol";
+    ViewData["Title"] = Model.PageTitle; 
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="container mt-5">
+        <div class="alert alert-info text-center">
+            <h4>@Model.ErrorMessage</h4>
+        </div>
+    </div>
 }
 
 <div class="container mt-5">
-    <h2 class="text-center">Kayıt Ol</h2>
+    <h2 class="text-center">@Model.PageTitle</h2>
+    <p class="text-center">@Model.HelpText</p>
 
     <form asp-action="Register" method="post" class="w-50 mx-auto border p-4 rounded shadow bg-light">
         <div class="mb-3">
-            <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
-            <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adınızı girin">
-            <span asp-validation-for="UserName" class="text-danger"></span>
+            <label asp-for="RegisterRequest.UserName" class="form-label">Kullanıcı Adı</label>
+            <input asp-for="RegisterRequest.UserName" class="form-control" placeholder="Kullanıcı adınızı girin">
+            <span asp-validation-for="RegisterRequest.UserName" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Email" class="form-label">E-Posta</label>
-            <input asp-for="Email" type="email" class="form-control" placeholder="E-posta adresinizi girin">
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <label asp-for="RegisterRequest.Email" class="form-label">E-Posta</label>
+            <input asp-for="RegisterRequest.Email" type="email" class="form-control" placeholder="E-posta adresinizi girin">
+            <span asp-validation-for="RegisterRequest.Email" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Password" class="form-label">Şifre</label>
-            <input asp-for="Password" type="password" class="form-control" placeholder="Şifrenizi girin">
-            <span asp-validation-for="Password" class="text-danger"></span>
+            <label asp-for="RegisterRequest.Password" class="form-label">Şifre</label>
+            <input asp-for="RegisterRequest.Password" type="password" class="form-control" placeholder="Şifrenizi girin">
+            <span asp-validation-for="RegisterRequest.Password" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
-            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Şifrenizi tekrar girin">
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            <label asp-for="RegisterRequest.ConfirmPassword" class="form-label">Şifre Tekrar</label>
+            <input asp-for="RegisterRequest.ConfirmPassword" type="password" class="form-control" placeholder="Şifrenizi tekrar girin">
+            <span asp-validation-for="RegisterRequest.ConfirmPassword" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Kayıt Ol</button>
@@ -39,4 +50,3 @@
         </div>
     </form>
 </div>
-

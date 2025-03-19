@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Project.Bll.DtoClasses.RoomDto>
+
+<select id="RoomSelect" name="RoomId" class="form-control">
+    <option value="">Lütfen bir oda seçin</option>
+    @foreach (var room in Model)
+    {
+        <option value="@room.Id">@($"Kat {room.Floor} - Oda {room.RoomNumber} - {room.PricePerNight} TL")</option>
+    }
+</select>

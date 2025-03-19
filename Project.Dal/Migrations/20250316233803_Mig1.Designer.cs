@@ -12,7 +12,7 @@ using Project.Dal.ContextClasses;
 namespace Project.Dal.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20250313181307_Mig1")]
+    [Migration("20250316233803_Mig1")]
     partial class Mig1
     {
         /// <inheritdoc />
@@ -61,14 +61,14 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "ec91170d-640e-4375-aa79-03b6be744f94",
+                            ConcurrencyStamp = "8cd3874b-f46e-4863-9b92-1fd5ec4571fe",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "1dab580b-083e-47b4-a52b-f10e1a8a1432",
+                            ConcurrencyStamp = "64cc9d8f-f0ff-4483-9001-f31bb92d97c4",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         });
@@ -277,16 +277,16 @@ namespace Project.Dal.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             ActivationCode = new Guid("00000000-0000-0000-0000-000000000000"),
-                            ConcurrencyStamp = "e8173b0c-8109-4ba7-a969-196b822a81a3",
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 147, DateTimeKind.Local).AddTicks(8996),
+                            ConcurrencyStamp = "9834e77f-0330-47d1-9ea0-32cd9150c326",
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 983, DateTimeKind.Local).AddTicks(9081),
                             Email = "bilgehotel@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "BILGEHOTEL@EMAIL.COM",
                             NormalizedUserName = "BILGEHOTEL",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGLJpud4gx+SVzMVvFobASHvnSqPYVC2WkCn6IKW7BylhXUfEyXQwADExckIKFjuMA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMwCZy1lPYf888jZLjCDExYTZzOIzQpONZWNAiCL6Lmgjrg/XaY3PyIQ3i/kGKvNpw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9d23d97a-0ee4-4cb4-b378-845c46fc4b6d",
+                            SecurityStamp = "87d6cbc0-5170-4901-9753-df9929426904",
                             Status = 1,
                             TwoFactorEnabled = false,
                             UserName = "bilgehotel"
@@ -296,16 +296,16 @@ namespace Project.Dal.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             ActivationCode = new Guid("00000000-0000-0000-0000-000000000000"),
-                            ConcurrencyStamp = "86a23fd2-a570-4280-8693-2764cd3be8be",
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5336),
+                            ConcurrencyStamp = "8f8ae079-a3fb-43b9-8404-edc4455f4590",
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4403),
                             Email = "testmember@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "TESTMEMBER@EMAIL.COM",
                             NormalizedUserName = "TESTMEMBER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOmjcj6GCKzV5uLAA4Atu8oqJs+p+5FKw171AWCnxozEdR9sLDo4N1YOWc7M/VP9oQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKvDgKFwhoP5XA90mvewZKjxgyz0izF3Dcs1FEvjMcSQ7EMwq/xzzExjlfrcOZiDvw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "64b69dac-1c60-46cf-b470-6c3fe57d33be",
+                            SecurityStamp = "8d926003-bd97-4e11-b8c0-819e5f51cba7",
                             Status = 1,
                             TwoFactorEnabled = false,
                             UserName = "testmember"
@@ -424,660 +424,660 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            Address = "Dağınık Evler Sokak 35a, Aydın, Estonya",
-                            BirthDate = new DateTime(1998, 12, 25, 0, 1, 19, 825, DateTimeKind.Local).AddTicks(7622),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(4895),
-                            FirstName = "Barsurungu",
-                            HireDate = new DateTime(2015, 6, 2, 8, 2, 50, 234, DateTimeKind.Local).AddTicks(4501),
-                            LastName = "Özdoğan",
-                            PhoneNumber = "+90-314-652-2-534",
+                            Address = "Sıran Söğüt Sokak 21b, Trabzon, Meksika",
+                            BirthDate = new DateTime(1998, 3, 24, 21, 48, 38, 534, DateTimeKind.Local).AddTicks(834),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3300),
+                            FirstName = "Akın",
+                            HireDate = new DateTime(2018, 11, 14, 4, 35, 51, 793, DateTimeKind.Local).AddTicks(6820),
+                            LastName = "Balaban",
+                            PhoneNumber = "+90-032-853-9-498",
                             Position = "Resepsiyonist",
-                            Salary = 53288.19m,
-                            Shift = 3,
+                            Salary = 55044.94m,
+                            Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 2,
-                            Address = "Tevfik Fikret Caddesi 118, Kırıkkale, Azerbaycan",
-                            BirthDate = new DateTime(1981, 5, 7, 22, 39, 28, 775, DateTimeKind.Local).AddTicks(2384),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(4998),
-                            FirstName = "Barkdurmuş",
-                            HireDate = new DateTime(2017, 5, 1, 12, 13, 26, 474, DateTimeKind.Local).AddTicks(7192),
-                            LastName = "Ertepınar",
-                            PhoneNumber = "+90-984-991-88-08",
+                            Address = "Dağınık Evler Sokak 2, Sinop, Güney Afrika",
+                            BirthDate = new DateTime(1988, 8, 5, 12, 50, 39, 921, DateTimeKind.Local).AddTicks(1397),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3414),
+                            FirstName = "Çölü",
+                            HireDate = new DateTime(2022, 11, 13, 6, 50, 50, 89, DateTimeKind.Local).AddTicks(837),
+                            LastName = "Yıldırım ",
+                            PhoneNumber = "+90-464-805-4-190",
                             Position = "Resepsiyonist",
-                            Salary = 46380.82m,
+                            Salary = 40931.84m,
                             Shift = 3,
                             Status = 1
                         },
                         new
                         {
                             Id = 3,
-                            Address = "İsmet Attila Caddesi 1, Giresun, Umman",
-                            BirthDate = new DateTime(1971, 4, 3, 9, 45, 33, 259, DateTimeKind.Local).AddTicks(4473),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5060),
-                            FirstName = "Alptutuk",
-                            HireDate = new DateTime(2014, 7, 10, 0, 5, 15, 880, DateTimeKind.Local).AddTicks(5622),
-                            LastName = "Özdoğan",
-                            PhoneNumber = "+90-435-285-09-71",
+                            Address = "Yunus Emre Sokak 40c, Afyon, Solomon Adaları",
+                            BirthDate = new DateTime(2006, 10, 15, 14, 7, 51, 68, DateTimeKind.Local).AddTicks(486),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3473),
+                            FirstName = "Amrak",
+                            HireDate = new DateTime(2015, 7, 20, 11, 34, 42, 238, DateTimeKind.Local).AddTicks(6316),
+                            LastName = "Polat",
+                            PhoneNumber = "+90-315-047-0-670",
                             Position = "Resepsiyonist",
-                            Salary = 53212.57m,
-                            Shift = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Address = "Ali Çetinkaya Caddesi 12c, İzmir, Çek Cumhuriyeti",
-                            BirthDate = new DateTime(1992, 4, 25, 6, 49, 14, 275, DateTimeKind.Local).AddTicks(8681),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5145),
-                            FirstName = "Barskan",
-                            HireDate = new DateTime(2023, 11, 28, 0, 48, 34, 257, DateTimeKind.Local).AddTicks(6137),
-                            LastName = "Erginsoy",
-                            PhoneNumber = "+90-951-235-7-077",
-                            Position = "Resepsiyonist",
-                            Salary = 41475.18m,
-                            Shift = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Address = "Kekeçoğlu Sokak 61c, Şanlıurfa, Saint Martin, Fransa",
-                            BirthDate = new DateTime(1979, 11, 16, 4, 14, 9, 544, DateTimeKind.Local).AddTicks(3534),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5225),
-                            FirstName = "Abılay",
-                            HireDate = new DateTime(2022, 6, 1, 11, 12, 18, 808, DateTimeKind.Local).AddTicks(6159),
-                            LastName = "Körmükçü",
-                            PhoneNumber = "+90-522-148-92-52",
-                            Position = "Resepsiyonist",
-                            Salary = 43749.79m,
+                            Salary = 43432.70m,
                             Shift = 3,
                             Status = 1
                         },
                         new
                         {
-                            Id = 6,
-                            Address = "Barış Sokak 92, Ankara, Bermuda, İngiltere",
-                            BirthDate = new DateTime(2003, 8, 22, 12, 40, 22, 170, DateTimeKind.Local).AddTicks(1650),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5297),
-                            FirstName = "Gönül",
-                            HireDate = new DateTime(2020, 6, 19, 1, 31, 7, 619, DateTimeKind.Local).AddTicks(2486),
-                            LastName = "Koçoğlu",
-                            PhoneNumber = "+90-633-943-1-204",
+                            Id = 4,
+                            Address = "Alparslan Türkeş Bulvarı 1, Tekirdağ, Yemen",
+                            BirthDate = new DateTime(1976, 3, 28, 0, 59, 47, 220, DateTimeKind.Local).AddTicks(7847),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3558),
+                            FirstName = "Altıntamgan",
+                            HireDate = new DateTime(2019, 7, 4, 3, 15, 14, 621, DateTimeKind.Local).AddTicks(855),
+                            LastName = "Samancı",
+                            PhoneNumber = "+90-668-847-4-990",
                             Position = "Resepsiyonist",
-                            Salary = 54828.83m,
-                            Shift = 1,
+                            Salary = 44507.10m,
+                            Shift = 3,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "Bandak Sokak 310, İstanbul, Brunei",
+                            BirthDate = new DateTime(1977, 3, 10, 10, 31, 13, 0, DateTimeKind.Local).AddTicks(9583),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3640),
+                            FirstName = "Bürkek",
+                            HireDate = new DateTime(2017, 2, 25, 9, 33, 27, 575, DateTimeKind.Local).AddTicks(2034),
+                            LastName = "Velioğlu",
+                            PhoneNumber = "+90-851-541-00-84",
+                            Position = "Resepsiyonist",
+                            Salary = 43594.78m,
+                            Shift = 2,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Address = "Afyon Kaya Sokak 804, Gaziantep, Tanzanya",
+                            BirthDate = new DateTime(1971, 4, 4, 23, 11, 15, 830, DateTimeKind.Local).AddTicks(8432),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3695),
+                            FirstName = "Armağan",
+                            HireDate = new DateTime(2020, 9, 25, 11, 35, 10, 788, DateTimeKind.Local).AddTicks(8698),
+                            LastName = "Kavaklıoğlu",
+                            PhoneNumber = "+90-718-835-88-78",
+                            Position = "Resepsiyonist",
+                            Salary = 49992.50m,
+                            Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 7,
-                            Address = "Nalbant Sokak 0, Çankırı, Palmyra Atoll, Amerika",
-                            BirthDate = new DateTime(1987, 11, 15, 10, 24, 37, 947, DateTimeKind.Local).AddTicks(4857),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5351),
-                            FirstName = "Berkyaruk",
-                            HireDate = new DateTime(2018, 6, 18, 21, 13, 1, 847, DateTimeKind.Local).AddTicks(2550),
-                            LastName = "Akbulut",
-                            PhoneNumber = "+90-437-294-11-95",
+                            Address = "Harman Yolu Sokak  2, Siirt, Palau Adaları",
+                            BirthDate = new DateTime(1978, 11, 6, 8, 42, 6, 321, DateTimeKind.Local).AddTicks(1630),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3772),
+                            FirstName = "Ceyhun",
+                            HireDate = new DateTime(2022, 8, 30, 23, 12, 13, 365, DateTimeKind.Local).AddTicks(4692),
+                            LastName = "Topçuoğlu",
+                            PhoneNumber = "+90-140-786-3-211",
                             Position = "Resepsiyonist",
-                            Salary = 56611.37m,
+                            Salary = 42049.87m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 8,
-                            Address = "Atatürk Bulvarı 55c, Kilis, Cape Verde",
-                            BirthDate = new DateTime(1980, 12, 24, 16, 54, 4, 519, DateTimeKind.Local).AddTicks(9746),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5441),
-                            FirstName = "Bayınçur",
-                            HireDate = new DateTime(2023, 9, 21, 22, 47, 17, 1, DateTimeKind.Local).AddTicks(7458),
-                            LastName = "Öztuna",
-                            PhoneNumber = "+90-914-301-1-073",
+                            Address = "Ergenekon Sokak   78, Yalova, Bermuda, İngiltere",
+                            BirthDate = new DateTime(1996, 11, 14, 6, 54, 10, 560, DateTimeKind.Local).AddTicks(3695),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3857),
+                            FirstName = "Alpata",
+                            HireDate = new DateTime(2023, 3, 12, 14, 6, 36, 835, DateTimeKind.Local).AddTicks(2131),
+                            LastName = "Erdoğan",
+                            PhoneNumber = "+90-415-245-4-374",
                             Position = "Temizlik Görevlisi",
-                            Salary = 31756.10m,
+                            Salary = 33914.91m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 9,
-                            Address = "Okul Sokak 33b, Bitlis, Mali",
-                            BirthDate = new DateTime(1970, 4, 25, 7, 49, 22, 290, DateTimeKind.Local).AddTicks(7872),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5523),
-                            FirstName = "Bayboğa",
-                            HireDate = new DateTime(2022, 6, 26, 7, 14, 28, 687, DateTimeKind.Local).AddTicks(1085),
-                            LastName = "Sarıoğlu",
-                            PhoneNumber = "+90-679-127-8-213",
+                            Address = "İsmet Attila Caddesi 84c, Ordu, Guadalup, Fransa",
+                            BirthDate = new DateTime(1986, 5, 3, 20, 42, 12, 250, DateTimeKind.Local).AddTicks(8218),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3935),
+                            FirstName = "Erdem",
+                            HireDate = new DateTime(2021, 10, 24, 16, 55, 57, 925, DateTimeKind.Local).AddTicks(8919),
+                            LastName = "Erbay",
+                            PhoneNumber = "+90-649-804-6-637",
                             Position = "Temizlik Görevlisi",
-                            Salary = 30156.99m,
+                            Salary = 32320.08m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 10,
-                            Address = "Kerimoğlu Sokak 44c, Bartın, Kazakistan",
-                            BirthDate = new DateTime(1990, 4, 27, 7, 47, 21, 384, DateTimeKind.Local).AddTicks(1435),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5601),
-                            FirstName = "Altıntay",
-                            HireDate = new DateTime(2016, 4, 3, 21, 20, 59, 545, DateTimeKind.Local).AddTicks(7123),
-                            LastName = "Biçer",
-                            PhoneNumber = "+90-869-493-2-681",
+                            Address = "Gül Sokak 699, Mardin, Bulgaristan",
+                            BirthDate = new DateTime(1980, 1, 26, 19, 44, 6, 445, DateTimeKind.Local).AddTicks(1062),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(3988),
+                            FirstName = "Akpıra",
+                            HireDate = new DateTime(2022, 10, 23, 9, 34, 23, 867, DateTimeKind.Local).AddTicks(6420),
+                            LastName = "Taşçı",
+                            PhoneNumber = "+90-699-502-62-76",
                             Position = "Temizlik Görevlisi",
-                            Salary = 27404.06m,
+                            Salary = 32512.28m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 11,
-                            Address = "Ali Çetinkaya Caddesi 92b, Adıyaman, Birmanya (Myanmar)",
-                            BirthDate = new DateTime(2005, 9, 18, 18, 12, 53, 40, DateTimeKind.Local).AddTicks(3213),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5651),
-                            FirstName = "Basan",
-                            HireDate = new DateTime(2014, 8, 1, 2, 6, 54, 196, DateTimeKind.Local).AddTicks(4663),
-                            LastName = "Öymen",
-                            PhoneNumber = "+90-235-537-43-23",
+                            Address = "Ali Çetinkaya Caddesi 01b, Gaziantep, Belize",
+                            BirthDate = new DateTime(2000, 2, 24, 0, 54, 39, 322, DateTimeKind.Local).AddTicks(5458),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4051),
+                            FirstName = "Gökçe",
+                            HireDate = new DateTime(2024, 1, 30, 7, 30, 48, 344, DateTimeKind.Local).AddTicks(4253),
+                            LastName = "Adan",
+                            PhoneNumber = "+90-289-054-3-464",
                             Position = "Temizlik Görevlisi",
-                            Salary = 25797.98m,
-                            Shift = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Address = "Kaldırım Sokak 36, Amasya, Honduras",
-                            BirthDate = new DateTime(1989, 9, 13, 18, 22, 43, 641, DateTimeKind.Local).AddTicks(6299),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5729),
-                            FirstName = "Biçek",
-                            HireDate = new DateTime(2018, 3, 25, 2, 39, 51, 229, DateTimeKind.Local).AddTicks(4513),
-                            LastName = "Gürmen",
-                            PhoneNumber = "+90-351-388-84-93",
-                            Position = "Temizlik Görevlisi",
-                            Salary = 29327.01m,
-                            Shift = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Address = "Barış Sokak 18c, Aydın, Malta",
-                            BirthDate = new DateTime(1996, 8, 1, 3, 13, 33, 595, DateTimeKind.Local).AddTicks(5399),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5800),
-                            FirstName = "Alpşalçı",
-                            HireDate = new DateTime(2018, 12, 20, 19, 5, 38, 926, DateTimeKind.Local).AddTicks(3267),
-                            LastName = "Kılıççı",
-                            PhoneNumber = "+90-576-612-6-957",
-                            Position = "Temizlik Görevlisi",
-                            Salary = 31321.94m,
-                            Shift = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Address = "Kerimoğlu Sokak 02a, İçel (Mersin), Gambiya",
-                            BirthDate = new DateTime(1997, 12, 28, 12, 1, 8, 793, DateTimeKind.Local).AddTicks(6387),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5850),
-                            FirstName = "Iyıktağ",
-                            HireDate = new DateTime(2015, 9, 26, 5, 3, 33, 57, DateTimeKind.Local).AddTicks(4332),
-                            LastName = "Arıcan",
-                            PhoneNumber = "+90-022-723-3-189",
-                            Position = "Temizlik Görevlisi",
-                            Salary = 34776.41m,
+                            Salary = 30538.92m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
-                            Id = 15,
-                            Address = "Fatih Sokak  305, Bartın, Benin",
-                            BirthDate = new DateTime(1967, 12, 6, 1, 43, 1, 824, DateTimeKind.Local).AddTicks(3117),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(5942),
-                            FirstName = "Ediz",
-                            HireDate = new DateTime(2023, 4, 5, 6, 57, 12, 914, DateTimeKind.Local).AddTicks(9564),
-                            LastName = "Özgörkey",
-                            PhoneNumber = "+90-740-430-67-06",
+                            Id = 12,
+                            Address = "İsmet Attila Caddesi 65c, Balıkesir, Özbekistan",
+                            BirthDate = new DateTime(1992, 1, 5, 6, 39, 43, 876, DateTimeKind.Local).AddTicks(9502),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4126),
+                            FirstName = "Aksungur",
+                            HireDate = new DateTime(2019, 5, 19, 15, 37, 13, 582, DateTimeKind.Local).AddTicks(6539),
+                            LastName = "Örge",
+                            PhoneNumber = "+90-495-134-1-442",
                             Position = "Temizlik Görevlisi",
-                            Salary = 25524.03m,
+                            Salary = 34523.37m,
+                            Shift = 2,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Address = "Tevfik Fikret Caddesi 17, Antalya, Guatemala",
+                            BirthDate = new DateTime(1974, 9, 17, 2, 2, 16, 603, DateTimeKind.Local).AddTicks(2242),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4207),
+                            FirstName = "Begi",
+                            HireDate = new DateTime(2018, 4, 20, 2, 33, 46, 403, DateTimeKind.Local).AddTicks(7592),
+                            LastName = "Sezek",
+                            PhoneNumber = "+90-432-997-5-158",
+                            Position = "Temizlik Görevlisi",
+                            Salary = 30300.79m,
+                            Shift = 2,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Address = "Kerimoğlu Sokak 74b, Amasya, Kazakistan",
+                            BirthDate = new DateTime(2002, 9, 17, 17, 28, 31, 423, DateTimeKind.Local).AddTicks(3620),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4255),
+                            FirstName = "Bayançar",
+                            HireDate = new DateTime(2018, 4, 3, 21, 37, 17, 26, DateTimeKind.Local).AddTicks(6053),
+                            LastName = "Akgül",
+                            PhoneNumber = "+90-638-175-80-85",
+                            Position = "Temizlik Görevlisi",
+                            Salary = 28779.25m,
+                            Shift = 1,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Address = "Barış Sokak 691, Kocaeli, Folkland Adaları, İngiltere",
+                            BirthDate = new DateTime(1981, 4, 1, 17, 37, 37, 450, DateTimeKind.Local).AddTicks(1571),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4332),
+                            FirstName = "Buldur",
+                            HireDate = new DateTime(2021, 5, 1, 2, 30, 50, 649, DateTimeKind.Local).AddTicks(2450),
+                            LastName = "Erçetin",
+                            PhoneNumber = "+90-375-511-5-874",
+                            Position = "Temizlik Görevlisi",
+                            Salary = 31471.95m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 16,
-                            Address = "Alparslan Türkeş Bulvarı 6, Kırklareli, Guam, Amerika",
-                            BirthDate = new DateTime(1974, 12, 3, 8, 47, 55, 61, DateTimeKind.Local).AddTicks(4332),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6007),
-                            FirstName = "İmrem",
-                            HireDate = new DateTime(2016, 3, 10, 4, 59, 16, 692, DateTimeKind.Local).AddTicks(1621),
-                            LastName = "Körmükçü",
-                            PhoneNumber = "+90-254-008-0-597",
+                            Address = "Gül Sokak 24a, Bursa, Rusya Federasyonu",
+                            BirthDate = new DateTime(1995, 8, 19, 14, 50, 57, 349, DateTimeKind.Local).AddTicks(3079),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4404),
+                            FirstName = "Büdüstudun",
+                            HireDate = new DateTime(2015, 12, 26, 16, 43, 25, 381, DateTimeKind.Local).AddTicks(6882),
+                            LastName = "Abadan",
+                            PhoneNumber = "+90-936-357-1-717",
                             Position = "Temizlik Görevlisi",
-                            Salary = 30893.55m,
-                            Shift = 1,
+                            Salary = 25216.92m,
+                            Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 17,
-                            Address = "Barış Sokak 67c, Sivas, Belize",
-                            BirthDate = new DateTime(1976, 10, 6, 5, 35, 16, 392, DateTimeKind.Local).AddTicks(11),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6088),
-                            FirstName = "Bağaturgerey",
-                            HireDate = new DateTime(2021, 1, 14, 17, 33, 23, 908, DateTimeKind.Local).AddTicks(7220),
-                            LastName = "Ekici",
-                            PhoneNumber = "+90-012-491-96-94",
+                            Address = "Tevfik Fikret Caddesi 88c, İçel (Mersin), Ekvator Ginesi",
+                            BirthDate = new DateTime(2003, 11, 29, 12, 20, 59, 404, DateTimeKind.Local).AddTicks(2192),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4477),
+                            FirstName = "Abşar",
+                            HireDate = new DateTime(2022, 10, 29, 11, 40, 2, 270, DateTimeKind.Local).AddTicks(692),
+                            LastName = "Atan",
+                            PhoneNumber = "+90-842-291-85-10",
                             Position = "Temizlik Görevlisi",
-                            Salary = 25151.08m,
+                            Salary = 30015.66m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 18,
-                            Address = "Sağlık Sokak 34b, Kilis, Hollanda Antilleri",
-                            BirthDate = new DateTime(1977, 4, 14, 7, 14, 25, 365, DateTimeKind.Local).AddTicks(1392),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6137),
-                            FirstName = "Kırçiçek",
-                            HireDate = new DateTime(2022, 6, 11, 4, 59, 7, 976, DateTimeKind.Local).AddTicks(6084),
-                            LastName = "Çevik",
-                            PhoneNumber = "+90-043-368-6-938",
+                            Address = "Bandak Sokak 501, Rize, Moldavya",
+                            BirthDate = new DateTime(2002, 12, 10, 1, 50, 38, 190, DateTimeKind.Local).AddTicks(375),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4525),
+                            FirstName = "Apak",
+                            HireDate = new DateTime(2021, 2, 3, 1, 31, 9, 398, DateTimeKind.Local).AddTicks(4064),
+                            LastName = "Erdoğan",
+                            PhoneNumber = "+90-944-833-6-730",
                             Position = "Temizlik Görevlisi",
-                            Salary = 30833.44m,
+                            Salary = 25316.83m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 19,
-                            Address = "Saygılı Sokak 232, Yozgat, Virgin Adaları, İngiltere",
-                            BirthDate = new DateTime(1989, 5, 20, 5, 54, 26, 569, DateTimeKind.Local).AddTicks(6877),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6224),
-                            FirstName = "Altıntamgan",
-                            HireDate = new DateTime(2014, 8, 31, 12, 6, 28, 118, DateTimeKind.Local).AddTicks(9738),
-                            LastName = "Sözeri",
-                            PhoneNumber = "+90-346-938-52-19",
+                            Address = "Bahçe Sokak 14c, Balıkesir, Kosova",
+                            BirthDate = new DateTime(1987, 9, 15, 12, 8, 55, 868, DateTimeKind.Local).AddTicks(1445),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4616),
+                            FirstName = "Gelin",
+                            HireDate = new DateTime(2019, 8, 7, 15, 6, 54, 937, DateTimeKind.Local).AddTicks(1526),
+                            LastName = "Yılmazer",
+                            PhoneNumber = "+90-014-877-22-19",
                             Position = "Aşçı",
-                            Salary = 110119.27m,
-                            Shift = 2,
+                            Salary = 100624.71m,
+                            Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 20,
-                            Address = "Güven Yaka Sokak 089, Düzce, Güney Kıbrıs Rum Yönetimi",
-                            BirthDate = new DateTime(2000, 5, 11, 13, 7, 45, 906, DateTimeKind.Local).AddTicks(8018),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6301),
-                            FirstName = "Atlı",
-                            HireDate = new DateTime(2016, 9, 8, 7, 14, 8, 358, DateTimeKind.Local).AddTicks(8437),
-                            LastName = "Hakyemez",
-                            PhoneNumber = "+90-860-499-6-178",
+                            Address = "Kerimoğlu Sokak 568, Muş, Kırgızistan",
+                            BirthDate = new DateTime(1979, 4, 14, 23, 4, 13, 464, DateTimeKind.Local).AddTicks(328),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4712),
+                            FirstName = "Bayur",
+                            HireDate = new DateTime(2017, 9, 25, 8, 20, 0, 245, DateTimeKind.Local).AddTicks(9066),
+                            LastName = "Denkel",
+                            PhoneNumber = "+90-349-207-99-43",
                             Position = "Aşçı",
-                            Salary = 102256.96m,
-                            Shift = 2,
+                            Salary = 111664.51m,
+                            Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 21,
-                            Address = "Dağınık Evler Sokak 6, Hakkari, Fransa",
-                            BirthDate = new DateTime(1972, 4, 25, 6, 31, 39, 455, DateTimeKind.Local).AddTicks(9030),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6375),
-                            FirstName = "Bayınçur",
-                            HireDate = new DateTime(2016, 5, 4, 8, 44, 3, 891, DateTimeKind.Local).AddTicks(7611),
-                            LastName = "Çevik",
-                            PhoneNumber = "+90-934-050-88-42",
+                            Address = "Sıran Söğüt Sokak 1, Ordu, Cibuti",
+                            BirthDate = new DateTime(1987, 3, 21, 20, 46, 49, 489, DateTimeKind.Local).AddTicks(6899),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4773),
+                            FirstName = "Buldur",
+                            HireDate = new DateTime(2020, 1, 3, 4, 39, 5, 713, DateTimeKind.Local).AddTicks(1362),
+                            LastName = "Arıcan",
+                            PhoneNumber = "+90-747-897-62-88",
                             Position = "Aşçı",
-                            Salary = 102324.14m,
+                            Salary = 118099.32m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 22,
-                            Address = "Güven Yaka Sokak 91b, Batman, Rusya Federasyonu",
-                            BirthDate = new DateTime(1994, 8, 2, 12, 10, 59, 132, DateTimeKind.Local).AddTicks(7845),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6423),
-                            FirstName = "Başkırt",
-                            HireDate = new DateTime(2018, 6, 1, 9, 26, 36, 824, DateTimeKind.Local).AddTicks(4446),
-                            LastName = "Alyanak",
-                            PhoneNumber = "+90-666-208-2-937",
+                            Address = "Kaldırım Sokak 0, Ardahan, Benin",
+                            BirthDate = new DateTime(1973, 10, 11, 21, 40, 52, 159, DateTimeKind.Local).AddTicks(2934),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4822),
+                            FirstName = "Bıçkı",
+                            HireDate = new DateTime(2016, 7, 12, 11, 16, 9, 801, DateTimeKind.Local).AddTicks(8593),
+                            LastName = "Öztonga",
+                            PhoneNumber = "+90-724-026-48-41",
                             Position = "Aşçı",
-                            Salary = 107177.17m,
+                            Salary = 119150.49m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 23,
-                            Address = "Harman Yolu Sokak  3, Bartın, Avustralya",
-                            BirthDate = new DateTime(1984, 3, 27, 14, 17, 43, 990, DateTimeKind.Local).AddTicks(7396),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6497),
-                            FirstName = "Bayna",
-                            HireDate = new DateTime(2017, 7, 29, 3, 41, 23, 360, DateTimeKind.Local).AddTicks(2939),
-                            LastName = "Babacan",
-                            PhoneNumber = "+90-853-171-7-742",
+                            Address = "Sağlık Sokak 69, İçel (Mersin), Ürdün",
+                            BirthDate = new DateTime(1988, 11, 20, 9, 39, 12, 703, DateTimeKind.Local).AddTicks(2664),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4895),
+                            FirstName = "Bükebuyraç",
+                            HireDate = new DateTime(2018, 7, 18, 12, 4, 57, 104, DateTimeKind.Local).AddTicks(4968),
+                            LastName = "Taşçı",
+                            PhoneNumber = "+90-842-981-96-95",
                             Position = "Aşçı",
-                            Salary = 115136.26m,
-                            Shift = 1,
+                            Salary = 103366.23m,
+                            Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 24,
-                            Address = "Harman Altı Sokak 44b, Muğla, Gabon",
-                            BirthDate = new DateTime(1978, 12, 15, 4, 50, 9, 696, DateTimeKind.Local).AddTicks(813),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6570),
-                            FirstName = "Büke",
-                            HireDate = new DateTime(2022, 2, 14, 2, 18, 33, 152, DateTimeKind.Local).AddTicks(3680),
-                            LastName = "Durmaz",
-                            PhoneNumber = "+90-701-271-0-364",
+                            Address = "Dar Sokak 29, Rize, Maldiv Adaları",
+                            BirthDate = new DateTime(1977, 2, 20, 9, 29, 39, 512, DateTimeKind.Local).AddTicks(3940),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(4973),
+                            FirstName = "Dizik",
+                            HireDate = new DateTime(2019, 8, 20, 22, 1, 18, 165, DateTimeKind.Local).AddTicks(1278),
+                            LastName = "Numanoğlu",
+                            PhoneNumber = "+90-390-250-08-24",
                             Position = "Aşçı",
-                            Salary = 106689.77m,
-                            Shift = 2,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Address = "Harman Yolu Sokak  96a, Bartın, Doğu Timor",
-                            BirthDate = new DateTime(2003, 3, 17, 6, 54, 23, 534, DateTimeKind.Local).AddTicks(5595),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6640),
-                            FirstName = "Batuk",
-                            HireDate = new DateTime(2014, 7, 28, 17, 56, 29, 673, DateTimeKind.Local).AddTicks(147),
-                            LastName = "Erçetin",
-                            PhoneNumber = "+90-906-788-1-892",
-                            Position = "Aşçı",
-                            Salary = 118763.45m,
+                            Salary = 101609.78m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
-                            Id = 26,
-                            Address = "Dar Sokak 70a, Kocaeli, Komorlar",
-                            BirthDate = new DateTime(1984, 11, 29, 4, 40, 30, 371, DateTimeKind.Local).AddTicks(9727),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6690),
-                            FirstName = "Alpamış",
-                            HireDate = new DateTime(2017, 5, 28, 23, 50, 36, 293, DateTimeKind.Local).AddTicks(4851),
-                            LastName = "Kulaksızoğlu",
-                            PhoneNumber = "+90-873-052-72-22",
+                            Id = 25,
+                            Address = "Barış Sokak 43, Rize, Madagaskar",
+                            BirthDate = new DateTime(1978, 10, 8, 15, 50, 42, 240, DateTimeKind.Local).AddTicks(9813),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5018),
+                            FirstName = "Ayban",
+                            HireDate = new DateTime(2020, 10, 12, 12, 48, 47, 664, DateTimeKind.Local).AddTicks(1792),
+                            LastName = "Bakırcıoğlu",
+                            PhoneNumber = "+90-929-533-0-958",
                             Position = "Aşçı",
-                            Salary = 110318.98m,
+                            Salary = 113065.34m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
-                            Id = 27,
-                            Address = "Mevlana Sokak 17a, Aydın, Uganda",
-                            BirthDate = new DateTime(1975, 6, 13, 23, 12, 42, 773, DateTimeKind.Local).AddTicks(5931),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6756),
-                            FirstName = "Barkan",
-                            HireDate = new DateTime(2016, 3, 8, 17, 32, 10, 974, DateTimeKind.Local).AddTicks(1820),
-                            LastName = "Kıraç ",
-                            PhoneNumber = "+90-296-604-85-53",
+                            Id = 26,
+                            Address = "Ergenekon Sokak   51c, Tunceli, Fransız Guyanası",
+                            BirthDate = new DateTime(1977, 1, 10, 22, 42, 36, 395, DateTimeKind.Local).AddTicks(3683),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5091),
+                            FirstName = "Boyan",
+                            HireDate = new DateTime(2015, 12, 18, 2, 8, 45, 385, DateTimeKind.Local).AddTicks(327),
+                            LastName = "Yetkiner",
+                            PhoneNumber = "+90-972-753-94-44",
                             Position = "Aşçı",
-                            Salary = 104120.85m,
+                            Salary = 114645.17m,
+                            Shift = 1,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Address = "Tevfik Fikret Caddesi 16c, Giresun, Mayotte, Fransa",
+                            BirthDate = new DateTime(1983, 2, 23, 23, 17, 7, 519, DateTimeKind.Local).AddTicks(3972),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5161),
+                            FirstName = "Bünül",
+                            HireDate = new DateTime(2021, 2, 24, 12, 22, 11, 856, DateTimeKind.Local).AddTicks(6374),
+                            LastName = "Beşerler",
+                            PhoneNumber = "+90-929-387-72-48",
+                            Position = "Aşçı",
+                            Salary = 114621.99m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 28,
-                            Address = "Tevfik Fikret Caddesi 794, Karaman, Bahreyn",
-                            BirthDate = new DateTime(2000, 9, 7, 19, 43, 10, 42, DateTimeKind.Local).AddTicks(5840),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6835),
-                            FirstName = "Alpgerey",
-                            HireDate = new DateTime(2020, 7, 9, 16, 42, 31, 10, DateTimeKind.Local).AddTicks(9881),
-                            LastName = "Kılıççı",
-                            PhoneNumber = "+90-373-297-85-78",
+                            Address = "Köypınar Sokak 14a, Düzce, İsviçre",
+                            BirthDate = new DateTime(1990, 4, 1, 1, 50, 8, 212, DateTimeKind.Local).AddTicks(2453),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5240),
+                            FirstName = "Akbuğra",
+                            HireDate = new DateTime(2017, 8, 19, 16, 54, 35, 360, DateTimeKind.Local).AddTicks(9862),
+                            LastName = "Baturalp",
+                            PhoneNumber = "+90-472-419-1-357",
                             Position = "Aşçı",
-                            Salary = 113665.85m,
-                            Shift = 2,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 29,
-                            Address = "Oğuzhan Sokak 8, Samsun, Peru",
-                            BirthDate = new DateTime(1989, 12, 9, 0, 0, 41, 457, DateTimeKind.Local).AddTicks(6671),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6918),
-                            FirstName = "Aral",
-                            HireDate = new DateTime(2016, 5, 5, 15, 3, 7, 838, DateTimeKind.Local).AddTicks(6148),
-                            LastName = "Babaoğlu",
-                            PhoneNumber = "+90-503-115-2-260",
-                            Position = "Aşçı",
-                            Salary = 104489.91m,
+                            Salary = 115213.02m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
-                            Id = 30,
-                            Address = "Sarıkaya Caddesi 20, Diyarbakır, Kosta Rika",
-                            BirthDate = new DateTime(1985, 11, 7, 19, 0, 16, 173, DateTimeKind.Local).AddTicks(488),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(6967),
-                            FirstName = "Ay",
-                            HireDate = new DateTime(2018, 12, 16, 13, 43, 52, 564, DateTimeKind.Local).AddTicks(4022),
-                            LastName = "Duygulu",
-                            PhoneNumber = "+90-552-273-3-557",
-                            Position = "Garson",
-                            Salary = 94414.73m,
+                            Id = 29,
+                            Address = "Bandak Sokak 18, Zonguldak, Endonezya",
+                            BirthDate = new DateTime(1984, 4, 22, 2, 44, 29, 226, DateTimeKind.Local).AddTicks(662),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5289),
+                            FirstName = "Çolman",
+                            HireDate = new DateTime(2018, 8, 10, 17, 19, 47, 501, DateTimeKind.Local).AddTicks(8015),
+                            LastName = "Karabulut",
+                            PhoneNumber = "+90-757-963-02-44",
+                            Position = "Aşçı",
+                            Salary = 100810.09m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
-                            Id = 31,
-                            Address = "Dağınık Evler Sokak 25a, Amasya, Tacikistan",
-                            BirthDate = new DateTime(1992, 7, 26, 10, 20, 17, 155, DateTimeKind.Local).AddTicks(2992),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7041),
-                            FirstName = "Eyiz",
-                            HireDate = new DateTime(2023, 4, 24, 22, 9, 42, 650, DateTimeKind.Local).AddTicks(3662),
-                            LastName = "Karadaş",
-                            PhoneNumber = "+90-485-349-06-96",
+                            Id = 30,
+                            Address = "Dağınık Evler Sokak 91, Elazığ, Gürcistan H",
+                            BirthDate = new DateTime(1976, 1, 21, 19, 7, 30, 492, DateTimeKind.Local).AddTicks(8451),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5360),
+                            FirstName = "Başgan",
+                            HireDate = new DateTime(2014, 8, 28, 13, 44, 55, 391, DateTimeKind.Local).AddTicks(2994),
+                            LastName = "Avan",
+                            PhoneNumber = "+90-802-543-3-230",
                             Position = "Garson",
-                            Salary = 92967.29m,
+                            Salary = 85121.58m,
+                            Shift = 1,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Address = "Köypınar Sokak 2, Tekirdağ, Özbekistan",
+                            BirthDate = new DateTime(1996, 4, 22, 12, 34, 44, 816, DateTimeKind.Local).AddTicks(35),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5427),
+                            FirstName = "Azak",
+                            HireDate = new DateTime(2024, 3, 4, 11, 19, 48, 311, DateTimeKind.Local).AddTicks(2456),
+                            LastName = "Arıcan",
+                            PhoneNumber = "+90-488-718-62-30",
+                            Position = "Garson",
+                            Salary = 95343.03m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 32,
-                            Address = "Barış Sokak 07b, Kırıkkale, Bulgaristan",
-                            BirthDate = new DateTime(1970, 2, 27, 18, 51, 33, 68, DateTimeKind.Local).AddTicks(7178),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7115),
-                            FirstName = "Kapgar",
-                            HireDate = new DateTime(2023, 4, 15, 22, 35, 4, 795, DateTimeKind.Local).AddTicks(4775),
-                            LastName = "Topaloğlu",
-                            PhoneNumber = "+90-485-793-80-16",
+                            Address = "Okul Sokak 29b, Ardahan, Somali",
+                            BirthDate = new DateTime(2006, 6, 14, 15, 51, 26, 323, DateTimeKind.Local).AddTicks(1575),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5487),
+                            FirstName = "Gün",
+                            HireDate = new DateTime(2015, 6, 9, 11, 6, 48, 657, DateTimeKind.Local).AddTicks(987),
+                            LastName = "Çetiner",
+                            PhoneNumber = "+90-977-556-3-753",
                             Position = "Garson",
-                            Salary = 71182.22m,
+                            Salary = 94847.53m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 33,
-                            Address = "Harman Altı Sokak 46c, Çanakkale, Sri Lanka",
-                            BirthDate = new DateTime(1973, 8, 20, 19, 32, 53, 640, DateTimeKind.Local).AddTicks(233),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7192),
-                            FirstName = "Barbol",
-                            HireDate = new DateTime(2021, 3, 31, 20, 30, 54, 127, DateTimeKind.Local).AddTicks(5236),
-                            LastName = "Sinanoğlu",
-                            PhoneNumber = "+90-411-212-63-87",
+                            Address = "Harman Altı Sokak 16b, Kırşehir, Arnavutluk",
+                            BirthDate = new DateTime(1989, 7, 8, 7, 24, 34, 873, DateTimeKind.Local).AddTicks(4502),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5538),
+                            FirstName = "Buluk",
+                            HireDate = new DateTime(2021, 7, 8, 23, 19, 33, 363, DateTimeKind.Local).AddTicks(4351),
+                            LastName = "Düşenkalkar",
+                            PhoneNumber = "+90-321-013-3-793",
                             Position = "Garson",
-                            Salary = 94929.26m,
+                            Salary = 82748.83m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 34,
-                            Address = "Köypınar Sokak 67b, Adana, Monako",
-                            BirthDate = new DateTime(1983, 10, 8, 8, 11, 3, 411, DateTimeKind.Local).AddTicks(4446),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7248),
-                            FirstName = "Al",
-                            HireDate = new DateTime(2024, 1, 11, 14, 41, 31, 771, DateTimeKind.Local).AddTicks(545),
-                            LastName = "Ekşioğlu",
-                            PhoneNumber = "+90-298-550-35-17",
+                            Address = "Ülkü Sokak 21, Samsun, Solomon Adaları",
+                            BirthDate = new DateTime(1968, 5, 2, 13, 8, 14, 390, DateTimeKind.Local).AddTicks(8078),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5619),
+                            FirstName = "Altınoba",
+                            HireDate = new DateTime(2022, 3, 7, 17, 44, 32, 64, DateTimeKind.Local).AddTicks(7148),
+                            LastName = "Düşenkalkar",
+                            PhoneNumber = "+90-055-441-6-792",
                             Position = "Garson",
-                            Salary = 76315.29m,
-                            Shift = 2,
+                            Salary = 78763.89m,
+                            Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 35,
-                            Address = "Kaldırım Sokak 61b, Manisa, Brunei",
-                            BirthDate = new DateTime(1996, 10, 29, 19, 44, 43, 582, DateTimeKind.Local).AddTicks(3154),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7323),
-                            FirstName = "Evin",
-                            HireDate = new DateTime(2022, 2, 22, 21, 51, 27, 941, DateTimeKind.Local).AddTicks(8701),
-                            LastName = "Yeşilkaya",
-                            PhoneNumber = "+90-442-201-20-65",
+                            Address = "Yunus Emre Sokak 927, Şanlıurfa, Botswana",
+                            BirthDate = new DateTime(2002, 8, 5, 2, 1, 27, 185, DateTimeKind.Local).AddTicks(7179),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5695),
+                            FirstName = "Bayançar",
+                            HireDate = new DateTime(2022, 7, 2, 5, 0, 51, 795, DateTimeKind.Local).AddTicks(5853),
+                            LastName = "Ayverdi",
+                            PhoneNumber = "+90-892-547-54-19",
                             Position = "Garson",
-                            Salary = 74702.10m,
+                            Salary = 70087.73m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 36,
-                            Address = "Kaldırım Sokak 96, Kırklareli, Mali",
-                            BirthDate = new DateTime(1975, 11, 21, 13, 38, 40, 482, DateTimeKind.Local).AddTicks(4580),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7399),
-                            FirstName = "Bögde",
-                            HireDate = new DateTime(2020, 7, 21, 23, 36, 18, 959, DateTimeKind.Local).AddTicks(6264),
-                            LastName = "Akman",
-                            PhoneNumber = "+90-770-704-7-185",
+                            Address = "30 Ağustos Caddesi 90, Eskişehir, Beyaz Rusya",
+                            BirthDate = new DateTime(2005, 9, 12, 6, 11, 13, 938, DateTimeKind.Local).AddTicks(9273),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5765),
+                            FirstName = "Büke",
+                            HireDate = new DateTime(2016, 3, 26, 21, 22, 25, 453, DateTimeKind.Local).AddTicks(9367),
+                            LastName = "Eliçin",
+                            PhoneNumber = "+90-014-766-12-36",
                             Position = "Garson",
-                            Salary = 87956.57m,
-                            Shift = 2,
+                            Salary = 95859.04m,
+                            Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 37,
-                            Address = "Güven Yaka Sokak 3, Sinop, Niue, Yeni Zelanda",
-                            BirthDate = new DateTime(1970, 12, 28, 12, 36, 0, 375, DateTimeKind.Local).AddTicks(8214),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7461),
-                            FirstName = "İdil",
-                            HireDate = new DateTime(2015, 10, 23, 21, 27, 3, 636, DateTimeKind.Local).AddTicks(3781),
-                            LastName = "Öztonga",
-                            PhoneNumber = "+90-718-994-63-03",
+                            Address = "Yunus Emre Sokak 93b, Zonguldak, Ruanda",
+                            BirthDate = new DateTime(1971, 5, 7, 11, 22, 34, 471, DateTimeKind.Local).AddTicks(3307),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5811),
+                            FirstName = "Kekik",
+                            HireDate = new DateTime(2022, 5, 16, 17, 48, 56, 179, DateTimeKind.Local).AddTicks(6791),
+                            LastName = "Ertürk",
+                            PhoneNumber = "+90-955-560-45-78",
                             Position = "Garson",
-                            Salary = 79281.45m,
+                            Salary = 86321.56m,
                             Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 38,
-                            Address = "Kaldırım Sokak 04a, Kars, Johnston Atoll, Amerika",
-                            BirthDate = new DateTime(1969, 4, 22, 6, 52, 58, 418, DateTimeKind.Local).AddTicks(3642),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7509),
-                            FirstName = "Amrak",
-                            HireDate = new DateTime(2015, 12, 27, 17, 19, 27, 428, DateTimeKind.Local).AddTicks(1356),
-                            LastName = "Yetkiner",
-                            PhoneNumber = "+90-991-881-6-125",
+                            Address = "İbn-i Sina Sokak 645, Karabük, Nauru",
+                            BirthDate = new DateTime(2003, 8, 21, 18, 53, 11, 260, DateTimeKind.Local).AddTicks(4585),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5886),
+                            FirstName = "Çobulmak",
+                            HireDate = new DateTime(2014, 11, 24, 7, 7, 57, 943, DateTimeKind.Local).AddTicks(5228),
+                            LastName = "Topaloğlu",
+                            PhoneNumber = "+90-393-299-9-601",
                             Position = "Garson",
-                            Salary = 77790.54m,
-                            Shift = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 39,
-                            Address = "Harman Yolu Sokak  36, Rize, Etiyopya",
-                            BirthDate = new DateTime(1974, 10, 14, 6, 24, 10, 48, DateTimeKind.Local).AddTicks(5076),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7591),
-                            FirstName = "Bayançar",
-                            HireDate = new DateTime(2023, 7, 28, 22, 40, 29, 992, DateTimeKind.Local).AddTicks(694),
-                            LastName = "Poçan",
-                            PhoneNumber = "+90-579-510-0-961",
-                            Position = "Garson",
-                            Salary = 79485.15m,
+                            Salary = 97495.32m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
-                            Id = 40,
-                            Address = "Ergenekon Sokak   202, Nevşehir, Güney Kıbrıs Rum Yönetimi",
-                            BirthDate = new DateTime(1970, 12, 17, 19, 39, 32, 46, DateTimeKind.Local).AddTicks(9691),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7676),
-                            FirstName = "Esen",
-                            HireDate = new DateTime(2021, 12, 6, 21, 32, 39, 292, DateTimeKind.Local).AddTicks(8301),
-                            LastName = "Ertepınar",
-                            PhoneNumber = "+90-896-458-2-631",
+                            Id = 39,
+                            Address = "Gül Sokak 1, Adana, Liechtenstein",
+                            BirthDate = new DateTime(1981, 9, 17, 13, 44, 49, 315, DateTimeKind.Local).AddTicks(8104),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(5962),
+                            FirstName = "Algu",
+                            HireDate = new DateTime(2021, 3, 26, 3, 0, 57, 655, DateTimeKind.Local).AddTicks(2461),
+                            LastName = "Türkyılmaz",
+                            PhoneNumber = "+90-541-925-22-36",
                             Position = "Garson",
-                            Salary = 95055.91m,
+                            Salary = 80703.36m,
+                            Shift = 1,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Address = "Kocatepe Caddesi 12c, Mardin, Ekvator Ginesi",
+                            BirthDate = new DateTime(1986, 4, 12, 1, 10, 31, 301, DateTimeKind.Local).AddTicks(2977),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(6031),
+                            FirstName = "Al",
+                            HireDate = new DateTime(2020, 5, 25, 8, 53, 56, 336, DateTimeKind.Local).AddTicks(5453),
+                            LastName = "Dağdaş",
+                            PhoneNumber = "+90-437-943-9-830",
+                            Position = "Garson",
+                            Salary = 73413.62m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 41,
-                            Address = "Afyon Kaya Sokak 02c, Niğde, Macaristan",
-                            BirthDate = new DateTime(1973, 2, 14, 0, 39, 43, 887, DateTimeKind.Local).AddTicks(5245),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7728),
-                            FirstName = "Ayma",
-                            HireDate = new DateTime(2015, 3, 10, 12, 10, 37, 624, DateTimeKind.Local).AddTicks(3610),
-                            LastName = "Hakyemez",
-                            PhoneNumber = "+90-013-699-1-910",
+                            Address = "Dağınık Evler Sokak 94a, Manisa, Somali",
+                            BirthDate = new DateTime(1970, 9, 12, 8, 59, 37, 592, DateTimeKind.Local).AddTicks(5675),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(6076),
+                            FirstName = "Ceyhun",
+                            HireDate = new DateTime(2017, 10, 6, 11, 55, 47, 828, DateTimeKind.Local).AddTicks(2722),
+                            LastName = "Demirel",
+                            PhoneNumber = "+90-656-478-67-79",
                             Position = "Garson",
-                            Salary = 78834.61m,
+                            Salary = 76871.44m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 42,
-                            Address = "Harman Yolu Sokak  38a, Trabzon, Zimbabve",
-                            BirthDate = new DateTime(2005, 3, 27, 4, 16, 58, 81, DateTimeKind.Local).AddTicks(9395),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7800),
-                            FirstName = "Esin",
-                            HireDate = new DateTime(2020, 10, 3, 9, 4, 36, 650, DateTimeKind.Local).AddTicks(9568),
-                            LastName = "Keseroğlu",
-                            PhoneNumber = "+90-437-816-89-01",
+                            Address = "Sıran Söğüt Sokak 86, İzmir, Bahreyn",
+                            BirthDate = new DateTime(1975, 5, 17, 1, 26, 24, 397, DateTimeKind.Local).AddTicks(6492),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(6151),
+                            FirstName = "Bağaturçigşi",
+                            HireDate = new DateTime(2016, 1, 2, 21, 53, 8, 835, DateTimeKind.Local).AddTicks(1155),
+                            LastName = "Gürmen",
+                            PhoneNumber = "+90-258-096-0-958",
                             Position = "Garson",
-                            Salary = 74125.06m,
+                            Salary = 86803.64m,
                             Shift = 2,
                             Status = 1
                         },
                         new
                         {
                             Id = 43,
-                            Address = "Atatürk Bulvarı 430, Aksaray, Kanarya Adaları",
-                            BirthDate = new DateTime(1999, 10, 21, 20, 57, 34, 674, DateTimeKind.Local).AddTicks(8992),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7878),
-                            FirstName = "Alkaevli",
-                            HireDate = new DateTime(2021, 7, 21, 18, 31, 56, 451, DateTimeKind.Local).AddTicks(8749),
-                            LastName = "Biçer",
-                            PhoneNumber = "+90-246-661-5-094",
+                            Address = "Atatürk Bulvarı 11, İstanbul, Türkmenistan",
+                            BirthDate = new DateTime(1975, 5, 29, 8, 56, 10, 46, DateTimeKind.Local).AddTicks(1470),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(6215),
+                            FirstName = "Akbulak",
+                            HireDate = new DateTime(2022, 9, 24, 14, 11, 47, 593, DateTimeKind.Local).AddTicks(5511),
+                            LastName = "Özbir",
+                            PhoneNumber = "+90-645-153-82-65",
                             Position = "Elektrikçi",
-                            Salary = 152753.39m,
-                            Shift = 3,
+                            Salary = 166219.48m,
+                            Shift = 1,
                             Status = 1
                         },
                         new
                         {
                             Id = 44,
-                            Address = "Köypınar Sokak 38c, Kilis, Folkland Adaları, İngiltere",
-                            BirthDate = new DateTime(1996, 10, 15, 13, 52, 12, 161, DateTimeKind.Local).AddTicks(4238),
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 107, DateTimeKind.Local).AddTicks(7951),
-                            FirstName = "Bölükbaşı",
-                            HireDate = new DateTime(2018, 5, 25, 5, 21, 45, 798, DateTimeKind.Local).AddTicks(4765),
-                            LastName = "Erbulak",
-                            PhoneNumber = "+90-861-068-9-446",
+                            Address = "Nalbant Sokak 29b, K.maraş, Mali",
+                            BirthDate = new DateTime(1977, 5, 25, 11, 33, 9, 767, DateTimeKind.Local).AddTicks(1962),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 942, DateTimeKind.Local).AddTicks(6266),
+                            FirstName = "Bilgez",
+                            HireDate = new DateTime(2021, 2, 28, 3, 25, 32, 952, DateTimeKind.Local).AddTicks(6532),
+                            LastName = "Tütüncü",
+                            PhoneNumber = "+90-516-125-1-008",
                             Position = "IT Sorumlusu",
-                            Salary = 171724.13m,
+                            Salary = 150851.01m,
                             Shift = 3,
                             Status = 1
                         });
@@ -1122,7 +1122,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5717),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4702),
                             Description = "Günlük sınırsız spa kullanımı.",
                             Name = "Spa Kullanımı",
                             Price = 3000m,
@@ -1131,7 +1131,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5719),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4705),
                             Description = "24 saat oda servisi. Tüm yemek siparişleri dahildir.",
                             Name = "Oda Servisi",
                             Price = 1500m,
@@ -1140,7 +1140,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5720),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4706),
                             Description = "Minibardaki içecekler ve atıştırmalıklar dahil.",
                             Name = "Minibar Kullanımı",
                             Price = 1000m,
@@ -1149,7 +1149,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5722),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4708),
                             Description = "Gidiş-dönüş özel araç transferi.",
                             Name = "Havalimanı Transferi",
                             Price = 5000m,
@@ -1158,7 +1158,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5723),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4709),
                             Description = "Konaklama süresince ücretsiz çamaşır ve kuru temizleme hizmeti.",
                             Name = "Çamaşırhane Hizmeti",
                             Price = 500m,
@@ -1167,7 +1167,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5738),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4716),
                             Description = "Ekstra günlük temizlik ve hijyen paketi.",
                             Name = "Günlük Oda Temizliği",
                             Price = 500m,
@@ -1176,7 +1176,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5739),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4717),
                             Description = "Özel şezlong ve plaj hizmetleri.",
                             Name = "Özel Plaj Alanı",
                             Price = 7500m,
@@ -1223,7 +1223,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5676),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4651),
                             Description = "Kahvaltı, öğle ve akşam yemeği dahil.",
                             Name = "Tam Pansiyon",
                             PriceMultiplier = 1.2m,
@@ -1232,7 +1232,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 187, DateTimeKind.Local).AddTicks(5680),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 3, 22, DateTimeKind.Local).AddTicks(4654),
                             Description = "Tüm yemekler, alkollü-alkolsüz içecekler ve otelin sunduğu belirli hizmetler dahil.",
                             Name = "Her Şey Dahil",
                             PriceMultiplier = 1.5m,
@@ -1436,7 +1436,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7547),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7704),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1453,7 +1453,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7550),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7711),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1470,7 +1470,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7551),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7712),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1487,7 +1487,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7552),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7713),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1504,7 +1504,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7552),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7714),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1521,7 +1521,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7554),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7715),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1538,7 +1538,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7555),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7716),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1555,7 +1555,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7556),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7717),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1572,7 +1572,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7556),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7717),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1589,7 +1589,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7558),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7719),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1606,7 +1606,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7560),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7721),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1623,7 +1623,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7561),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7723),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1640,7 +1640,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 13,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7562),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7723),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1657,7 +1657,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 14,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7562),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7724),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1674,7 +1674,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 15,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7563),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7724),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1691,7 +1691,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 16,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7563),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7748),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1708,7 +1708,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 17,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7564),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7749),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1725,7 +1725,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 18,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7565),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7751),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1742,7 +1742,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 19,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7566),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7751),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1759,7 +1759,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 20,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7567),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7752),
                             Floor = 1,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1776,7 +1776,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 21,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7569),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7754),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1793,7 +1793,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 22,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7570),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7755),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1810,7 +1810,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 23,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7570),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7756),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1827,7 +1827,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 24,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7571),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7756),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1844,7 +1844,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 25,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7571),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7757),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1861,7 +1861,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 26,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7572),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7757),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1878,7 +1878,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 27,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7573),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7758),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1895,7 +1895,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 28,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7573),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7758),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1912,7 +1912,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 29,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7574),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7759),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1929,7 +1929,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 30,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7574),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7759),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1946,7 +1946,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 31,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7576),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7761),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1963,7 +1963,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 32,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7577),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7762),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1980,7 +1980,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 33,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7578),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7763),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -1997,7 +1997,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 34,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7579),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7764),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2014,7 +2014,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 35,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7580),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7765),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2031,7 +2031,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 36,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7581),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7765),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2048,7 +2048,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 37,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7581),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7766),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2065,7 +2065,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 38,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7582),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7766),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2082,7 +2082,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 39,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7582),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7767),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2099,7 +2099,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 40,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7583),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7767),
                             Floor = 2,
                             HasAirConditioner = true,
                             HasBalcony = false,
@@ -2116,7 +2116,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 41,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7586),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7770),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2133,7 +2133,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 42,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7587),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7772),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2150,7 +2150,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 43,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7588),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7772),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2167,7 +2167,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 44,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7588),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7773),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2184,7 +2184,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 45,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7589),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7773),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2201,7 +2201,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 46,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7590),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7774),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2218,7 +2218,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 47,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7590),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7775),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2235,7 +2235,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 48,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7591),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7775),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2252,7 +2252,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 49,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7592),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7776),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2269,7 +2269,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 50,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7612),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7776),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2286,7 +2286,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 51,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7617),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7778),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2303,7 +2303,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 52,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7618),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7779),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2320,7 +2320,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 53,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7619),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7780),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2337,7 +2337,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 54,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7620),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7781),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2354,7 +2354,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 55,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7621),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7781),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2371,7 +2371,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 56,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7621),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7782),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2388,7 +2388,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 57,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7622),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7782),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2405,7 +2405,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 58,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7622),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7783),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2422,7 +2422,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 59,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7623),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7783),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2439,7 +2439,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 60,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7624),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7784),
                             Floor = 3,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2456,7 +2456,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 61,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7626),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7786),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2473,7 +2473,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 62,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7626),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7787),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2490,7 +2490,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 63,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7627),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7787),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2507,7 +2507,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 64,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7628),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7788),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2524,7 +2524,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 65,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7628),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7788),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2541,7 +2541,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 66,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7629),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7811),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2558,7 +2558,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 67,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7630),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7812),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2575,7 +2575,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 68,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7631),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7812),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2592,7 +2592,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 69,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7631),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7813),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2609,7 +2609,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 70,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7632),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7814),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2626,7 +2626,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 71,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7635),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7816),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2643,7 +2643,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 72,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7636),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7817),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2660,7 +2660,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 73,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7637),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7818),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2677,7 +2677,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 74,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7637),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7818),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2694,7 +2694,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 75,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7638),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7819),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2711,7 +2711,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 76,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7638),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7820),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2728,7 +2728,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 77,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7641),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7821),
                             Floor = 4,
                             HasAirConditioner = true,
                             HasBalcony = true,
@@ -2780,7 +2780,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7409),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7628),
                             Description = "1 adet tek kişilik yatak. Balkon ve minibar bulunmaz. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                             Name = "Tek Kişilik",
                             Status = 1
@@ -2788,7 +2788,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7422),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7641),
                             Description = "1 adet büyük (duble) yatak. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                             Name = "Çift Kişilik (Duble)",
                             Status = 1
@@ -2796,7 +2796,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7423),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7643),
                             Description = "2 adet tek kişilik yatak. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                             Name = "Çift Kişilik (Tek Kişilik 2 Yataklı)",
                             Status = 1
@@ -2804,7 +2804,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7425),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7644),
                             Description = "3 adet tek kişilik yatak.  Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                             Name = "Üç Kişilik (Tek Kişilik 3 Yataklı)",
                             Status = 1
@@ -2812,7 +2812,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7426),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7645),
                             Description = "Bir tek bir duble yatak.  Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                             Name = "Üç Kişilik (1 Tek, 1 Duble Yataklı)",
                             Status = 1
@@ -2820,7 +2820,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7459),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7647),
                             Description = "1 adet büyük (duble) yatak + 2 adet tek kişilik yatak. Klima, TV, saç kurutma makinesi ve WiFi mevcuttur.",
                             Name = "Dört Kişilik",
                             Status = 1
@@ -2828,7 +2828,7 @@ namespace Project.Dal.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2025, 3, 13, 21, 13, 7, 105, DateTimeKind.Local).AddTicks(7460),
+                            CreatedDate = new DateTime(2025, 3, 17, 2, 38, 2, 940, DateTimeKind.Local).AddTicks(7649),
                             Description = "Geniş ve lüks oda. Özel oturma alanı, büyük yatak, balkon, minibar, özel banyo ve lüks hizmetler. Klima, TV, saç kurutma makinesi, WiFi ve özel hizmetler mevcuttur.",
                             Name = "Kral Dairesi",
                             Status = 1

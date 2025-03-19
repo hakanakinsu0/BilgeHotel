@@ -21,6 +21,22 @@
     </div>
 }
 
+<!-- Kat Bilgileri -->
+<h4>Katlardaki Odaların Bilgileri:</h4>
+<div class="alert alert-info">
+    @if (ViewBag.FloorsInfo != null)
+    {
+        @foreach (var floor in ViewBag.FloorsInfo)
+        {
+            <p><strong>@floor.Key. Kat:</strong> @floor.Value</p>
+        }
+    }
+    else
+    {
+        <p>Kat bilgileri mevcut değil.</p>
+    }
+</div>
+
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label for="StartDate">Giriş Tarihi</label>
@@ -33,29 +49,15 @@
         <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
 
-    <!-- Kat Bilgileri -->
-    <h4>Kat Bilgileri:</h4>
-    <div class="alert alert-info">
-        @if (ViewBag.FloorsInfo != null)
-        {
-            @foreach (var floor in ViewBag.FloorsInfo)
-            {
-                <p><strong>@floor.Key. Kat:</strong> @floor.Value</p>
-            }
-        }
-        else
-        {
-            <p>Kat bilgileri mevcut değil.</p>
-        }
+    <div class="form-group">
+        <label for="RoomSelect">Oda Seçimi</label>
+        <div id="RoomSelectContainer">
+            <select id="RoomSelect" name="RoomId" class="form-control">
+                <option value="">Önce giriş ve çıkış tarihlerini seçiniz</option>
+            </select>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="RoomId">Oda Seçimi</label>
-        <select asp-for="RoomId" class="form-control" asp-items="ViewBag.Rooms">
-            <option value="">Lütfen bir oda seçin</option>
-        </select>
-        <span asp-validation-for="RoomId" class="text-danger"></span>
-    </div>
     <div class="form-group">
         <label for="PackageId">Paket Seçimi (Opsiyonel)</label>
         <select asp-for="PackageId" class="form-control" asp-items="ViewBag.Packages">
@@ -66,3 +68,29 @@
 
     <button type="submit" class="btn btn-primary">Rezervasyonu Oluştur</button>
 </form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Tarih alanlarına değişiklik event'ini bağlayın
+        $('#StartDate, #EndDate').change(function () {
+            var startDate = $('#StartDate').val();
+            var endDate = $('#EndDate').val();
+
+            if (startDate && endDate) {
+                $.ajax({
+                    url: '@Url.Action("GetAvailableRooms", "Reservation")',
+                    type: 'GET',
+                    data: { startDate: startDate, endDate: endDate },
+                    success: function (data) {
+                        // Gelen partial view içeriğini oda select alanına yerleştirin.
+                        $('#RoomSelectContainer').html(data);
+                    },
+                    error: function () {
+                        alert('Oda bilgileri yüklenirken bir hata oluştu.');
+                    }
+                });
+            }
+        });
+    });
+</script>

@@ -1,33 +1,40 @@
-﻿@model UserLoginRequestModel
+﻿@using Project.MvcUI.Models.PageVms.AppUsers
+@model LoginPageViewModel
 
 @{
-    ViewData["Title"] = "Giriş Yap";
+    ViewData["Title"] = Model.PageTitle; 
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="container mt-5">
+        <div class="alert alert-info text-center">
+            <h4>@Model.ErrorMessage</h4>  
+        </div>
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Count > 0)
+{
+    <div asp-validation-summary="All" class="alert alert-danger mt-5"></div>
 }
 
 <div class="container mt-5">
-    <h2 class="text-center">Giriş Yap</h2>
-
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-danger text-center">
-            @TempData["Message"]
-        </div>
-    }
-
+    <h2 class="text-center">@Model.PageTitle</h2>  
+    <p class="text-center">@Model.HelpText</p>  
     <form asp-action="Login" method="post" class="w-50 mx-auto border p-4 rounded shadow bg-light">
-        <input type="hidden" asp-for="ReturnUrl" value="@Context.Request.Query["returnUrl"]" />
+        <input type="hidden" asp-for="LoginRequest.ReturnUrl" value="@Context.Request.Query["returnUrl"]" />  
 
         <div class="mb-3">
-            <label asp-for="Email" class="form-label">E-Posta</label>
-            <input asp-for="Email" type="email" class="form-control" placeholder="E-posta adresinizi girin" value="@Model?.Email">
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <label asp-for="LoginRequest.Email" class="form-label">E-Posta</label>
+            <input asp-for="LoginRequest.Email" type="email" class="form-control" placeholder="E-posta adresinizi girin" />  
+            <span asp-validation-for="LoginRequest.Email" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Password" class="form-label">Şifre</label>
-            <input asp-for="Password" type="password" class="form-control" placeholder="Şifrenizi girin">
-
-            <span asp-validation-for="Password" class="text-danger"></span>
+            <label asp-for="LoginRequest.Password" class="form-label">Şifre</label>
+            <input asp-for="LoginRequest.Password" type="password" class="form-control" placeholder="Şifrenizi girin" />
+            <span asp-validation-for="LoginRequest.Password" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
@@ -41,10 +48,3 @@
         </div>
     </form>
 </div>
-
-<!-- Tüm model doğrulama hatalarını topluca göstermek için -->
-@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Count > 0)
-{
-    <div asp-validation-summary="All" class="alert alert-danger"></div>
-}
-

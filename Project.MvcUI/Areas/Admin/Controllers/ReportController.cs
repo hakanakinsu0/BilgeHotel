@@ -95,56 +95,56 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             var rooms = await _roomManager.GetAllAsync();
             var reservations = await _reservationManager.GetAllAsync();
 
-            var totalRooms = rooms.Count;
-            var occupiedRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Occupied);
-            var emptyRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Empty);
-            var maintenanceRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Maintenance);
+            int totalRooms = rooms.Count;
+            int occupiedRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Occupied);
+            int emptyRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Empty);
+            int maintenanceRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Maintenance);
 
-            var occupiedPercentage = totalRooms > 0 ? (double)occupiedRooms / totalRooms * 100 : 0;
+            double occupiedPercentage = totalRooms > 0 ? (double)occupiedRooms / totalRooms * 100 : 0;
 
-            // 📅 İçinde Bulunduğumuz Ayın Başlangıç ve Bitiş Tarihini Alalım
+            // 📅 İçinde bulunduğumuz ayın başlangıç ve bitiş tarihini alalım
             var currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var currentMonthEnd = currentMonthStart.AddMonths(1).AddDays(-1);
 
-            // 📌 Mart ayı içinde rezervasyonu olan odaları al
-            var reservationsInCurrentMonth = reservations
+            // 📅 Bu ay içindeki rezervasyonları filtreleyelim
+            var reservationsThisMonth = await _reservationManager.GetAllAsync();
+            reservationsThisMonth = reservationsThisMonth
                 .Where(res => res.StartDate <= currentMonthEnd && res.EndDate >= currentMonthStart)
                 .ToList();
 
-            // 📊 Oda bazlı dolu günleri hesaplamak için Dictionary
+            // 📊 Oda bazlı dolu günleri hesaplayalım
             var roomOccupiedDays = new Dictionary<int, int>();
 
-            foreach (var reservation in reservationsInCurrentMonth)
+            foreach (var reservation in reservationsThisMonth)
             {
-                int roomId = reservation.RoomId;
-                if (!roomOccupiedDays.ContainsKey(roomId))
-                {
-                    roomOccupiedDays[roomId] = 0;
-                }
-
                 var start = reservation.StartDate < currentMonthStart ? currentMonthStart : reservation.StartDate;
                 var end = reservation.EndDate > currentMonthEnd ? currentMonthEnd : reservation.EndDate;
-                roomOccupiedDays[roomId] += (int)(end - start).TotalDays;
+                int occupiedDays = (int)(end - start).TotalDays;
+
+                if (roomOccupiedDays.ContainsKey(reservation.RoomId))
+                    roomOccupiedDays[reservation.RoomId] += occupiedDays;
+                else
+                    roomOccupiedDays[reservation.RoomId] = occupiedDays;
             }
 
             // 📊 Bu ay içinde rezervasyon yapılan odaları belirleyelim
-            var uniqueOccupiedRoomsThisMonth = roomOccupiedDays.Count;
+            int uniqueOccupiedRoomsThisMonth = roomOccupiedDays.Count;
+            int totalRoomDaysInMonth = totalRooms * DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+            int totalOccupiedDaysThisMonth = roomOccupiedDays.Values.Sum();
 
-            // 📊 Oda başına ortalama doluluk oranı
-            var totalRoomDays = totalRooms * (currentMonthEnd - currentMonthStart).TotalDays;
-            var totalOccupiedDays = roomOccupiedDays.Values.Sum();
-            var monthlyOccupancyRate = totalRoomDays > 0 ? (totalOccupiedDays / totalRoomDays) * 100 : 0;
+            double monthlyOccupiedPercentage = totalRoomDaysInMonth > 0
+                ? (double)totalOccupiedDaysThisMonth / totalRoomDaysInMonth * 100
+                : 0;
 
             var model = new RoomUsageReportResponseModel
             {
                 TotalRooms = totalRooms,
                 OccupiedRooms = occupiedRooms,
-                EmptyRooms = emptyRooms,
+                EmptyRooms = totalRooms - occupiedRooms - maintenanceRooms,
                 MaintenanceRooms = maintenanceRooms,
                 OccupiedPercentage = occupiedPercentage,
-                MonthlyOccupiedPercentage = monthlyOccupancyRate,
-                MonthlyOccupiedRooms = uniqueOccupiedRoomsThisMonth,
-                MonthlyOccupiedRoomsPercentage = totalRooms > 0 ? (double)uniqueOccupiedRoomsThisMonth / totalRooms * 100 : 0
+                MonthlyOccupiedPercentage = monthlyOccupiedPercentage,
+                MonthlyOccupiedRooms = roomOccupiedDays.Count,
             };
 
             return View(model);

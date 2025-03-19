@@ -22,6 +22,8 @@ namespace Project.Bll.Managers.Abstracts
         Task<bool> CanDeleteRoomAsync(int roomId);
         Task<bool> UpdateRoomStatusAsync(int roomId, RoomStatus newStatus);
 
+        Task<List<RoomDto>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate);
+
     }
 
 }

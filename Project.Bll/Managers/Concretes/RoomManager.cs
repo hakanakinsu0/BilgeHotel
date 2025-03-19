@@ -141,5 +141,19 @@ namespace Project.Bll.Managers.Concretes
 
             return true;
         }
+
+        public async Task<List<RoomDto>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate)
+        {
+            // Oda rezervasyon ilişkisini dahil ederek, çakışan rezervasyonu olmayan odaları seçiyoruz.
+            var rooms = await _repository
+                .Where(room =>
+                    !room.Reservations.Any(res =>
+                        res.Status != DataStatus.Deleted &&
+                        startDate < res.EndDate && endDate > res.StartDate))
+                .Include(r => r.Reservations)
+                .ToListAsync();
+
+            return _mapper.Map<List<RoomDto>>(rooms);
+        }
     }
 }

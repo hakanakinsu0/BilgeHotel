@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Bll.Managers.Concretes;
 using Project.Entities.Enums;
+using Project.Entities.Models;
 using Project.MvcUI.Models.PureVms.Payments.RequestModels;
 using Project.MvcUI.Models.PureVms.Payments.ResponseModels;
 using System.Net.Http;
@@ -18,15 +20,19 @@ namespace Project.MvcUI.Controllers
         private readonly IAppUserManager _appUserManager;
         private readonly IAppUserProfileManager _appUserProfileManager;
         private readonly IRoomManager _roomManager;
+        private readonly IPaymentManager _paymentManager;
+        private readonly IReservationExtraServiceManager _reservationExtraServiceManager;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public PaymentController(IReservationManager reservationManager, IAppUserManager appUserManager, IAppUserProfileManager appUserProfileManager, IHttpClientFactory httpClientFactory, IRoomManager roomManager)
+        public PaymentController(IReservationManager reservationManager, IAppUserManager appUserManager, IAppUserProfileManager appUserProfileManager, IHttpClientFactory httpClientFactory, IRoomManager roomManager, IPaymentManager paymentManager, IReservationExtraServiceManager reservationExtraServiceManager)
         {
             _reservationManager = reservationManager;
             _appUserManager = appUserManager;
             _appUserProfileManager = appUserProfileManager;
             _httpClientFactory = httpClientFactory;
             _roomManager = roomManager;
+            _paymentManager = paymentManager;
+            _reservationExtraServiceManager = reservationExtraServiceManager;
         }
 
         public IActionResult Index()
@@ -41,6 +47,7 @@ namespace Project.MvcUI.Controllers
             var reservation = await _reservationManager.GetByIdAsync(reservationId);
             if (reservation == null)
             {
+
                 TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
                 return RedirectToAction("Index", "Reservation");
             }
@@ -77,54 +84,74 @@ namespace Project.MvcUI.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Lütfen tüm alanları eksiksiz doldurun.";
-
-                foreach (var key in ModelState.Keys)
-                {
-                    foreach (var error in ModelState[key].Errors)
-                    {
-                        Console.WriteLine($"Key: {key}, Hata: {error.ErrorMessage}");
-                    }
-                }
-
                 return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
             }
-
-            Console.WriteLine($"Ödeme İşlemi Başlatılıyor: {JsonConvert.SerializeObject(model)}");
 
             var client = _httpClientFactory.CreateClient();
             string apiUrl = "http://localhost:5190/api/Transaction/StartTransaction";
 
             var jsonContent = JsonConvert.SerializeObject(new
             {
-                model.ReservationId,
                 model.CardUserName,
                 model.CardNumber,
                 model.CVV,
                 model.ExpiryMonth,
                 model.ExpiryYear,
-                ShoppingPrice = model.ShoppingPrice // ✅ **API'ye doğru isimle gönderiliyor**
+                model.ShoppingPrice
             });
 
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
             var response = await client.PostAsync(apiUrl, content);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
                 var reservation = await _reservationManager.GetByIdAsync(model.ReservationId);
+
                 if (reservation != null)
                 {
-                    reservation.ReservationStatus = Project.Entities.Enums.ReservationStatus.Confirmed;
+                    reservation.ReservationStatus = ReservationStatus.Confirmed;
+                    reservation.Status = DataStatus.Updated;
+                    reservation.ModifiedDate = DateTime.Now;
                     await _reservationManager.UpdateAsync(reservation);
+
+                    // ✅ Payment tablosundaki ilgili kaydı bul
+                    var payments = await _paymentManager.GetAllAsync();
+                    var existingPayment = payments.FirstOrDefault(p => p.ReservationId == model.ReservationId);
+
+                    if (existingPayment != null && existingPayment.Status == DataStatus.Deleted)
+                    {
+                        // Var olan payment güncellenir
+                        existingPayment.Status = DataStatus.Updated;
+                        existingPayment.ModifiedDate = DateTime.Now;
+                        existingPayment.DeletedDate = null;
+                        existingPayment.PaymentDate = DateTime.Now; // Yeniden ödeme tarihi
+                        await _paymentManager.UpdateAsync(existingPayment);
+                    }
+                    else
+                    {
+                        // ✅ Ödeme yoksa yeni ödeme oluştur
+                        var paymentDto = new PaymentDto
+                        {
+                            ReservationId = reservation.Id,
+                            PaymentAmount = model.ShoppingPrice,
+                            PaymentMethod = PaymentMethod.CreditCard,
+                            PaymentDate = DateTime.Now,
+                            Status = DataStatus.Inserted,
+                            CreatedDate = DateTime.Now
+                        };
+                        await _paymentManager.CreateAsync(paymentDto);
+                    }
+
+                    TempData["SuccessMessage"] = "Ödeme başarıyla tamamlandı!";
+                    return RedirectToAction("MyReservations", "Reservation");
                 }
 
-                TempData["SuccessMessage"] = "Ödeme başarıyla tamamlandı ve rezervasyon onaylandı!";
-                return RedirectToAction("MyReservations", "Reservation");
+                TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
+                return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
             }
             else
             {
-                TempData["ErrorMessage"] = $"Ödeme başarısız: {responseString}";
+                TempData["ErrorMessage"] = "Ödeme başarısız.";
                 return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
             }
         }
@@ -198,7 +225,7 @@ namespace Project.MvcUI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> CancelPaymentConfirm(int Id)
+        public async Task<IActionResult> CancelPaymentConfirm(int reservationId)
         {
             if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -244,7 +271,7 @@ namespace Project.MvcUI.Controllers
                 return RedirectToAction("History");
             }
 
-            var reservation = await _reservationManager.GetByIdAsync(Id);
+            var reservation = await _reservationManager.GetByIdAsync(reservationId);
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
@@ -255,7 +282,7 @@ namespace Project.MvcUI.Controllers
 
             var model = new PaymentCancelRequestModel
             {
-                ReservationId = Id,
+                ReservationId = reservationId,
                 CardUserName = userCard.CardUserName,
                 CardNumber = userCard.CardNumber,
                 CVV = userCard.CVV,
@@ -270,7 +297,7 @@ namespace Project.MvcUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmCancelPayment(PaymentCancelRequestModel model)
+        public async Task<IActionResult> CancelPaymentConfirm(PaymentCancelRequestModel model)
         {
             if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
@@ -279,17 +306,12 @@ namespace Project.MvcUI.Controllers
             }
 
             var reservation = await _reservationManager.GetByIdAsync(model.ReservationId);
-            if (reservation == null)
+            if (reservation == null || reservation.ReservationStatus != ReservationStatus.Confirmed)
             {
-                TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
+                TempData["ErrorMessage"] = "Rezervasyon bulunamadı veya zaten iptal edilmiş.";
                 return RedirectToAction("History");
             }
 
-            if (reservation.ReservationStatus != ReservationStatus.Confirmed)
-            {
-                TempData["ErrorMessage"] = "Bu rezervasyon için ödeme yapılmamış veya zaten iptal edilmiş.";
-                return RedirectToAction("History");
-            }
 
             var client = _httpClientFactory.CreateClient();
             string cancelApiUrl = "http://localhost:5190/api/Transaction/CancelTransaction";
@@ -298,26 +320,33 @@ namespace Project.MvcUI.Controllers
             var content = new StringContent(jsonCancelContent, Encoding.UTF8, "application/json");
 
             var cancelResponse = await client.PostAsync(cancelApiUrl, content);
-            var cancelResponseString = await cancelResponse.Content.ReadAsStringAsync();
 
             if (cancelResponse.IsSuccessStatusCode)
             {
-                // **✅ Ödeme iptal edildikten sonra rezervasyon durumunu 'Canceled' yap**
                 reservation.ReservationStatus = ReservationStatus.Canceled;
-                reservation.Status = DataStatus.Updated;
-                reservation.ModifiedDate = DateTime.Now;
-                await _reservationManager.UpdateAsync(reservation);
+                await _reservationManager.CancelReservationAsync(reservation.Id);
+                var existingServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservation.Id);
+                foreach (var service in existingServices.Where(x => x.Status != DataStatus.Deleted))
+                {
+                    await _reservationExtraServiceManager.UpdateDeletedAsync(service);
+                }
 
-                TempData["SuccessMessage"] = "Ödeme başarıyla iptal edildi ve rezervasyon tamamen iptal edildi.";
-                //return RedirectToAction("History");
-                return RedirectToAction("MyReservations", "Reservation", new { Id = reservation.Id });
+                // ✅ Payment durumunu güncelle
+                var payments = await _paymentManager.GetAllAsync();
+                var payment = payments.FirstOrDefault(p => p.ReservationId == model.ReservationId);
+                if (payment != null)
+                {
+                    payment.Status = DataStatus.Deleted;
+                    payment.DeletedDate = DateTime.Now;
+                    await _paymentManager.UpdateAsync(payment);
+                }
 
+                TempData["SuccessMessage"] = "Ödeme ve rezervasyon iptal edildi.";
+                return RedirectToAction("MyReservations", "Reservation");
             }
-            else
-            {
-                TempData["ErrorMessage"] = $"Ödeme iptal edilemedi: {cancelResponseString}";
-                return RedirectToAction("History");
-            }
+
+            TempData["ErrorMessage"] = "Ödeme iptal edilemedi.";
+            return RedirectToAction("History");
         }
 
 

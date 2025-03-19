@@ -44,13 +44,18 @@
             <select asp-for="Gender" class="form-control">
                 <option value="Male">Erkek</option>
                 <option value="Female">Kadın</option>
+                <option value="Other">Diğer</option>
             </select>
             <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="Nationality" class="form-label">Uyruğunuz</label>
-            <input asp-for="Nationality" class="form-control" placeholder="Uyruğunuzu girin">
+            <select asp-for="Nationality" class="form-control">
+                <option value="">Lütfen seçiniz</option>
+                <option value="Turk">Türk</option>
+                <option value="Diger">Diğer</option>
+            </select>
             <span asp-validation-for="Nationality" class="text-danger"></span>
         </div>
 

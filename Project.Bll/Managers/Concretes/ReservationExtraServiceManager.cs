@@ -55,7 +55,7 @@ namespace Project.Bll.Managers.Concretes
                 {
                     ReservationId = reservationId,
                     ExtraServiceId = id,
-                    Status = DataStatus.Updated,
+                    Status = DataStatus.Inserted,
                     ModifiedDate = DateTime.Now
                 }).ToList();
 

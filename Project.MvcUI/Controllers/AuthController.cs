@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
-using Project.Common.Tools;
 using Project.Entities.Enums;
 using Project.Entities.Models;
+using Project.MvcUI.Models.PageVms.AppUsers;
 using Project.MvcUI.Models.PureVms.AppUsers.RequestModels;
 using Project.MvcUI.Models.PureVms.AppUsers.ResponseModels;
 using SignInManager = Microsoft.AspNetCore.Identity.SignInResult;
@@ -12,16 +14,24 @@ using SignInManager = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Project.MvcUI.Controllers
 {
+    /// <summary>
+    /// Kullanıcı kimlik doğrulama işlemlerini (kayıt, giriş, şifre sıfırlama, vs.) yöneten controller. 
+    /// </summary>
     public class AuthController : Controller
     {
+        // Sabit tanımlamalar
+        const string MemberRole = "Member";             // Rol ismi sabiti 
+        const string BaseUrl = "http://localhost:5114"; // Aktivasyon ve reset linkleri için temel URL sabiti
 
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
-        private readonly IMapper _mapper;
-        private readonly IAppUserManager _appUserManager;
+        readonly UserManager<AppUser> _userManager;             // Kullanıcı yönetim servisi 
+        readonly SignInManager<AppUser> _signInManager;         // Giriş yönetim servisi 
+        readonly RoleManager<IdentityRole<int>> _roleManager;   // Rol yönetim servisi 
+        readonly IMapper _mapper;                               // AutoMapper servisi 
+        readonly IAppUserManager _appUserManager;               // Uygulama kullanıcı yönetim servisi 
 
-
+        /// <summary>
+        /// Controller'ın contructer'i. Gerekli servisler dependency injection ile alınır. 
+        /// </summary>
         public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IdentityRole<int>> roleManager, IMapper mapper, IAppUserManager appUserManager)
         {
             _userManager = userManager;
@@ -31,29 +41,39 @@ namespace Project.MvcUI.Controllers
             _appUserManager = appUserManager;
         }
 
+        #region RegisterAction
+
+        /// <summary>
+        /// Kayıt sayfasını görüntüler.
+        /// </summary>
         public IActionResult Register()
         {
-            return View();
+            RegisterPageViewModel viewModel = new RegisterPageViewModel(); // Page VM oluştur
+            return View(viewModel); // View'a gönder
         }
 
+        /// <summary>
+        /// Kullanıcı kayıt işlemini gerçekleştirir; model validasyonu, email kontrolü, kullanıcı oluşturma, rol atama, aktivasyon maili gönderimi ve yönlendirme işlemleri yapılır.
+        /// </summary>
+        /// <param name="viewModel">Kayıt sayfasına özgü view model</param>
         [HttpPost]
-        public async Task<IActionResult> Register(UserRegisterRequestModel model)
+        public async Task<IActionResult> Register(RegisterPageViewModel viewModel)
         {
+            UserRegisterRequestModel model = viewModel.RegisterRequest;     // Pure model, page VM içerisindeki RegisterRequest'ten elde ediliyor.
+            UserRegisterResponseModel response = new(); // Kayıt response modeli oluştur
+
+            // Model validasyonunu kontrol et
             if (!ModelState.IsValid)
-            {
-                TempData["Message"] = "Lütfen eksik veya hatalı alanları kontrol edin.";
-                return View(model);
-            }
+                return ProcessResponse(response, viewModel, false, "Lütfen eksik veya hatalı alanları kontrol edin.");
 
-            AppUser? existingUser = await _userManager.FindByEmailAsync(model.Email);
-            if (existingUser != null)
-            {
-                TempData["Message"] = "Bu e-posta adresi zaten kullanımda.";
-                return View(model);
-            }
+            // Kullanıcı kontrolü: Hem e-posta hem de kullanıcı adı kontrolü
+            if (await _appUserManager.FindUserByEmailAsync(model.Email) != null || await _userManager.FindByNameAsync(model.UserName) != null)
+                return ProcessResponse(response, viewModel, false, "Bu e-posta adresi veya kullanıcı adı zaten kullanımda.");
 
-            Guid activationCode = Guid.NewGuid();
+            // Aktivasyon kodu üretimi
+            Guid activationCode = _appUserManager.GenerateActivationCode();
 
+            // Yeni kullanıcı nesnesinin oluşturulması
             AppUser appUser = new()
             {
                 UserName = model.UserName,
@@ -61,256 +81,293 @@ namespace Project.MvcUI.Controllers
                 ActivationCode = activationCode,
                 CreatedDate = DateTime.Now,
                 Status = DataStatus.Inserted
-
             };
 
+            // Kullanıcı oluşturma
+            IdentityResult result = await _appUserManager.CreateUserAsync(appUser, model.Password);
 
-            IdentityResult result = await _userManager.CreateAsync(appUser, model.Password);
+            if (!result.Succeeded)
+                return ProcessResponse(response, viewModel, false, "Kayıt başarısız.");
+
+            // Rol ataması (örneğin "Member" rolü)
+            IdentityResult roleResult = await _appUserManager.AssignRoleAsync(appUser, MemberRole);
+            if (!roleResult.Succeeded)
+                return ProcessResponse(response, viewModel, false, "Rol ataması başarısız.");
+
+            // Aktivasyon mailinin gönderilmesi
+            await _appUserManager.SendActivationEmailAsync(appUser, activationCode);
+
+            return ProcessResponse(response, viewModel, true, "Lütfen hesabınızı onaylamak için e-postanızı kontrol ediniz.", "RedirectPanel");
+        }
+
+        /// <summary>
+        /// RedirectPanel paneli görünümünü döndürür. 
+        /// </summary>
+        public IActionResult RedirectPanel()
+        {
+            return View(); // RedirectPanel view'ını döndür 
+        }
+
+        #endregion
+
+        #region ConfirmEmailAction
+
+        /// <summary>
+        /// E-posta doğrulama işlemini gerçekleştirir; aktivasyon kodu kontrolü ve email onaylama yapılır. 
+        /// </summary>
+        /// <param name="activationCode">Aktivasyon kodu</param>
+        /// <param name="userId">Kullanıcı ID'si</param>
+        public async Task<IActionResult> ConfirmEmail(Guid activationCode, int userId)
+        {
+            UserConfirmEmailResponseModel response = new();
+
+            // Manager'daki ConfirmEmailAsync metodu çağrılıyor.
+            IdentityResult result = await _appUserManager.ConfirmEmailAsync(userId, activationCode);
 
             if (result.Succeeded)
             {
-                #region Rol Atama İşlemi
-                IdentityRole<int>? appRole = await _roleManager.FindByNameAsync("Member");
-                if (appRole == null) await _roleManager.CreateAsync(new() { Name = "Member" });
-                await _userManager.AddToRoleAsync(appUser, "Member");
-                #endregion
-
-                string message = $"<p>Hesabınız oluşturulmuştur. Üyeliğinizi tamamlamak için aşağıdaki bağlantıya tıklayınız:</p>" +
-                 $"<p><a href='http://localhost:5114/Auth/ConfirmEmail?activationCode={activationCode}&userId={appUser.Id}' " +
-                 $"style='color:blue; text-decoration:underline;'>E-posta doğrulama bağlantısı</a></p>";
-
-                MailService.Send(model.Email, body: message, subject: "BilgeHotel Aktivasyon Maili");
-
-                TempData["Message"] = "Lütfen hesabınızı onaylamak için e-postanızı kontrol ediniz.";
-                return RedirectToAction("RedirectPanel");
+                SetResponseMessage(response, true, "Hesabınız başarıyla onaylandı. Giriş yapabilirsiniz.");
+                return RedirectToAction("Login");
             }
 
-            TempData["Message"] = "Kayıt başarısız";
-            return View();
-        }
-
-        public IActionResult RedirectPanel()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> ConfirmEmail(Guid activationCode, int userId)
-        {
-            AppUser? user = await _userManager.FindByIdAsync(userId.ToString());
-
-            if (user == null)
-            {
-                TempData["Message"] = "Kullanıcı bulunamadı.";
-                return RedirectToAction("RedirectPanel");
-            }
-
-            if (user.ActivationCode == activationCode)
-            {
-                user.EmailConfirmed = true;
-                await _userManager.UpdateAsync(user);
-                TempData["Message"] = "Hesabınız başarıyla onaylandı. Giriş yapabilirsiniz.";
-                return RedirectToAction("RedirectPanel");
-            }
-
-            TempData["Message"] = "Geçersiz doğrulama kodu.";
+            SetResponseMessage(response, false, "Hesabınız onaylanmadı. Bilgilerinizi kontrol ediniz.");
             return RedirectToAction("RedirectPanel");
         }
 
+        #endregion
+
+        #region LoginAction
+
+        /// <summary>
+        /// Giriş sayfasını görüntüler. 
+        /// </summary>
         public IActionResult Login()
         {
-            return View();
+            var viewModel = new LoginPageViewModel(); // Login Page VM oluştur
+
+            // TempData'da mesaj varsa, bunu view model'in ErrorMessage alanına aktar
+            if (TempData["Message"] != null)
+            {
+                viewModel.ErrorMessage = TempData["Message"].ToString();
+            }
+
+            return View(viewModel); // View'a gönder
         }
 
+        /// <summary>
+        /// Kullanıcı giriş işlemini gerçekleştirir; model validasyonu, kullanıcı kontrolü, email onayı, kilitlenme kontrolü ve rol bazlı yönlendirme yapılır.
+        /// </summary>
+        /// <param name="viewModel">Giriş sayfasına özgü view model</param>
         [HttpPost]
-        public async Task<IActionResult> Login(UserLoginRequestModel model)
+        public async Task<IActionResult> Login(LoginPageViewModel viewModel)
         {
-            UserLoginResponseModel response = new();
+            UserLoginRequestModel model = viewModel.LoginRequest; // Pure model, LoginPageViewModel içerisindeki LoginRequest'ten elde ediliyor.
+            UserLoginResponseModel response = new(); // Giriş response modeli oluştur
 
+            // Model doğrulamasını kontrol et
             if (!ModelState.IsValid)
-            {
-                response.Success = false;
-                response.Message = "Lütfen eksik veya hatalı alanları kontrol edin.";
+                return ProcessResponse(response, viewModel, false, "Lütfen eksik veya hatalı alanları kontrol edin.");
 
-                // ModelState içindeki tüm hata mesajlarını al ve TempData içinde göster
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                TempData["Message"] = string.Join(" ", errors);
+            AppUser? user = await _userManager.FindByEmailAsync(model.Email); // Email ile kullanıcıyı bul 
 
-                return RedirectToAction("Login");
-            }
-
-
-            AppUser? user = await _userManager.FindByEmailAsync(model.Email);
+            // Kullanıcı bulunamazsa
             if (user == null)
-            {
-                response.Success = false;
-                response.Message = "Geçersiz e-posta veya şifre.";
-                TempData["Message"] = response.Message;
-                return RedirectToAction("Login");
-            }
+                return ProcessResponse(response, viewModel, false, "Geçersiz e-posta veya şifre.");
 
+            // Email onayı yapılmamışsa
             if (!user.EmailConfirmed)
-            {
-                response.Success = false;
-                response.Message = "Lütfen e-postanızı onaylayın.";
-                TempData["Message"] = response.Message;
-                return RedirectToAction("MailPanel");
-            }
+                return ProcessResponse(response, viewModel, false, "Lütfen e-postanızı onaylayın.", "MailPanel");
 
-            SignInManager result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
+            SignInManager result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true); // Giriş işlemini dene 
 
+            // Hesap kilitlendiyse
             if (result.IsLockedOut)
+                return ProcessResponse(response, viewModel, false, "Çok fazla hatalı giriş yaptınız. Lütfen 3 dakika sonra tekrar deneyin.");
+
+            if (result.Succeeded) // Giriş başarılı ise
             {
-                response.Success = false;
-                response.Message = "Çok fazla hatalı giriş yaptınız. Lütfen 3 dakika sonra tekrar deneyin.";
-                TempData["Message"] = response.Message;
-                return RedirectToAction("Login");
+                // Eğer returnUrl varsa, ona yönlendir
+                if (!string.IsNullOrEmpty(model.ReturnUrl))
+                    return LocalRedirect(model.ReturnUrl); // LocalRedirect, verilen URL'nin yerel bir URL olduğunu kontrol eder. Eğer URL yerel değilse, yönlendirme yapılmaz ve güvenlik açısından hata fırlatır. Bu, açık yönlendirme saldırılarına karşı ekstra bir koruma sağlar.
+
+                // Kullanıcı profilinden IdentityNumber kontrolü
+                var userProfile = await _appUserManager.GetUserProfileAsync(user.Id); // Profil bilgilerini al 
+
+                if (string.IsNullOrEmpty(userProfile.IdentityNumber)) // Kimlik numarası boş ise
+                    return RedirectToAction("Edit", "Profile"); // Profil düzenleme sayfasına yönlendir 
+
+                // Kullanıcının rollerine göre yönlendirme
+                IList<string> roles = await _userManager.GetRolesAsync(user); // Rollerini al 
+
+                if (roles.Contains("Admin")) // Admin rolüne sahipse
+                    return RedirectToAction("Index", "Dashboard", new { Area = "Admin" }); // Admin paneline yönlendir 
+
+                else if (roles.Contains(MemberRole)) // Member rolüne sahipse
+                    return RedirectToAction("Index", "Home"); // Üye (şimdilik Home) paneline yönlendir 
+
+                return RedirectToAction("Index", "Home"); // Diğer durumlarda varsayılan yönlendirme 
             }
 
-            if (result.Succeeded)
-            {
-                // **Eğer returnUrl varsa, giriş yaptıktan sonra kullanıcıyı oraya yönlendir**
-                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                {
-                    return Redirect(model.ReturnUrl);
-                }
-
-                // **IdentityNumber kontrolü ekleyelim**
-                var userProfile = await _appUserManager.GetUserProfileAsync(user.Id);
-                if (string.IsNullOrEmpty(userProfile.IdentityNumber)) // Eğer kimlik numarası girilmemişse
-                {
-                    return RedirectToAction("Edit", "Profile"); // Profil düzenleme sayfasına yönlendir
-                }
-
-                // Kullanıcının rolüne göre yönlendirme yap
-                IList<string> roles = await _userManager.GetRolesAsync(user);
-                if (roles.Contains("Admin"))
-                {
-                    return RedirectToAction("Index", "Dashboard", new { Area = "Admin" });
-                //return RedirectToAction("Privacy", "Home");
-                }
-                else if (roles.Contains("Member"))
-                {
-                    // return RedirectToAction("Index", "Customer"); //TODO: Customer paneli aktif edilecek
-                    return RedirectToAction("Index", "Home");
-                }
-                return RedirectToAction("Index", "Home");
-            }
-
-            response.Success = false;
-            response.Message = "Geçersiz giriş bilgileri.";
-            TempData["Message"] = response.Message;
-            return RedirectToAction("Login");
+            return ProcessResponse(response, viewModel, false, "Geçersiz giriş bilgileri.", "Login");
         }
 
-
+        /// <summary>
+        /// Mail onay paneli görünümünü döndürür. 
+        /// </summary>
         public IActionResult MailPanel()
         {
-            return View();
+            return View(); // MailPanel'i döndür 
         }
 
+
+        #endregion
+
+        #region ForgotPasswordAction
+
+        /// <summary>
+        /// Şifre sıfırlama sayfasını görüntüler.
+        /// </summary>
         public IActionResult ForgotPassword()
         {
-            return View();
+            ForgotPasswordPageViewModel viewModel = new ForgotPasswordPageViewModel(); // Page VM oluştur
+            return View(viewModel); // View'a gönder
         }
 
+        /// <summary>
+        /// Şifre sıfırlama işlemini gerçekleştirir; model validasyonu, kullanıcı kontrolü, token oluşturma, reset linki oluşturma ve mail gönderimi yapılır. 
+        /// </summary>
+        /// <param name="model">Şifre sıfırlama isteği model verileri</param>
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(UserForgotPasswordRequestModel model)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordPageViewModel viewModel)
         {
-            UserForgotPasswordResponseModel response = new();
+            var model = viewModel.ForgotPasswordRequest; // Pure model, Page VM içerisindeki ForgotPasswordRequest'ten elde ediliyor.
+            UserForgotPasswordResponseModel response = new(); // Response model oluştur
 
+            // Hata durumunda ProcessResponse çağrısı ile viewModel güncellenip view'e gönderilir.
             if (!ModelState.IsValid)
-            {
-                response.Success = false;
-                response.Message = "Lütfen eksik veya hatalı alanları kontrol edin.";
-                TempData["Message"] = response.Message;
-                return View(model);
-            }
+                return ProcessResponse(response, viewModel, false, "Lütfen eksik veya hatalı alanları kontrol edin.");
 
-            AppUser? user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-            {
-                response.Success = true;
-                response.Message = "Eğer bu e-posta adresi sistemde kayıtlı ise şifre sıfırlama bağlantısı gönderilmiştir.";
-                TempData["Message"] = response.Message;
-                return RedirectToAction("ForgotPassword");
-            }
+            // Manager üzerinden şifre sıfırlama maili gönderme işlemini gerçekleştiriyoruz.
+            IdentityResult result = await _appUserManager.SendPasswordResetEmailAsync(model.Email);
 
-            // Şifre sıfırlama tokeni oluşturma
-            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            // Başarılı durumda RedirectPanel'e yönlendirme yapılır.
+            if (result.Succeeded)
+                return ProcessResponse(response, viewModel, true, "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.", "RedirectPanel");
 
-            // Kullanıcıya şifre sıfırlama linki gönderme
-            string resetLink = $"http://localhost:5114/Auth/ResetPassword?token={Uri.EscapeDataString(resetToken)}&email={Uri.EscapeDataString(user.Email)}";
-
-            string message = $"<p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:</p>" +
-                             $"<p><a href='{resetLink}' style='color:blue; text-decoration:underline;'>Şifreyi Sıfırla</a></p>";
-
-            MailService.Send(user.Email, body: message, subject: "BilgeHotel Şifre Sıfırlama");
-
-            response.Success = true;
-            response.Message = "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.";
-            TempData["Message"] = response.Message;
-            return RedirectToAction("ForgotPassword");
+            // İşlem başarısız ise ProcessResponse ile viewModel güncellenir ve view'e gönderilir.
+            return ProcessResponse(response, viewModel, false, "Şifre sıfırlama işlemi başarısız.");
         }
 
+        #endregion
+
+        #region ResetPasswordAction
+
+        /// <summary>
+        /// Şifre sıfırlama sayfasını, token ve email bilgisiyle birlikte görüntüler.
+        /// </summary>
+        /// <param name="token">Şifre sıfırlama tokeni</param>
+        /// <param name="email">Kullanıcının email adresi</param>
         public IActionResult ResetPassword(string token, string email)
         {
+            var viewModel = new ResetPasswordPageViewModel(); // Page VM oluştur
+            viewModel.ResetPasswordRequest.Token = token; // Token ata
+            viewModel.ResetPasswordRequest.Email = email; // Email ata
+
+            // Eğer token veya email boş ise, hata mesajı ayarlanarak view model gönderilir.
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
             {
-                ModelState.AddModelError("", "Geçersiz şifre sıfırlama bağlantısı.");
-                return View();
+                // Burada viewModel'i hem response hem de viewModel olarak gönderiyoruz.
+                return ProcessResponse(viewModel, viewModel, false, "Geçersiz şifre sıfırlama bağlantısı.");
             }
 
-            UserResetPasswordRequestModel model = new UserResetPasswordRequestModel { Token = token, Email = email };
-            return View(model);
+            return View(viewModel);
         }
 
+        /// <summary>
+        /// Şifre sıfırlama işlemini gerçekleştirir; model validasyonu, token doğrulaması, şifre güncellemesi ve kullanıcı güncelleme işlemleri yapılır.
+        /// </summary>
+        /// <param name="viewModel">Yeni şifre ve reset token bilgilerini içeren sayfa view modeli</param>
         [HttpPost]
-        public async Task<IActionResult> ResetPassword(UserResetPasswordRequestModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordPageViewModel viewModel)
         {
-            UserResetPasswordResponseModel response = new();
+            // Pure model, Page VM içerisindeki ResetPasswordRequest'ten elde ediliyor.
+            var model = viewModel.ResetPasswordRequest;
+            UserResetPasswordResponseModel response = new(); // Response model oluştur
 
+            // Model validasyonunu kontrol et
             if (!ModelState.IsValid)
-            {
-                response.Success = false;
-                response.Message = "Lütfen eksik veya hatalı alanları kontrol edin.";
-                TempData["Message"] = response.Message;
-                return View(model);
-            }
+                return ProcessResponse(response, viewModel, false, "Lütfen eksik veya hatalı alanları kontrol edin.");
 
-            AppUser? user = await _userManager.FindByEmailAsync(model.Email);
+            AppUser? user = await _userManager.FindByEmailAsync(model.Email); // Email ile kullanıcıyı bul 
+
+            // Kullanıcı bulunamazsa
             if (user == null)
-            {
-                TempData["Message"] = "Geçersiz e-posta adresi.";
-                return RedirectToAction("ForgotPassword");
-            }
+                return ProcessResponse(response, viewModel, false, "Geçersiz e-posta adresi.", "ForgotPassword");
 
-            IdentityResult result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            IdentityResult result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword); // Şifre sıfırlama işlemini gerçekleştir 
 
+            // İşlem başarılı ise
             if (result.Succeeded)
             {
-                // **ModifiedDate ve Status Güncelleniyor**
-                user.ModifiedDate = DateTime.Now;
-                user.Status = DataStatus.Updated;
-                await _userManager.UpdateAsync(user);
-
-                TempData["Message"] = "Şifreniz başarıyla sıfırlandı. Giriş yapabilirsiniz.";
-                return RedirectToAction("Login");
+                return ProcessResponse(response, viewModel, true, "Şifreniz başarıyla sıfırlandı. Giriş yapabilirsiniz.", "Login");
             }
-
-            response.Success = false;
-            response.Message = string.Join(" ", result.Errors.Select(e => e.Description));
-            TempData["Message"] = response.Message;
-            return View(model);
+            return ProcessResponse(response, viewModel, false, "Şifre sıfırlama işlemi başarısız.");
         }
+        #endregion
 
+        #region LogoutAction
 
+        /// <summary>
+        /// Kullanıcının çıkış işlemini gerçekleştirir ve ana sayfaya yönlendirir. 
+        /// </summary>
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            await _signInManager.SignOutAsync();        // Kullanıcıyı sistemden çıkışı yapar
+            return RedirectToAction("Index", "Home");   // Ana sayfaya yönlendir 
+        }
+        #endregion
+
+        #region ControllerPrivateMethods
+
+        /// <summary>
+        /// Response nesnesine, verilen başarı durumuna ve mesaja göre
+        /// Success ve Message alanlarını atar; ayrıca TempData'ya da aynı mesajı yazar.
+        /// </summary>
+        /// <param name="response">Hata/success bilgisini tutacak dinamik response nesnesi.</param>
+        /// <param name="success">İşlemin başarılı olup olmadığını belirtir.</param>
+        /// <param name="message">Atanacak hata/success mesajı.</param>
+        private void SetResponseMessage(dynamic response, bool success, string message)
+        {
+            response.Success = success; // Başarı durumunu ata
+            response.Message = message; // Mesajı ata
+            TempData["Message"] = message; // TempData'ya mesajı ata
         }
 
+        /// <summary>
+        /// Verilen view model üzerinde response mesajını ayarlayarak; 
+        /// eğer yönlendirme parametresi sağlanmışsa belirtilen aksiyona yönlendirir,
+        /// aksi halde view model ile view'i render eder.
+        /// </summary>
+        /// <typeparam name="T">Kullanılacak view model tipi (ErrorMessage alanı olmalı)</typeparam>
+        /// <param name="response">Response nesnesi (dinamik, Success ve Message alanlarını içerir).</param>
+        /// <param name="viewModel">Geri gönderilecek view model.</param>
+        /// <param name="success">İşlemin başarılı olup olmadığını belirtir.</param>
+        /// <param name="message">Görüntülenecek hata/success mesajı.</param>
+        /// <param name="redirectAction">Yönlendirme yapılacak action adı; boş ise view render edilir.</param>
+        /// <returns>ActionResult: Yönlendirme veya view döndürür.</returns>
+        private IActionResult ProcessResponse<T>(dynamic response, T viewModel, bool success, string message, string redirectAction = null) where T : class
+        {
+            SetResponseMessage(response, success, message); // Response mesajını ayarla
+            dynamic vm = viewModel; // viewModel'in ErrorMessage property'sine erişmek için dynamic'e cast et
+            vm.ErrorMessage = response.Message; // Hata/success mesajını viewModel'e aktar
 
+            // Eğer redirectAction sağlanmışsa ilgili aksiyona yönlendir, aksi halde view model ile view'e gönder
+            if (string.IsNullOrEmpty(redirectAction))
+                return View(viewModel);
+            else
+                return RedirectToAction(redirectAction);
+        }
 
+        #endregion
     }
 }

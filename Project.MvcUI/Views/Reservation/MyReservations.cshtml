@@ -2,6 +2,13 @@
 
 <h2>Geçmiş ve Aktif Rezervasyonlar</h2>
 
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+
 @if (Model.Reservations != null && Model.Reservations.Any())
 {
     <table class="table">
@@ -11,7 +18,6 @@
                 <th>Başlangıç Tarihi</th>
                 <th>Bitiş Tarihi</th>
                 <th>Ödeme Durumu</th>
-                <th>Status</th> <!-- Yeni eklenen kolon -->
                 <th>Fiyat</th>
                 <th>Güncelle</th>
                 <th>İptal Et</th>
@@ -25,8 +31,28 @@
                     <td>@reservation.RoomNumber</td>
                     <td>@reservation.StartDate.ToShortDateString()</td>
                     <td>@reservation.EndDate.ToShortDateString()</td>
-                    <td>@reservation.ReservationStatus</td>
-                    <td>@reservation.Status</td> <!-- Status'u burada gösteriyoruz -->
+                    <td>
+                        @{
+                            string statusText = "";
+                            if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.PendingPayment)
+                            {
+                                statusText = "Ödeme Bekleniyor";
+                            }
+                            else if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Confirmed)
+                            {
+                                statusText = "Ödendi";
+                            }
+                            else if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Canceled)
+                            {
+                                statusText = "İptal Edildi";
+                            }
+                            else
+                            {
+                                statusText = reservation.ReservationStatus.ToString();
+                            }
+                        }
+                        @statusText
+                    </td>
                     <td>@reservation.TotalPrice.ToString("N2") TL</td> <!-- ✅ Sayıyı formatlıyoruz -->
                     <td>
                         @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.PendingPayment)

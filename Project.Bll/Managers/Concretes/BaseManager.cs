@@ -79,13 +79,48 @@ namespace Project.Bll.Managers.Concretes
         }
 
         // **Güncelleme işlemi**
-        public async Task UpdateAsync(T dto)
+        public virtual async Task UpdateAsync(T dto)
         {
-            dto.ModifiedDate = DateTime.Now;
-            dto.Status = DataStatus.Updated;
+            U existingEntity = await _repository.GetByIdAsync(dto.Id);
 
+            if (existingEntity == null)
+            {
+                throw new Exception($"Güncellenecek entity bulunamadı. ID: {dto.Id}");
+            }
+
+            dto.ModifiedDate = DateTime.Now;
+
+            // DTO üzerinde durum belirtilmemişse varsayılan olarak Updated yap
+            if (dto.Status == default)
+            {
+                dto.Status = DataStatus.Updated;
+            }
+
+            // Mapping işlemi
             U newEntity = _mapper.Map<U>(dto);
-            U existingEntity = await _repository.GetByIdAsync(newEntity.Id);
+
+            // Tarih ve durum alanlarını ayarlama
+            switch (dto.Status)
+            {
+                case DataStatus.Deleted:
+                    newEntity.DeletedDate = DateTime.Now;
+                    newEntity.ModifiedDate = null;
+                    newEntity.Status = DataStatus.Deleted;
+                    break;
+
+                case DataStatus.Updated:
+                    newEntity.ModifiedDate = DateTime.Now;
+                    newEntity.DeletedDate = null;
+                    newEntity.Status = DataStatus.Updated;
+
+                    break;
+
+                default:
+                    newEntity.ModifiedDate = DateTime.Now;
+                    newEntity.Status = DataStatus.Updated;
+                    break;
+            }
+
             await _repository.UpdateAsync(existingEntity, newEntity);
         }
 
@@ -107,7 +142,7 @@ namespace Project.Bll.Managers.Concretes
 
         public async Task MakePassiveAsync(T dto)
         {
-            var entity = await _repository.GetByIdAsync(dto.Id);
+            U entity = await _repository.GetByIdAsync(dto.Id);
             if (entity != null)
             {
                 entity.DeletedDate = DateTime.Now;
@@ -147,7 +182,7 @@ namespace Project.Bll.Managers.Concretes
 
         public async Task<int> CountAsync(Expression<Func<U, bool>> predicate = null)
         {
-            var entities = await _repository.GetAllAsync();
+            List<U> entities = await _repository.GetAllAsync();
             return predicate == null
                 ? entities.Count  // **GetAllAsync() sonucu liste olduğu için Count() kullanıyoruz**
                 : entities.Count(predicate.Compile());  // **Expression<Func<U, bool>>'ı Func<U, bool> haline getiriyoruz**
@@ -155,7 +190,7 @@ namespace Project.Bll.Managers.Concretes
 
         public async Task<decimal> SumAsync(Expression<Func<U, decimal>> selector, Expression<Func<U, bool>> predicate = null)
         {
-            var entities = await _repository.GetAllAsync();
+            List<U> entities = await _repository.GetAllAsync();
             return predicate == null
                 ? entities.Sum(selector.Compile())  // **GetAllAsync() sonucu liste olduğu için Sum() kullanıyoruz**
                 : entities.Where(predicate.Compile()).Sum(selector.Compile());

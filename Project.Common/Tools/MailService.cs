@@ -27,7 +27,7 @@ namespace Project.Common.Tools
         /// <param name="body">E-posta içeriği (varsayılan: "Test mesajıdır").</param>
         /// <param name="subject">E-posta konusu (varsayılan: "Email Testi").</param>
         /// <param name="sender">Gönderici e-posta adresi (opsiyonel, varsayılan hesap kullanılır).</param>
-        public static void Send(
+        public static async Task SendAsync(
             string receiver,
             string password = DefaultPassword,
             string body = "Test mesajıdır",
@@ -53,10 +53,10 @@ namespace Project.Common.Tools
                 {
                     Subject = subject,
                     Body = body,
-                    IsBodyHtml = true // HTML desteği eklenebilir
+                    IsBodyHtml = true
                 };
 
-                smtp.Send(message);
+                await smtp.SendMailAsync(message);
             }
             catch (Exception ex)
             {

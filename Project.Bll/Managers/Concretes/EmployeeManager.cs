@@ -18,5 +18,21 @@ namespace Project.Bll.Managers.Concretes
         {
             _repository = repository;
         }
+
+        public async Task<int> GetRandomReceptionistEmployeeIdAsync()
+        {
+            var employees = await GetAllAsync(); // BaseManager üzerinden tüm çalışanlar alınıyor
+            var receptionists = employees
+                .Where(e => e.Position.Equals("Resepsiyonist"))
+                .ToList();
+
+            if (receptionists.Any())
+            {
+                var random = new Random();
+                var randomEmployee = receptionists[random.Next(receptionists.Count)];
+                return randomEmployee.Id;
+            }
+            return -1;
+        }
     }
 }

@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Abstracts
 {
-    public interface IEmployeeManager : IManager<EmployeeDto, Employee> { }
-
+    public interface IEmployeeManager : IManager<EmployeeDto, Employee>
+    {
+        /// <summary>
+        /// "Resepsiyonist" pozisyonundaki çalışanlar arasından rastgele bir çalışan ID'si döner.
+        /// Eğer böyle bir çalışan bulunamazsa null döner.
+        /// </summary>
+        Task<int> GetRandomReceptionistEmployeeIdAsync();
+    }
 }

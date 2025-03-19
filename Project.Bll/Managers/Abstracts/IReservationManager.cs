@@ -26,6 +26,13 @@ namespace Project.Bll.Managers.Abstracts
 
         Task ReactivateReservationAsync(int reservationId);
 
+        /// <summary>
+        /// Rezervasyonun toplam fiyatına, seçilen ekstra hizmetlerin ücretlerini gece sayısıyla çarparak ekler.
+        /// </summary>
+        /// <param name="reservationId">Rezervasyon ID'si</param>
+        /// <param name="extraServiceIds">Ekstra hizmetlerin ID listesi</param>
+        /// <returns>Asenkron işlem için Task</returns>
+        Task UpdateReservationPriceWithExtraServices(int reservationId, List<int> extraServiceIds);
 
     }
 }
