@@ -1,14 +1,30 @@
-﻿@model List<Project.MvcUI.Models.PureVms.Payments.ResponseModels.PaymentHistoryResponseModel>
+﻿@model PaymentHistoryPageVm
 
 @{
-    ViewData["Title"] = "💰 Ödeme Geçmişi";
+    // Sayfa başlığı PageVM'den alınıyor
+    ViewData["Title"] = Model.PageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>💰 Ödeme Geçmişi</h2>
-<p>Yaptığınız ödemelerin listesini aşağıda görebilirsiniz.</p>
+<!-- Hata mesajı varsa gösteriliyor -->
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-info">@Model.ErrorMessage</div>
+}
 
-@if (Model == null || !Model.Any())
+<!-- TempData ile gönderilen başarı mesajı -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<h2>@Model.PageTitle</h2>
+@if (!string.IsNullOrEmpty(Model.HelpText))
+{
+    <p>@Model.HelpText</p>
+}
+
+@if (Model.PaymentHistoryList == null || !Model.PaymentHistoryList.Any())
 {
     <p>Henüz bir ödeme kaydınız bulunmamaktadır.</p>
 }
@@ -25,7 +41,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.PaymentHistoryList)
             {
                 <tr>
                     <td>@item.CardUserName</td>
@@ -33,10 +49,10 @@ else
                     <td>@item.RoomNumber</td>
                     <td>@item.PaymentAmount ₺</td>
                     <td>
-                        <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@item.ReservationId" class="btn btn-warning btn-sm">💳 Ödemeyi İptal Et</a>
-
+                        <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@item.ReservationId" class="btn btn-warning btn-sm">
+                            💳 Ödemeyi İptal Et
+                        </a>
                     </td>
-
                 </tr>
             }
         </tbody>

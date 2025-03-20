@@ -1,7 +1,7 @@
-﻿@model Project.MvcUI.Models.PureVms.Payments.RequestModels.PaymentProcessRequestModel
+﻿@model PaymentProcessPageVm
 
 @{
-    ViewData["Title"] = "💳 Ödeme Yap";
+    ViewData["Title"] = Model.PageTitle; // Sayfa başlığı PageVM'den alınıyor
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,79 +10,72 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="aler t alert-danger">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
-    </div>
-}
-
-<h2>💳 Ödeme Yap</h2>
+<h2>@Model.PageTitle</h2>
 <p>Rezervasyonunuz için ödeme yapabilirsiniz.</p>
 
 <form asp-action="ProcessPayment" method="post">
-    <input type="hidden" asp-for="ReservationId" />
-
-    @*     <div class="mb-3">
-        <label asp-for="CustomerName" class="form-label">Müşteri Adı</label>
-        <input asp-for="CustomerName" class="form-control" readonly />
-    </div> *@
+    @* Rezervasyon Id'si gizli alanda gönderiliyor *@
+    <input type="hidden" asp-for="PaymentProcessRequest.ReservationId" />
 
     <div class="mb-3">
-        <label asp-for="ShoppingPrice" class="form-label">Ödenecek Tutar</label>
-        <input asp-for="ShoppingPrice" class="form-control" readonly />
+        <label asp-for="PaymentProcessRequest.ShoppingPrice" class="form-label">Ödenecek Tutar</label>
+        <input asp-for="PaymentProcessRequest.ShoppingPrice" class="form-control" readonly />
+        <span asp-validation-for="PaymentProcessRequest.ShoppingPrice" class="text-danger"></span>
     </div>
 
     <h4>💳 Kart Bilgileri</h4>
 
     <div class="mb-3">
-        <label asp-for="CardUserName" class="form-label">Kart Sahibi</label>
-        <input asp-for="CardUserName" class="form-control" required />
-        <span asp-validation-for="CardUserName" class="text-danger"></span>
+        <label asp-for="PaymentProcessRequest.CardUserName" class="form-label">Kart Sahibi</label>
+        <input asp-for="PaymentProcessRequest.CardUserName" class="form-control" required />
+        <span asp-validation-for="PaymentProcessRequest.CardUserName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="CardNumber" class="form-label">Kart Numarası</label>
-        <input asp-for="CardNumber" class="form-control" placeholder="1111 2222 3333 4444" required />
-        <span asp-validation-for="CardNumber" class="text-danger"></span>
+        <label asp-for="PaymentProcessRequest.CardNumber" class="form-label">Kart Numarası</label>
+        <input asp-for="PaymentProcessRequest.CardNumber" class="form-control" placeholder="1111 2222 3333 4444" required />
+        <span asp-validation-for="PaymentProcessRequest.CardNumber" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="CVV" class="form-label">CVV</label>
-        <input asp-for="CVV" class="form-control" maxlength="3" required />
-        <span asp-validation-for="CVV" class="text-danger"></span>
+        <label asp-for="PaymentProcessRequest.CVV" class="form-label">CVV</label>
+        <input asp-for="PaymentProcessRequest.CVV" class="form-control" maxlength="3" required />
+        <span asp-validation-for="PaymentProcessRequest.CVV" class="text-danger"></span>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            <label asp-for="ExpiryMonth" class="form-label">Son Kullanım Ayı</label>
-            <select asp-for="ExpiryMonth" class="form-control">
+            <label asp-for="PaymentProcessRequest.ExpiryMonth" class="form-label">Son Kullanım Ayı</label>
+            <select asp-for="PaymentProcessRequest.ExpiryMonth" class="form-control">
                 @for (int i = 1; i <= 12; i++)
                 {
                     <option value="@i">@i</option>
                 }
             </select>
-            <span asp-validation-for="ExpiryMonth" class="text-danger"></span>
+            <span asp-validation-for="PaymentProcessRequest.ExpiryMonth" class="text-danger"></span>
         </div>
         <div class="col-md-6">
-            <label asp-for="ExpiryYear" class="form-label">Son Kullanım Yılı</label>
-            <select asp-for="ExpiryYear" class="form-control">
+            <label asp-for="PaymentProcessRequest.ExpiryYear" class="form-label">Son Kullanım Yılı</label>
+            <select asp-for="PaymentProcessRequest.ExpiryYear" class="form-control">
                 @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
                 {
                     <option value="@i">@i</option>
                 }
             </select>
-            <span asp-validation-for="ExpiryYear" class="text-danger"></span>
+            <span asp-validation-for="PaymentProcessRequest.ExpiryYear" class="text-danger"></span>
         </div>
     </div>
-    <button type="submit" class="btn btn-success mt-3"><i class="fas fa-credit-card"></i> Ödeme Yap</button>
-    <a asp-action="MyReservations" asp-controller="Reservation" class="btn btn-danger mt-3">Ödemeyi Daha Sonra Yap</a>
+    <button type="submit" class="btn btn-success mt-3">
+        <i class="fas fa-credit-card"></i> Ödeme Yap
+    </button>
+    <a asp-action="MyReservations" asp-controller="Reservation" class="btn btn-danger mt-3">
+        Ödemeyi Daha Sonra Yap
+    </a>
 </form>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+@* Eğer istemci tarafı validasyon scriptlerine ihtiyaç varsa, aşağıdaki script'leri uncomment edebilirsiniz *@
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

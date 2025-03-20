@@ -33,6 +33,6 @@ namespace Project.MvcUI.Models.PureVms.AppUsers.RequestModels
         [Required(ErrorMessage = "{0} zorunludur.")]
         [RegularExpression(@"^\d{11}$", ErrorMessage = "{0} 11 haneli olmalıdır.")]
         [Display(Name = "TC Kimlik Numarası")]
-        public string IdentityNumber { get; set; } // **TC Kimlik No**
+        public string IdentityNumber { get; set; } 
     }
 }

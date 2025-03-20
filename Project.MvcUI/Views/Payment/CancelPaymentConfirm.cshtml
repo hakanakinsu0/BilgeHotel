@@ -1,40 +1,41 @@
-﻿@model Project.MvcUI.Models.PureVms.Payments.RequestModels.PaymentCancelRequestModel
+﻿@model PaymentCancelPageVm
 
 @{
-    ViewData["Title"] = "Ödeme İptal Onayı";
+    ViewData["Title"] = Model.PageTitle; // Sayfa başlığı PageVM'den alınıyor.
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>⚠️ Ödeme İptali</h2>
-<p>Bu işlemi iptal etmek istediğinizden emin misiniz?</p>
+<h2>⚠️ Ödeme İptal Onayı</h2>
+<p>@Model.HelpText</p>
 
 <table class="table table-bordered">
     <tr>
         <th>📌 Kart Sahibi</th>
-        <td>@Model.CardUserName</td>
+        <td>@Model.PaymentCancelRequest.CardUserName</td>
     </tr>
     <tr>
         <th>💳 Kart Numarası</th>
-        <td>@Model.CardNumber</td>
+        <td>@Model.PaymentCancelRequest.CardNumber</td>
     </tr>
     <tr>
         <th>🏨 Oda Numarası</th>
-        <td>@Model.RoomNumber</td>
+        <td>@Model.PaymentCancelRequest.RoomNumber</td>
     </tr>
     <tr>
-        <th>💰 Ödeme Tutarı</th>
-        <td>@Model.RefundAmount ₺</td>
+        <th>💰 İade Edilecek Tutar</th>
+        <td>@Model.PaymentCancelRequest.RefundAmount ₺</td>
     </tr>
 </table>
 
 <form asp-action="CancelPaymentConfirm" method="post">
-    <input type="hidden" asp-for="ReservationId" />
-    <input type="hidden" asp-for="CardUserName" />
-    <input type="hidden" asp-for="CardNumber" />
-    <input type="hidden" asp-for="CVV" />
-    <input type="hidden" asp-for="RefundAmount" />
+    @* Form verileri PaymentCancelRequestModel içinden gönderiliyor *@
+    <input type="hidden" asp-for="PaymentCancelRequest.ReservationId" />
+    <input type="hidden" asp-for="PaymentCancelRequest.CardUserName" />
+    <input type="hidden" asp-for="PaymentCancelRequest.CardNumber" />
+    <input type="hidden" asp-for="PaymentCancelRequest.CVV" />
+    <input type="hidden" asp-for="PaymentCancelRequest.RefundAmount" />
+    <input type="hidden" asp-for="PaymentCancelRequest.RoomNumber" />
 
     <button type="submit" class="btn btn-danger">Evet, Ödemeyi İptal Et</button>
     <a asp-action="History" class="btn btn-secondary">Hayır, Vazgeç</a>
 </form>
-

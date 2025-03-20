@@ -10,6 +10,8 @@ namespace Project.Bll.Managers.Abstracts
         Task<List<ReservationExtraServiceDto>> GetByReservationIdAsync(int reservationId);
         Task UpdateExtraServicesForReservation(int reservationId, List<int> newExtraServiceIds);
         Task UpdateDeletedAsync(ReservationExtraServiceDto dto);
+        Task CancelExtraServicesByReservationIdAsync(int reservationId);
+
 
     }
 }

@@ -8,6 +8,10 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
 
 @if (Model.Reservations != null && Model.Reservations.Any())
 {

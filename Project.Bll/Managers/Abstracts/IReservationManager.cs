@@ -34,5 +34,23 @@ namespace Project.Bll.Managers.Abstracts
         /// <returns>Asenkron işlem için Task</returns>
         Task UpdateReservationPriceWithExtraServices(int reservationId, List<int> extraServiceIds);
 
+        /// <summary>
+        /// Rezervasyonun ödeme işlemi için uygun olup olmadığını kontrol eder.
+        /// Rezervasyon, onaylanmış veya iptal edilmiş durumdaysa ödeme yapılamaz.
+        /// </summary>
+        /// <param name="reservationId">Rezervasyon ID'si</param>
+        /// <returns>Uygunsa true, değilse false</returns>
+        Task<bool> IsReservationPayableAsync(int reservationId);
+
+        Task ConfirmReservationAsync(int reservationId);
+
+        Task<ReservationDto> GetConfirmedReservationByIdAsync(int reservationId);
+
+
+
+
+
+
+
     }
 }

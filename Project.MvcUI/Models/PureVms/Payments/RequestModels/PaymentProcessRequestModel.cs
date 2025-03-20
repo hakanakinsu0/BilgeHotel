@@ -4,30 +4,36 @@ namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
 {
     public class PaymentProcessRequestModel
     {
+        [Display(Name = "Rezervasyon Numarası")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public int ReservationId { get; set; }
 
-        [Required(ErrorMessage = "Kart sahibi adı gereklidir.")]
+        [Display(Name = "Kart Sahibi Adı")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public string CardUserName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Kart numarası gereklidir.")]
-        [StringLength(19, MinimumLength = 16, ErrorMessage = "Kart numarası 16-19 karakter olmalıdır.")]
+        [Display(Name = "Kart Numarası")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        [StringLength(19, MinimumLength = 16, ErrorMessage = "{0} 16-19 karakter olmalıdır.")]
         public string CardNumber { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "CVV gereklidir.")]
-        [StringLength(3, MinimumLength = 3, ErrorMessage = "CVV 3 haneli olmalıdır.")]
+        [Display(Name = "CVV")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        [StringLength(3, MinimumLength = 3, ErrorMessage = "{0} 3 haneli olmalıdır.")]
         public string CVV { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Son Kullanım Ayı gereklidir.")]
-        [Range(1, 12, ErrorMessage = "Geçerli bir ay seçin.")]
+        [Display(Name = "Son Kullanım Ayı")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        [Range(1, 12, ErrorMessage = "Geçerli bir {0} seçin.")]
         public int ExpiryMonth { get; set; }
 
-        [Required(ErrorMessage = "Son Kullanım Yılı gereklidir.")]
-        [Range(2024, 2035, ErrorMessage = "Geçerli bir yıl seçin.")]
+        [Display(Name = "Son Kullanım Yılı")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        [Range(2024, 2035, ErrorMessage = "Geçerli bir {0} seçin.")]
         public int ExpiryYear { get; set; }
 
-        [Required(ErrorMessage = "Tutar gereklidir.")]
-        public decimal ShoppingPrice { get; set; }  // ✅ **ShoppingPrice olarak değiştirildi**
-
-
+        [Display(Name = "Tutar")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        public decimal ShoppingPrice { get; set; }
     }
 }

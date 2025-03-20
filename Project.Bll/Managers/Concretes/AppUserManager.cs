@@ -254,5 +254,23 @@ namespace Project.Bll.Managers.Concretes
 
             return IdentityResult.Success; // Başarılı sonucu döndür
         }
+
+        /// <summary>
+        /// Belirtilen kullanıcı adını kullanarak, kullanıcının bilgilerini ve ilgili profil verilerini birlikte getirir.
+        /// </summary>
+        /// <param name="username">Kullanıcının kullanıcı adı</param>
+        /// <returns>Kullanıcı ve profil bilgilerini içeren bir tuple (AppUserDto, AppUserProfileDto)</returns>
+        public async Task<(AppUserDto user, AppUserProfileDto profile)> GetUserWithProfileAsync(string username)
+        {
+            var allUsers = await GetAllAsync();
+            var user = allUsers.FirstOrDefault(u => u.UserName == username);
+            if (user == null)
+            {
+                return (null, null);
+            }
+            var profile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
+            return (user, profile);
+        }
+
     }
 }

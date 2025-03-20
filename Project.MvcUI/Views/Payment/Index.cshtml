@@ -1,3 +1,42 @@
-﻿<h1>
-    Payment
-</h1>
+﻿@{
+    ViewData["Title"] = "Ödeme İşlemleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Ödeme İşlemleri</h1>
+    <p>Aşağıdaki seçeneklerden ödeme işlemleriyle ilgili aksiyonlara ulaşabilirsiniz:</p>
+
+    <div class="row">
+        <!-- Ödeme Yap -->
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-header">Ödeme Yap</div>
+                <div class="card-body">
+                    <p class="card-text">Rezervasyonunuz için ödeme işlemini başlatın.</p>
+                    <a asp-controller="Payment" asp-action="Checkout" class="btn btn-light">Ödeme Yap</a>
+                </div>
+            </div>
+        </div>
+        <!-- Ödeme Geçmişi -->
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-header">Ödeme Geçmişi</div>
+                <div class="card-body">
+                    <p class="card-text">Yapılan ödemelerin geçmişini görüntüleyin.</p>
+                    <a asp-controller="Payment" asp-action="History" class="btn btn-light">Geçmişi Görüntüle</a>
+                </div>
+            </div>
+        </div>
+        <!-- Ödeme İptali -->
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-danger">
+                <div class="card-header">Ödeme İptali</div>
+                <div class="card-body">
+                    <p class="card-text">Ödeme iptali yapmak için rezervasyonunuzu seçin.</p>
+                    <a asp-controller="Payment" asp-action="CancelPaymentConfirm" asp-route-reservationId="1" class="btn btn-light">İptal İşlemi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

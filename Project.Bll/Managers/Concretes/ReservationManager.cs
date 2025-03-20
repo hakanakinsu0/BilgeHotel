@@ -290,5 +290,65 @@ namespace Project.Bll.Managers.Concretes
             await _repository.UpdateAsync(reservationEntity, reservationEntity);
         }
 
+        /// <summary>
+        /// Belirtilen rezervasyonun ödeme işlemi için uygun olup olmadığını kontrol eder.
+        /// Ödeme için uygunluk, rezervasyonun bulunması ve durumunun Confirmed veya Canceled olmamasıyla belirlenir.
+        /// </summary>
+        /// <param name="reservationId">Kontrol edilecek rezervasyonun ID'si</param>
+        /// <returns>Ödeme için uygun ise true, değilse false</returns>
+        public async Task<bool> IsReservationPayableAsync(int reservationId)
+        {
+            var reservation = await _repository.GetByIdAsync(reservationId);
+            if (reservation == null)
+            {
+                return false; // Rezervasyon bulunamadıysa ödeme işlemi yapılamaz
+            }
+
+            // Rezervasyonun ödeme için uygunluğu: Confirmed veya Canceled durumda değilse ödeme yapılabilir
+            return reservation.ReservationStatus != ReservationStatus.Confirmed &&
+                   reservation.ReservationStatus != ReservationStatus.Canceled;
+        }
+
+        /// <summary>
+        /// Belirtilen rezervasyonu onaylı hale getirir.
+        /// Rezervasyon durumunu "Confirmed" yapar, ilgili tarih ve statü alanlarını günceller.
+        /// </summary>
+        /// <param name="reservationId">Onaylanacak rezervasyonun ID'si</param>
+        /// <returns>Asenkron işlem için Task</returns>
+        public async Task ConfirmReservationAsync(int reservationId)
+        {
+            // Rezervasyonu veritabanından alıyoruz
+            var reservation = await _repository.GetByIdAsync(reservationId);
+            if (reservation == null)
+            {
+                throw new Exception("Rezervasyon bulunamadı.");
+            }
+
+            // Rezervasyonun durumunu güncelliyoruz
+            reservation.ReservationStatus = ReservationStatus.Confirmed;
+            reservation.Status = DataStatus.Updated;
+            reservation.ModifiedDate = DateTime.Now;
+
+            // Yeni entity oluşturup güncelleme işlemini gerçekleştiriyoruz
+            var newEntity = _mapper.Map<Reservation>(reservation);
+            await _repository.UpdateAsync(reservation, newEntity);
+        }
+
+        /// <summary>
+        /// Belirtilen rezervasyon ID'sine sahip, onaylanmış (Confirmed) rezervasyonu getirir.
+        /// Eğer rezervasyon bulunamaz veya durum onaylı değilse, null döndürür.
+        /// </summary>
+        /// <param name="reservationId">Rezervasyon ID'si</param>
+        /// <returns>Onaylanmış rezervasyonun DTO'su veya null</returns>
+        public async Task<ReservationDto> GetConfirmedReservationByIdAsync(int reservationId)
+        {
+            var reservation = await _repository.GetByIdAsync(reservationId);
+            if (reservation == null || reservation.ReservationStatus != ReservationStatus.Confirmed)
+            {
+                return null;
+            }
+            return _mapper.Map<ReservationDto>(reservation);
+        }
+
     }
 }

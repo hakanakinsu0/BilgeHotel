@@ -94,6 +94,28 @@ namespace Project.Bll.Managers.Concretes
         }
 
 
+        /// <summary>
+        /// Belirtilen rezervasyona ait ekstra servislerin tamamını iptal eder.
+        /// Aktif durumda olan (Deleted olmayan) tüm ekstra servislerin statusunu Deleted yapar,
+        /// DeletedDate ve ModifiedDate alanlarını günceller.
+        /// </summary>
+        /// <param name="reservationId">Ekstra servisleri iptal edilecek rezervasyonun ID'si</param>
+        /// <returns>Asenkron işlem için Task</returns>
+        public async Task CancelExtraServicesByReservationIdAsync(int reservationId)
+        {
+            // İlgili rezervasyona ait ekstra servisleri çekiyoruz.
+            var extraServices = await _repository.Where(res => res.ReservationId == reservationId).ToListAsync();
+
+            // Durumu Deleted olmayan tüm ekstra servisler için güncelleme yapıyoruz.
+            foreach (var service in extraServices.Where(x => x.Status != DataStatus.Deleted))
+            {
+                service.Status = DataStatus.Deleted;
+                service.DeletedDate = DateTime.Now;
+                service.ModifiedDate = DateTime.Now;
+                await _repository.UpdateAsync(service, service);
+            }
+        }
+
 
     }
 }

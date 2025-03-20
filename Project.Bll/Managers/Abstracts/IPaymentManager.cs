@@ -13,6 +13,11 @@ namespace Project.Bll.Managers.Abstracts
         Task<decimal> GetTotalRevenueAsync();
         Task<decimal> GetRevenueLast30DaysAsync();
         Task<decimal> GetPendingPaymentsAsync();
+
+        Task RecordPaymentAsync(int reservationId, decimal amount);
+        Task CancelPaymentByReservationIdAsync(int reservationId);
+
+
     }
 
 }

@@ -21,6 +21,10 @@ namespace Project.Bll.Managers.Abstracts
         Guid GenerateActivationCode();  // Aktivasyon kodu üretir.
         Task SendActivationEmailAsync(AppUser user, Guid activationCode); //Aktivasyon mailini gönderir.
         Task<IdentityResult> ConfirmEmailAsync(int userId, Guid activationCode); //Email onaylama işlemini gerçekleştirir.
-        Task<IdentityResult> SendPasswordResetEmailAsync(string email); //Şifre sıfırlama mailini gönderir. 
+        Task<IdentityResult> SendPasswordResetEmailAsync(string email); //Şifre sıfırlama mailini gönderir.
+        Task<(AppUserDto user, AppUserProfileDto profile)> GetUserWithProfileAsync(string username);
+
+
+
     }
 }

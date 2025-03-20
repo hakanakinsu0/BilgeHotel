@@ -1,13 +1,33 @@
-﻿namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
 {
     public class PaymentCancelRequestModel
     {
+        [Display(Name = "Rezervasyon Numarası")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public int ReservationId { get; set; }
-        public string CardUserName { get; set; } = string.Empty;
-        public string CardNumber { get; set; } = string.Empty;
-        public string CVV { get; set; } = string.Empty; // **API’den dinamik olarak alınacak**
-        public decimal RefundAmount { get; set; } // Kullanıcıya geri iade edilecek tutar
-        public string RoomNumber { get; set; } 
 
+        [Display(Name = "Kart Sahibi")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        public string CardUserName { get; set; }
+
+        [Display(Name = "Kart Numarası")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        public string CardNumber { get; set; }
+
+        [Display(Name = "CVV")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        [StringLength(3, MinimumLength = 3, ErrorMessage = "CVV {0} 3 haneli olmalıdır.")]
+        public string CVV { get; set; }
+
+        [Display(Name = "İade Edilecek Tutar")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "{0} pozitif bir değer olmalıdır.")]
+        public decimal RefundAmount { get; set; }
+
+        [Display(Name = "Oda Numarası")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        public string RoomNumber { get; set; }
     }
 }
