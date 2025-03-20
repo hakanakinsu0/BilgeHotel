@@ -148,9 +148,8 @@ namespace Project.MvcUI.Controllers
             // TempData'da mesaj varsa, bunu view model'in ErrorMessage alanına aktar
             if (TempData["Message"] != null)
             {
-                viewModel.ErrorMessage = TempData["Message"].ToString();
+                viewModel.ErrorMessage = TempData["Message"]!.ToString(); // '!' operatörü, TempData["Message"] değerinin null olmadığını garanti altına almak için kullanılır. Böylece ToString() metodu çağrıldığında null referans hatası alınmaz.
             }
-
             return View(viewModel); // View'a gönder
         }
 
@@ -355,7 +354,7 @@ namespace Project.MvcUI.Controllers
         /// <param name="message">Görüntülenecek hata/success mesajı.</param>
         /// <param name="redirectAction">Yönlendirme yapılacak action adı; boş ise view render edilir.</param>
         /// <returns>ActionResult: Yönlendirme veya view döndürür.</returns>
-        private IActionResult ProcessResponse<T>(dynamic response, T viewModel, bool success, string message, string redirectAction = null) where T : class
+        private IActionResult ProcessResponse<T>(dynamic response, T viewModel, bool success, string message, string? redirectAction = null) where T : class
         {
             SetResponseMessage(response, success, message); // Response mesajını ayarla
             dynamic vm = viewModel; // viewModel'in ErrorMessage property'sine erişmek için dynamic'e cast et
