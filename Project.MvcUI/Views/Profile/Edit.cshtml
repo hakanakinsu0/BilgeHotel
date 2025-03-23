@@ -1,71 +1,69 @@
-﻿@model UserProfileUpdateRequestModel
+﻿@model UserProfileEditPageVm
 
 @{
-    ViewData["Title"] = "Profilimi Düzenle";
+    ViewData["Title"] = Model.PageTitle;
 }
 
 <div class="container mt-5">
-    <h2 class="text-center">Profil Bilgilerini Güncelle</h2>
+    <h2 class="text-center">@Model.PageTitle</h2>
 
-    @if (TempData["SuccessMessage"] != null)
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
     {
         <div class="alert alert-success text-center">
-            @TempData["SuccessMessage"]
+            @Model.SuccessMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger text-center">
+            @Model.ErrorMessage
         </div>
     }
 
     <form asp-action="Edit" method="post" class="w-50 mx-auto border p-4 rounded shadow bg-light">
         <div class="mb-3">
-            <label asp-for="FirstName" class="form-label">Ad</label>
-            <input asp-for="FirstName" class="form-control" placeholder="Adınızı girin">
-            <span asp-validation-for="FirstName" class="text-danger"></span>
+            <label asp-for="UserProfileUpdate.FirstName" class="form-label">Ad</label>
+            <input asp-for="UserProfileUpdate.FirstName" class="form-control" placeholder="Adınızı girin" />
+            <span asp-validation-for="UserProfileUpdate.FirstName" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
-            <label asp-for="LastName" class="form-label">Soyad</label>
-            <input asp-for="LastName" class="form-control" placeholder="Soyadınızı girin">
-            <span asp-validation-for="LastName" class="text-danger"></span>
+            <label asp-for="UserProfileUpdate.LastName" class="form-label">Soyad</label>
+            <input asp-for="UserProfileUpdate.LastName" class="form-control" placeholder="Soyadınızı girin" />
+            <span asp-validation-for="UserProfileUpdate.LastName" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
-            <label asp-for="PhoneNumber" class="form-label">Telefon Numarası</label>
-            <input asp-for="PhoneNumber" class="form-control" placeholder="Telefon numaranızı girin">
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            <label asp-for="UserProfileUpdate.PhoneNumber" class="form-label">Telefon Numarası</label>
+            <input asp-for="UserProfileUpdate.PhoneNumber" class="form-control" placeholder="Telefon numaranızı girin" />
+            <span asp-validation-for="UserProfileUpdate.PhoneNumber" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
-            <label asp-for="Address" class="form-label">Adres</label>
-            <textarea asp-for="Address" class="form-control" placeholder="Adresinizi girin"></textarea>
-            <span asp-validation-for="Address" class="text-danger"></span>
+            <label asp-for="UserProfileUpdate.Address" class="form-label">Adres</label>
+            <textarea asp-for="UserProfileUpdate.Address" class="form-control" placeholder="Adresinizi girin"></textarea>
+            <span asp-validation-for="UserProfileUpdate.Address" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
-            <label asp-for="Gender" class="form-label">Cinsiyet</label>
-            <select asp-for="Gender" class="form-control">
+            <label asp-for="UserProfileUpdate.Gender" class="form-label">Cinsiyet</label>
+            <select asp-for="UserProfileUpdate.Gender" class="form-control">
                 <option value="Male">Erkek</option>
                 <option value="Female">Kadın</option>
                 <option value="Other">Diğer</option>
             </select>
-            <span asp-validation-for="Gender" class="text-danger"></span>
+            <span asp-validation-for="UserProfileUpdate.Gender" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
-            <label asp-for="Nationality" class="form-label">Uyruğunuz</label>
-            <select asp-for="Nationality" class="form-control">
+            <label asp-for="UserProfileUpdate.Nationality" class="form-label">Uyruğunuz</label>
+            <select asp-for="UserProfileUpdate.Nationality" class="form-control">
                 <option value="">Lütfen seçiniz</option>
                 <option value="Turk">Türk</option>
                 <option value="Diger">Diğer</option>
             </select>
-            <span asp-validation-for="Nationality" class="text-danger"></span>
+            <span asp-validation-for="UserProfileUpdate.Nationality" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
-            <label asp-for="IdentityNumber" class="form-label">TC Kimlik Numarası</label>
-            <input asp-for="IdentityNumber" class="form-control" placeholder="TC Kimlik Numaranızı girin">
-            <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+            <label asp-for="UserProfileUpdate.IdentityNumber" class="form-label">TC Kimlik Numarası</label>
+            <input asp-for="UserProfileUpdate.IdentityNumber" class="form-control" placeholder="TC Kimlik Numaranızı girin" />
+            <span asp-validation-for="UserProfileUpdate.IdentityNumber" class="text-danger"></span>
         </div>
-
-
 
         <button type="submit" class="btn btn-success w-100">Güncelle</button>
 
