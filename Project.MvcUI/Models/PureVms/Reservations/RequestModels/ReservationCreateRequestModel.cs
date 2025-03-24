@@ -6,19 +6,26 @@ namespace Project.MvcUI.Models.PureVms.Reservations.RequestModels
 {
     public class ReservationCreateRequestModel
     {
+        [Display(Name = "Giriş Tarihi")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "Başlangıç tarihi gereklidir.")]
         public DateTime StartDate { get; set; }
 
+        [Display(Name = "Çıkış Tarihi")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "Bitiş tarihi gereklidir.")]
         public DateTime EndDate { get; set; }
 
-        [Required(ErrorMessage = "Oda seçimi gereklidir.")]
+        [Display(Name = "Oda Seçimi")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public int RoomId { get; set; }
 
-        // Opsiyonel: Paket seçimi
+        [Display(Name = "Paket Seçimi (Opsiyonel)")]
         public int? PackageId { get; set; }
 
-        // Opsiyonel: Ek hizmetler için ID listesi
+        [Display(Name = "Ekstra Hizmetler (Opsiyonel)")]
         public List<int>? ExtraServiceIds { get; set; } = new List<int>();
     }
 }

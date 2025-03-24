@@ -23,6 +23,7 @@ namespace Project.Bll.Managers.Abstracts
         Task<bool> UpdateRoomStatusAsync(int roomId, RoomStatus newStatus);
 
         Task<List<RoomDto>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate);
+        Task UpdateRoomStatusOnReservationChangeAsync(int oldRoomId, int newRoomId);
 
     }
 

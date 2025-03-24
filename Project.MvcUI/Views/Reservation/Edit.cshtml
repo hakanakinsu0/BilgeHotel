@@ -1,43 +1,43 @@
-﻿@model Project.MvcUI.Models.PureVms.Reservations.RequestModels.ReservationUpdateRequestModel
+﻿@model ReservationUpdateRequestModel
 
 @{
-    ViewData["Title"] = "Rezervasyonu Güncelle";
+    ViewData["Title"] = "Rezervasyonu Güncelle"; // Sayfa başlığı ayarlandı
 }
 
-<h2>@ViewData["Title"]</h2>
-
+<h2>@ViewData["Title"]</h2> <!-- Başlık görüntülendi -->
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div> <!-- Hata mesajı görüntülendi -->
 }
 
 <form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="ReservationId" />
+    <input type="hidden" asp-for="ReservationId" /> <!-- Rezervasyon ID gizli olarak gönderildi -->
+    @* Düzenlenebilir oda seçimi için RoomId alanının gizli input'u kaldırıldı *@
 
     <div class="form-group">
         <label for="StartDate">Giriş Tarihi</label>
-        <input asp-for="StartDate" class="form-control" type="date" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
+        <input asp-for="StartDate" class="form-control" type="date" /> <!-- Giriş tarihi için input oluşturuldu -->
+        <span asp-validation-for="StartDate" class="text-danger"></span> <!-- Giriş tarihi validasyonu -->
     </div>
 
     <div class="form-group">
         <label for="EndDate">Çıkış Tarihi</label>
-        <input asp-for="EndDate" class="form-control" type="date" />
-        <span asp-validation-for="EndDate" class="text-danger"></span>
+        <input asp-for="EndDate" class="form-control" type="date" /> <!-- Çıkış tarihi için input oluşturuldu -->
+        <span asp-validation-for="EndDate" class="text-danger"></span> <!-- Çıkış tarihi validasyonu -->
     </div>
 
     <div class="form-group">
         <label for="RoomId">Oda Seçimi</label>
         <select asp-for="RoomId" class="form-control" asp-items="ViewBag.Rooms">
-            <option value="">Lütfen bir oda seçin</option>
-        </select>
+            <option value="">Lütfen bir oda seçin</option> <!-- Varsayılan seçenek -->
+        </select> <!-- Oda seçimi dropdown'ı -->
     </div>
 
     <div class="form-group">
         <label for="PackageId">Paket Seçimi</label>
         <select asp-for="PackageId" class="form-control" asp-items="ViewBag.Packages">
-            <option value="">Paket seçilmedi</option>
-        </select>
+            <option value="">Paket seçilmedi</option> <!-- Varsayılan paket seçeneği -->
+        </select> <!-- Paket seçimi dropdown'ı -->
     </div>
 
     <div class="form-group">
@@ -48,7 +48,8 @@
                 foreach (var service in ViewBag.ExtraServices as List<SelectListItem>)
                 {
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="ExtraServiceIds" value="@service.Value" id="service_@service.Value"
+                        <input type="checkbox" class="form-check-input" name="ExtraServiceIds"
+                               value="@service.Value" id="service_@service.Value"
                         @(Model.ExtraServiceIds.Contains(int.Parse(service.Value)) ? "checked" : "") />
                         <label class="form-check-label" for="service_@service.Value">@service.Text</label>
                     </div>
@@ -57,11 +58,13 @@
         </div>
     </div>
 
+
+
     <div class="form-group">
         <label for="TotalPrice">Toplam Fiyat</label>
-        <input asp-for="TotalPrice" class="form-control" type="text" readonly />
+        <input asp-for="TotalPrice" class="form-control" type="text" readonly /> <!-- Toplam fiyat alanı, salt okunur -->
     </div>
 
-    <button type="submit" class="btn btn-primary">Güncelle</button>
-    <a asp-action="MyReservations" class="btn btn-secondary">İptal</a>
+    <button type="submit" class="btn btn-primary">Güncelle</button> <!-- Güncelleme butonu -->
+    <a asp-action="MyReservations" class="btn btn-secondary">İptal</a> <!-- İptal butonu -->
 </form>

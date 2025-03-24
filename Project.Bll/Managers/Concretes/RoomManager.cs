@@ -155,5 +155,41 @@ namespace Project.Bll.Managers.Concretes
 
             return _mapper.Map<List<RoomDto>>(rooms);
         }
+
+
+        /// <summary>
+        /// Rezervasyon değişikliği sırasında oda durumlarını günceller.
+        /// Eski oda farklıysa, eski odanın durumunu "Empty" ve yeni odanın durumunu "Occupied" olarak ayarlar.
+        /// </summary>
+        /// <param name="oldRoomId">Eski oda ID'si</param>
+        /// <param name="newRoomId">Yeni oda ID'si</param>
+        /// <returns>Asenkron işlem için Task</returns>
+        public async Task UpdateRoomStatusOnReservationChangeAsync(int oldRoomId, int newRoomId)
+        {
+            if (oldRoomId != newRoomId)
+            {
+                // Eski oda durumunu güncelle: boş olarak ayarla.
+                var oldRoom = await _repository.GetByIdAsync(oldRoomId);
+                if (oldRoom != null)
+                {
+                    oldRoom.RoomStatus = RoomStatus.Empty;
+                    oldRoom.Status = DataStatus.Updated;
+                    oldRoom.ModifiedDate = DateTime.Now;
+                    await _repository.UpdateAsync(oldRoom, oldRoom);
+                }
+
+                // Yeni oda durumunu güncelle: dolu olarak ayarla.
+                var newRoom = await _repository.GetByIdAsync(newRoomId);
+                if (newRoom != null)
+                {
+                    newRoom.RoomStatus = RoomStatus.Occupied;
+                    newRoom.Status = DataStatus.Updated;
+                    newRoom.ModifiedDate = DateTime.Now;
+                    await _repository.UpdateAsync(newRoom, newRoom);
+                }
+            }
+        }
+
+
     }
 }

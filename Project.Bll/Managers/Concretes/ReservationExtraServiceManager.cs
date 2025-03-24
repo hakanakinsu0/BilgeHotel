@@ -55,8 +55,9 @@ namespace Project.Bll.Managers.Concretes
                 {
                     ReservationId = reservationId,
                     ExtraServiceId = id,
-                    Status = DataStatus.Inserted,
-                    ModifiedDate = DateTime.Now
+                    Status = DataStatus.Updated,
+                    CreatedDate = DateTime.Now,  // Yeni eklenen servisler için CreatedDate atanıyor
+                    ModifiedDate = DateTime.Now,
                 }).ToList();
 
             if (servicesToAdd.Any())

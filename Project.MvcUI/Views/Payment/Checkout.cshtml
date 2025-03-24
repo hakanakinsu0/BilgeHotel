@@ -10,6 +10,11 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
 <h2>@Model.PageTitle</h2>
 <p>Rezervasyonunuz için ödeme yapabilirsiniz.</p>
 

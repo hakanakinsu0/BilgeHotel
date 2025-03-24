@@ -343,10 +343,10 @@ namespace Project.Bll.Managers.Concretes
         public async Task<ReservationDto> GetConfirmedReservationByIdAsync(int reservationId)
         {
             var reservation = await _repository.GetByIdAsync(reservationId);
-            if (reservation == null || reservation.ReservationStatus != ReservationStatus.Confirmed)
-            {
-                return null;
-            }
+            //if (reservation == null || reservation.ReservationStatus != ReservationStatus.Confirmed)
+            //{
+            //    return null;
+            //}
             return _mapper.Map<ReservationDto>(reservation);
         }
 

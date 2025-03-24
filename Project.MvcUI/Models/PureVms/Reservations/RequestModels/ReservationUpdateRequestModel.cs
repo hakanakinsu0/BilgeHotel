@@ -6,22 +6,29 @@ namespace Project.MvcUI.Models.PureVms.Reservations.RequestModels
 {
     public class ReservationUpdateRequestModel
     {
-        [Required]
+        [Display(Name = "Rezervasyon ID'si")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public int ReservationId { get; set; }
 
-        [Required(ErrorMessage = "Başlangıç tarihi gereklidir.")]
+        [Display(Name = "Başlangıç Tarihi")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public DateTime StartDate { get; set; }
 
-        [Required(ErrorMessage = "Bitiş tarihi gereklidir.")]
+        [Display(Name = "Bitiş Tarihi")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public DateTime EndDate { get; set; }
 
-        [Required(ErrorMessage = "Oda seçilmelidir.")]
+        [Display(Name = "Oda Seçimi")]
+        [Required(ErrorMessage = "{0} gereklidir.")]
         public int RoomId { get; set; }
 
+        [Display(Name = "Paket Seçimi (Opsiyonel)")]
         public int? PackageId { get; set; }
 
+        [Display(Name = "Toplam Fiyat")]
         public decimal TotalPrice { get; set; }
 
-        public List<int> ExtraServiceIds { get; set; } = new List<int>(); // Güncellenmiş ekstra hizmetler
+        [Display(Name = "Ekstra Hizmetler")]
+        public List<int>? ExtraServiceIds { get; set; } // Güncellenmiş ekstra hizmetler
     }
 }

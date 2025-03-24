@@ -85,13 +85,13 @@
                     <td>
                         @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.PendingPayment)
                         {
-                            <a asp-action="Checkout" asp-controller="Payment" asp-route-id="@reservation.Id" class="btn btn-warning btn-sm">Ödeme Yap</a>
+                            <a asp-action="Checkout" asp-controller="Payment" asp-route-reservationId="@reservation.Id" class="btn btn-warning btn-sm">Ödeme Yap</a>
 
                         }
                         @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Confirmed)
                         {
                             <!-- 🛑 Ödemeyi İptal Et -->
-                            <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-id="@reservation.Id" class="btn btn-warning btn-sm">💳 Ödemeyi İptal Et</a>
+                            <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@reservation.Id" class="btn btn-warning btn-sm">💳 Ödemeyi İptal Et</a>
                         }
                         @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Canceled)
 
