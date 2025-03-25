@@ -1,7 +1,14 @@
-﻿@model Project.MvcUI.Models.PureVms.Reservations.ResponseModels.ReservationListResponseModel
+﻿@model Project.MvcUI.Models.PageVms.Reservations.ReservationListPageVm
 
-<h2>Geçmiş ve Aktif Rezervasyonlar</h2>
+@{
+    ViewData["Title"] = Model.PageTitle;
+}
 
+<h2>@Model.PageTitle</h2>
+@if (!string.IsNullOrEmpty(Model.HelpText))
+{
+    <p>@Model.HelpText</p>
+}
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -57,7 +64,7 @@
                         }
                         @statusText
                     </td>
-                    <td>@reservation.TotalPrice.ToString("N2") TL</td> <!-- ✅ Sayıyı formatlıyoruz -->
+                    <td>@reservation.TotalPrice.ToString("N2") TL</td>
                     <td>
                         @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.PendingPayment)
                         {
@@ -66,38 +73,30 @@
                         else
                         {
                             <button class="btn btn-secondary btn-sm" disabled>Güncelle</button>
-
                         }
                     </td>
                     <td>
                         @if (reservation.ReservationStatus != Project.Entities.Enums.ReservationStatus.Canceled)
                         {
-                            <!-- 🛑 Rezervasyonu İptal Et -->
                             <a asp-action="Cancel" asp-controller="Reservation" asp-route-id="@reservation.Id" class="btn btn-danger btn-sm">Rezervasyonu İptal Et</a>
                         }
                         else
                         {
                             <button class="btn btn-secondary btn-sm" disabled>Rezervasyonu İptal Et</button>
-
                         }
-                        
                     </td>
                     <td>
                         @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.PendingPayment)
                         {
                             <a asp-action="Checkout" asp-controller="Payment" asp-route-reservationId="@reservation.Id" class="btn btn-warning btn-sm">Ödeme Yap</a>
-
                         }
-                        @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Confirmed)
+                        else if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Confirmed)
                         {
-                            <!-- 🛑 Ödemeyi İptal Et -->
-                            <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@reservation.Id" class="btn btn-warning btn-sm">💳 Ödemeyi İptal Et</a>
+                            <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@reservation.Id" class="btn btn-warning btn-sm">Ödemeyi İptal Et</a>
                         }
-                        @if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Canceled)
-
+                        else if (reservation.ReservationStatus == Project.Entities.Enums.ReservationStatus.Canceled)
                         {
-                            <button class="btn btn-secondary btn-sm" disabled>Ödemeyi Yap</button>
-
+                            <button class="btn btn-secondary btn-sm" disabled>Ödeme Yap</button>
                         }
                     </td>
                 </tr>
@@ -105,7 +104,7 @@
         </tbody>
     </table>
 }
-else
+@* else
 {
     <p>Henüz rezervasyonunuz bulunmamaktadır.</p>
-}
+} *@

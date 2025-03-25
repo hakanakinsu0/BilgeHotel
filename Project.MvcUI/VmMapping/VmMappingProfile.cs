@@ -7,6 +7,7 @@ using Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels;
 using Project.MvcUI.Models.PureVms.AppUsers.RequestModels;
 using Project.MvcUI.Models.PureVms.AppUsers.ResponseModels;
+using Project.MvcUI.Models.PureVms.Reservations.RequestModels;
 
 namespace Project.MvcUI.VmMapping
 {
@@ -21,6 +22,9 @@ namespace Project.MvcUI.VmMapping
             CreateMap<UserProfileUpdateRequestModel, AppUserProfile>().ReverseMap();
             CreateMap<UserChangePasswordRequestModel, AppUserDto>().ReverseMap();
             CreateMap<ReservationDto, Reservation>().ReverseMap();
+            CreateMap<ReservationCreateRequestModel, ReservationDto>().ReverseMap();
+            CreateMap<Reservation, ReservationDto>();
+
 
             // ✅ Admin Paneli Kullanıcı Yönetimi
             CreateMap<UserViewModel, AppUserDto>().ReverseMap();

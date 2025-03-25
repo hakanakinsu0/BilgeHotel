@@ -68,7 +68,7 @@ namespace Project.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CardInfoes");
+                    b.ToTable("CardInfoes", (string)null);
 
                     b.HasData(
                         new

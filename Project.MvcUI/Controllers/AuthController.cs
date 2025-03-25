@@ -202,9 +202,9 @@ namespace Project.MvcUI.Controllers
                     return RedirectToAction("Index", "Dashboard", new { Area = "Admin" }); // Admin paneline yönlendir 
 
                 else if (roles.Contains(MemberRole)) // Member rolüne sahipse
-                    return RedirectToAction("Index", "Home"); // Üye (şimdilik Home) paneline yönlendir 
+                    return RedirectToAction("Index", "Profile"); // Üye (şimdilik Home) paneline yönlendir 
 
-                return RedirectToAction("Index", "Home"); // Diğer durumlarda varsayılan yönlendirme 
+                return RedirectToAction("Index", "Profile"); // Diğer durumlarda varsayılan yönlendirme 
             }
 
             return ProcessResponse(response, viewModel, false, "Geçersiz giriş bilgileri.", "Login");

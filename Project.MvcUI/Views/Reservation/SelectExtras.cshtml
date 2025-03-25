@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Models.PureVms.Reservations.RequestModels.ReservationSelectExtrasRequestModel
+﻿@model ReservationSelectExtrasPageVm
 
 @{
     ViewData["Title"] = "Ekstra Hizmet Seçimi";
@@ -12,17 +12,19 @@
 }
 
 <form asp-action="SelectExtras" method="post">
-    <input type="hidden" asp-for="ReservationId" />
+    <!-- Form modelindeki ReservationSelectExtrasRequest içindeki ReservationId gönderiliyor -->
+    <input type="hidden" asp-for="ReservationSelectExtrasRequest.ReservationId" />
 
     <div class="form-group">
         <label>Ekstra Hizmetler</label>
         <div>
-            @if (ViewBag.ExtraServices != null)
+            @if (Model.ExtraServices != null)
             {
-                foreach (var service in ViewBag.ExtraServices as List<SelectListItem>)
+                foreach (var service in Model.ExtraServices)
                 {
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="ExtraServiceIds" value="@service.Value" id="service_@service.Value" />
+                        <!-- Checkbox name attribute'unu form modelinin içindeki ExtraServiceIds olarak ayarlıyoruz -->
+                        <input type="checkbox" class="form-check-input" name="ReservationSelectExtrasRequest.ExtraServiceIds" value="@service.Value" id="service_@service.Value" />
                         <label class="form-check-label" for="service_@service.Value">@service.Text</label>
                     </div>
                 }

@@ -7,7 +7,7 @@ using Project.MvcUI.Areas.Admin.Models;
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // 🔐 Sadece Admin yetkisi olanlar erişebilir
+    [Authorize(Roles = "Admin")] // Bu controller'a yalnızca Admin rolündeki kullanıcılar erişebilir.
     public class DashboardController : Controller
     {
         private readonly IAppUserManager _appUserManager;
@@ -26,8 +26,15 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             _roomManager = roomManager;
             _paymentManager = paymentManager;
         }
+
+        /// <summary>
+        /// Dashboard sayfası için gerekli verileri getirir.
+        /// Toplam kullanıcı sayısı, aktif kullanıcı sayısı, rezervasyon istatistikleri, oda durumları ve gelir bilgileri gibi veriler toplanır.
+        /// Bu veriler DashboardViewModel'e aktarılır ve view'e gönderilir.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
+            // DashboardViewModel, admin panelinde görüntülenecek istatistiksel verileri içerir.
             DashboardViewModel dashboardData = new DashboardViewModel
             {
                 TotalUsers = await _appUserManager.GetTotalUserCountAsync(),
@@ -44,6 +51,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 PendingPayments = await _paymentManager.GetPendingPaymentsAsync()
             };
 
+            // Toplanan veriler Dashboard view'ine gönderilir.
             return View(dashboardData);
         }
     }

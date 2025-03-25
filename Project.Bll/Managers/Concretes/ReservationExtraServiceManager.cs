@@ -19,35 +19,39 @@ namespace Project.Bll.Managers.Concretes
 
         public async Task UpdateExtraServicesForReservation(int reservationId, List<int> newExtraServiceIds)
         {
+            // Eğer yeni ekstra hizmet ID listesi null ise, boş liste ile değiştirilir.
+            newExtraServiceIds = newExtraServiceIds ?? new List<int>();
+
+            // İlgili rezervasyona ait mevcut ekstra hizmet kayıtları çekiliyor.
             var existingServices = await _repository.Where(res => res.ReservationId == reservationId).ToListAsync();
 
-            // 1️⃣ Silinecek hizmetleri belirle (Şu an seçili olmayanlar)
+            // 1️⃣ Silinecek hizmetleri belirle: Yeni listede olmayan ve henüz silinmemiş kayıtlar.
             var servicesToDelete = existingServices
                 .Where(es => !newExtraServiceIds.Contains(es.ExtraServiceId) && es.Status != DataStatus.Deleted)
                 .ToList();
 
             foreach (var service in servicesToDelete)
             {
-                service.Status = DataStatus.Deleted; // Silinmek yerine işaretleniyor
+                service.Status = DataStatus.Deleted;  // Kayıt silinmek yerine "Deleted" olarak işaretlenir.
                 service.DeletedDate = DateTime.Now;
                 service.ModifiedDate = DateTime.Now;
-                await _repository.UpdateAsync(service, service); // Güncelleme yapılıyor
+                await _repository.UpdateAsync(service, service);
             }
 
-            // 2️⃣ Daha önce Deleted olan hizmetleri geri aktif hale getirme
+            // 2️⃣ Daha önce silinmiş (Deleted) kayıtları yeniden aktif hale getirme.
             var servicesToReactivate = existingServices
                 .Where(es => newExtraServiceIds.Contains(es.ExtraServiceId) && es.Status == DataStatus.Deleted)
                 .ToList();
 
             foreach (var service in servicesToReactivate)
             {
-                service.Status = DataStatus.Updated; // Yeniden aktif hale getir
+                service.Status = DataStatus.Updated; // Kayıt yeniden aktif hale getirilir.
                 service.DeletedDate = null;
                 service.ModifiedDate = DateTime.Now;
                 await _repository.UpdateAsync(service, service);
             }
 
-            // 3️⃣ Yeni eklenen hizmetleri bul ve ekle
+            // 3️⃣ Yeni eklenen hizmetleri bul ve ekle: Yeni listede olup, mevcut kayıtlarda bulunmayanlar.
             var existingServiceIds = existingServices.Select(es => es.ExtraServiceId).ToList();
             var servicesToAdd = newExtraServiceIds
                 .Where(id => !existingServiceIds.Contains(id))
@@ -56,7 +60,7 @@ namespace Project.Bll.Managers.Concretes
                     ReservationId = reservationId,
                     ExtraServiceId = id,
                     Status = DataStatus.Updated,
-                    CreatedDate = DateTime.Now,  // Yeni eklenen servisler için CreatedDate atanıyor
+                    CreatedDate = DateTime.Now,  // Yeni eklenen kayıt için CreatedDate atanır.
                     ModifiedDate = DateTime.Now,
                 }).ToList();
 
@@ -65,8 +69,6 @@ namespace Project.Bll.Managers.Concretes
                 await _repository.CreateRangeAsync(servicesToAdd);
             }
         }
-
-
 
 
         public async Task CreateRangeAsync(List<ReservationExtraServiceDto> dtoList)
