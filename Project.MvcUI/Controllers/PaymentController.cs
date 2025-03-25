@@ -4,28 +4,34 @@ using Newtonsoft.Json;
 using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Bll.Managers.Concretes;
+using Project.Common.Tools;
 using Project.Entities.Enums;
 using Project.Entities.Models;
 using Project.MvcUI.Models.PageVms.Payments;
 using Project.MvcUI.Models.PureVms.Payments.RequestModels;
 using Project.MvcUI.Models.PureVms.Payments.ResponseModels;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 
 namespace Project.MvcUI.Controllers
 {
-    [Authorize(Roles = "Admin,Member")] 
+    // Bu controller, yalnızca Admin ve Member rollerindeki kullanıcılar tarafından erişilebilir.
+    [Authorize(Roles = "Admin,Member")]
     public class PaymentController : Controller
     {
+        // Controller'ın ihtiyaç duyduğu manager ve servis bağımlılıkları tanımlanıyor.
         private readonly IReservationManager _reservationManager;
         private readonly IAppUserManager _appUserManager;
         private readonly IAppUserProfileManager _appUserProfileManager;
         private readonly IRoomManager _roomManager;
         private readonly IPaymentManager _paymentManager;
         private readonly IReservationExtraServiceManager _reservationExtraServiceManager;
+        private readonly IExtraServiceManager _extraServiceManager;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public PaymentController(IReservationManager reservationManager, IAppUserManager appUserManager, IAppUserProfileManager appUserProfileManager, IRoomManager roomManager, IPaymentManager paymentManager, IReservationExtraServiceManager reservationExtraServiceManager, IHttpClientFactory httpClientFactory)
+        // Constructor enjeksiyonu ile tüm bağımlılıklar sağlanıyor.
+        public PaymentController(IReservationManager reservationManager, IAppUserManager appUserManager, IAppUserProfileManager appUserProfileManager, IRoomManager roomManager, IPaymentManager paymentManager, IReservationExtraServiceManager reservationExtraServiceManager, IHttpClientFactory httpClientFactory, IExtraServiceManager extraServiceManager)
         {
             _reservationManager = reservationManager;
             _appUserManager = appUserManager;
@@ -34,77 +40,71 @@ namespace Project.MvcUI.Controllers
             _paymentManager = paymentManager;
             _reservationExtraServiceManager = reservationExtraServiceManager;
             _httpClientFactory = httpClientFactory;
+            _extraServiceManager = extraServiceManager;
         }
 
         #region Index
 
+        // Index action'ı, PaymentController için varsayılan view'i döndürür.
         public IActionResult Index()
         {
             return View();
-        } 
+        }
 
         #endregion
 
         #region Checkout
 
         /// <summary>
-        /// Ödeme sayfasını açar.
-        /// Rezervasyon ve kullanıcı profil bilgilerini getirip, ödeme işlemi için gerekli PageVM'i oluşturur.
+        /// Ödeme sayfasını açar. İlgili rezervasyon ve kullanıcı profil bilgilerini çekip, ödeme işlemi için gerekli PageVM'i oluşturur.
         /// </summary>
-        public async Task<IActionResult> Checkout(int reservationId) // Ödeme sayfası için PageVM oluşturma
+        /// <param name="reservationId">İlgili rezervasyonun ID'si</param>
+        /// <returns>Ödeme işlemi için hazırlanmış view</returns>
+        public async Task<IActionResult> Checkout(int reservationId)
         {
-            // Rezervasyon bilgisini asenkron olarak alıyoruz
-            ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId); // Rezervasyon bilgisi çekiliyor
+            // Belirtilen ID ile rezervasyon bilgisini asenkron olarak çekiyoruz.
+            ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId); // Rezervasyon verisi alınıyor
+
+            // Rezervasyon bulunamazsa, hata mesajı belirleyip yönlendirme yapıyoruz.
             if (reservation == null)
-            {
-                // Rezervasyon bulunamazsa hata mesajı verip, rezervasyon listesinin bulunduğu sayfaya yönlendiriyoruz
-                TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
-                return RedirectToAction("MyReservations", "Reservation");
-            }
+                return RedirectWithError("Rezervasyon bulunamadı.");
 
-            // Rezervasyon durumunu kontrol ediyoruz: Eğer rezervasyon zaten onaylanmış veya iptal edilmişse, ödeme işlemi başlatılamaz
+            // Rezervasyonun ödeme için uygun olup olmadığını kontrol ediyoruz.
+            // Eğer rezervasyon onaylanmış veya iptal edilmişse, ödeme işlemi başlatılamaz.
             if (!await _reservationManager.IsReservationPayableAsync(reservationId))
-            {
-                TempData["ErrorMessage"] = "Bu rezervasyon için ödeme işlemi başlatılamaz. Rezervasyon zaten onaylanmış veya iptal edilmiş.";
-                return RedirectToAction("MyReservations", "Reservation");
-            }
+                return RedirectWithError("Bu rezervasyon için ödeme işlemi başlatılamaz. Rezervasyon zaten onaylanmış veya iptal edilmiş.");
 
-            // Rezervasyonun ilişkilendirildiği kullanıcı bilgisinin (AppUserId) dolu olup olmadığını kontrol ediyoruz
+            // Rezervasyonun ilişkilendirildiği kullanıcı bilgisinin mevcut olup olmadığını kontrol ediyoruz.
             if (reservation.AppUserId == null)
-            {
-                TempData["ErrorMessage"] = "Rezervasyonla ilişkilendirilmiş kullanıcı bulunamadı.";
-                return RedirectToAction("MyReservations", "Reservation");
-            }
+                return RedirectWithError("Rezervasyonla ilişkilendirilmiş kullanıcı bulunamadı.");
 
-            // Rezervasyona ait kullanıcı profil bilgisini getiriyoruz
-            AppUserProfileDto userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId.Value); // Kullanıcı profili çekiliyor
+            // Rezervasyona ait kullanıcı profil bilgilerini çekiyoruz.
+            AppUserProfileDto userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId.Value); // Kullanıcı profili alınıyor
 
+            // Kullanıcı profili bulunamazsa, hata mesajı ile yönlendiriyoruz.
             if (userProfile == null)
-            {
-                TempData["ErrorMessage"] = "Kullanıcı bilgisi bulunamadı.";
-                return RedirectToAction("MyReservations", "Reservation");
-            }
+                return RedirectWithError("Kullanıcı bilgisi bulunamadı.");
 
-            // Ödeme işlemi için kullanılacak pure model oluşturuluyor
+            // Ödeme işlemi için kullanılacak olan request modelini oluşturuyoruz.
             PaymentProcessRequestModel processRequest = new PaymentProcessRequestModel
             {
-                ReservationId = reservation.Id,          // Rezervasyon ID'si atanıyor
-                CardUserName = "",                       // Kart sahibi bilgisi; kullanıcı tarafından manuel girilecek
-                CardNumber = "",                         // Kart numarası; kullanıcı tarafından manuel girilecek
-                CVV = "",                                // CVV; kullanıcı tarafından manuel girilecek
-                ExpiryMonth = DateTime.Now.Month,        // Varsayılan olarak geçerli ay
-                ExpiryYear = DateTime.Now.Year,          // Varsayılan olarak geçerli yıl
-                ShoppingPrice = reservation.TotalPrice   // Ödeme tutarı, rezervasyonun toplam fiyatı olarak atanıyor
+                ReservationId = reservation.Id,          // Rezervasyon ID'si modelde atanıyor
+                CardUserName = "",                       // Kart sahibi bilgisi; kullanıcı tarafından girilecek
+                CardNumber = "",                         // Kart numarası; kullanıcı tarafından girilecek
+                CVV = "",                                // CVV; kullanıcı tarafından girilecek
+                ExpiryMonth = DateTime.Now.Month,        // Geçerli ay atanıyor (varsayılan değer)
+                ExpiryYear = DateTime.Now.Year,          // Geçerli yıl atanıyor (varsayılan değer)
+                ShoppingPrice = reservation.TotalPrice   // Rezervasyondan alınan toplam fiyat ödeme tutarı olarak belirleniyor
             };
 
-            // UI'ya özgü ek bilgileri barındıran PageVM oluşturuluyor
+            // UI'ya özgü ek bilgileri barındıran PaymentProcessPageVm oluşturuluyor.
             PaymentProcessPageVm pageVm = new PaymentProcessPageVm
             {
-                PaymentProcessRequest = processRequest,  // Pure model PageVM'e ekleniyor
-                PageTitle = "💳 Ödeme Yap"               // Sayfa başlığı belirleniyor
+                PaymentProcessRequest = processRequest,  // Ödeme işlemi için oluşturulan request model PageVM'e ekleniyor
+                PageTitle = "💳 Ödeme Yap"               // View için sayfa başlığı belirleniyor
             };
 
-            // Oluşturulan PageVM ile view render ediliyor
+            // Oluşturulan PaymentProcessPageVm modelini view'e gönderiyoruz.
             return View(pageVm);
         }
 
@@ -113,24 +113,22 @@ namespace Project.MvcUI.Controllers
         #region ProcessPayment
 
         /// <summary>
-        /// Ödeme işlemini gerçekleştirir.
+        /// Ödeme işlemini gerçekleştirir. 
         /// PaymentProcessPageVm içindeki PaymentProcessRequest verilerini kullanarak ödeme API'sine çağrı yapar.
-        /// API başarılı ise, ilgili rezervasyon "Confirmed" duruma getirilir ve ödeme kaydı manager üzerinden oluşturulur.
+        /// API çağrısı başarılı olursa, rezervasyon onaylanır ve ödeme kaydı oluşturulur.
+        /// Hata durumunda ilgili hata mesajı ayarlanıp Checkout sayfasına yönlendirme yapılır.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessPayment(PaymentProcessPageVm pageVm)
         {
-            // Formdan gönderilen ödeme bilgilerinin yer aldığı modeli PageVM içinden alıyoruz.
+            // Formdan gönderilen ödeme bilgilerini içeren modeli, PageVM içerisinden alıyoruz.
             PaymentProcessRequestModel model = pageVm.PaymentProcessRequest;
 
-            // Model validasyonu kontrol ediliyor.
-            // Eğer model valid değilse, hata mesajı set edilip Checkout sayfasına yönlendiriliyor.
+            // Model doğrulamasını kontrol ediyoruz.
+            // Eğer model geçerli değilse, hata mesajı ayarlanır ve kullanıcı Checkout sayfasına yönlendirilir.
             if (!ModelState.IsValid)
-            {
-                TempData["ErrorMessage"] = "Lütfen tüm alanları eksiksiz doldurun.";
-                return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
-            }
+                return RedirectWithError("Lütfen tüm alanları eksiksiz doldurun.", "Checkout", "Payment", new RouteValueDictionary(new { reservationId = model.ReservationId }));
 
             // HTTP client örneği oluşturuluyor.
             HttpClient client = _httpClientFactory.CreateClient();
@@ -139,7 +137,7 @@ namespace Project.MvcUI.Controllers
             string apiUrl = "http://localhost:5190/api/Transaction/StartTransaction";
 
             // API'ye gönderilecek JSON içeriği oluşturuluyor.
-            // Bu içerik, ödeme işlemi için gerekli kart ve tutar bilgilerini içerir.
+            // Bu içerik, ödeme işlemi için gerekli kart bilgileri ve tutar bilgisini içerir.
             string jsonContent = JsonConvert.SerializeObject(new
             {
                 model.CardUserName,
@@ -153,7 +151,7 @@ namespace Project.MvcUI.Controllers
             // JSON içeriği, HTTP POST isteği için uygun formatta hazırlanıyor.
             StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            // API'ye POST isteği gönderiliyor.
+            // Ödeme API'sine POST isteği gönderiliyor.
             HttpResponseMessage response = await client.PostAsync(apiUrl, content);
 
             // API çağrısı başarılı ise:
@@ -161,40 +159,38 @@ namespace Project.MvcUI.Controllers
             {
                 try
                 {
-                    // Rezervasyonun onaylanması işlemi, ilgili manager metodu aracılığıyla merkezi hale getiriliyor.
-                    // Eğer rezervasyon onaylanamazsa exception fırlatılır.
+                    // Rezervasyon onaylama işlemi yapılıyor.
+                    // İlgili manager metodu çağrılarak, rezervasyon "Confirmed" duruma getiriliyor.
                     await _reservationManager.ConfirmReservationAsync(model.ReservationId);
                 }
                 catch (Exception ex)
                 {
-                    // Rezervasyon onaylama sırasında hata oluşursa, hata mesajı belirlenip Checkout sayfasına yönlendiriliyor.
-                    TempData["ErrorMessage"] = "Rezervasyon güncellenirken bir hata oluştu: " + ex.Message;
-                    return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
+                    // Rezervasyon onaylama sırasında hata oluşursa, hata mesajı ayarlanıp Checkout sayfasına yönlendiriliyor.
+                    return RedirectWithError("Rezervasyon güncellenirken bir hata oluştu: " + ex.Message, "Checkout", "Payment",
+                        new RouteValueDictionary(new { reservationId = model.ReservationId }));
                 }
 
                 try
                 {
-                    // Ödeme kaydı işlemi, ilgili manager metodu kullanılarak merkezi hale getiriliyor.
-                    // Eğer ödeme kaydı oluşturulamazsa exception fırlatılır.
+                    // Ödeme kaydı oluşturma işlemi gerçekleştiriliyor.
+                    // Eğer ödeme kaydı oluşturulamazsa, exception fırlatılır.
                     await _paymentManager.RecordPaymentAsync(model.ReservationId, model.ShoppingPrice);
                 }
                 catch (Exception ex)
                 {
-                    // Ödeme kaydı oluşturma sırasında hata oluşursa, hata mesajı belirlenip Checkout sayfasına yönlendiriliyor.
-                    TempData["ErrorMessage"] = "Ödeme kaydı oluşturulurken bir hata oluştu: " + ex.Message;
-                    return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
+                    // Ödeme kaydı oluşturma sırasında hata oluşursa, hata mesajı ayarlanıp Checkout sayfasına yönlendirme yapılıyor.
+                    return RedirectWithError("Ödeme kaydı oluşturulurken bir hata oluştu: " + ex.Message, "Checkout", "Payment",
+                        new RouteValueDictionary(new { reservationId = model.ReservationId }));
                 }
 
-                // İşlem başarılı ise, isteğe bağlı olarak ödeme sonucu bilgileri oluşturulabilir.
-                // Ancak burada direkt olarak kullanıcı ödeme geçmişi sayfasına yönlendiriliyor.
-                TempData["SuccessMessage"] = "Ödeme başarıyla tamamlandı!";
-                return RedirectToAction("History", "Payment");
+                // İşlem başarılı ise, başarı mesajı ayarlanıp kullanıcı ödeme geçmişi (History) sayfasına yönlendirilir.
+                return RedirectWithError("Ödeme başarıyla tamamlandı!", "History", "Payment");
             }
             else
             {
-                // API çağrısı başarısız ise, hata mesajı belirlenip Checkout sayfasına yönlendiriliyor.
-                TempData["ErrorMessage"] = "Ödeme başarısız.";
-                return RedirectToAction("Checkout", new { reservationId = model.ReservationId });
+                // API çağrısı başarısız ise, hata mesajı ayarlanır ve kullanıcı Checkout sayfasına yönlendirilir.
+                return RedirectWithError("Ödeme başarısız.", "Checkout", "Payment",
+                    new RouteValueDictionary(new { reservationId = model.ReservationId }));
             }
         }
 
@@ -212,48 +208,32 @@ namespace Project.MvcUI.Controllers
         {
             // Kullanıcının oturum açtığından emin oluyoruz; aksi halde ana sayfaya yönlendiriyoruz.
             if (User.Identity == null || !User.Identity.IsAuthenticated)
-            {
-                TempData["ErrorMessage"] = "Ödeme geçmişini görmek için giriş yapmalısınız.";
-                return RedirectToAction("Index", "Home");
-            }
+                return RedirectWithError("Ödeme geçmişini görmek için giriş yapmalısınız.", "Index", "Home");
 
-            // Kullanıcının tüm bilgilerini alıp, aktif oturum açan kullanıcının bilgilerini User.Identity.Name üzerinden buluyoruz.
+            // Tüm kullanıcı bilgilerini alıp, aktif oturum açan kullanıcının bilgilerini User.Identity.Name üzerinden buluyoruz.
             List<AppUserDto> allUsers = await _appUserManager.GetAllAsync();
-
             AppUserDto? user = allUsers.FirstOrDefault(u => u.UserName == User.Identity.Name);
 
+            // Eğer kullanıcı bulunamazsa hata mesajı ile yönlendiriyoruz.
             if (user == null)
-            {
-                TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
-                return RedirectToAction("Index");
-            }
+                return RedirectWithError("Kullanıcı bulunamadı.", "Index", "Payment");
 
             // Kullanıcının profil bilgilerini getiriyoruz.
             AppUserProfileDto userProfile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
-
             if (userProfile == null)
-            {
-                TempData["ErrorMessage"] = "Kullanıcı profili bulunamadı.";
-                return RedirectToAction("Index");
-            }
+                return RedirectWithError("Kullanıcı profili bulunamadı.", "Index", "Payment");
 
             // Kullanıcının tam adını oluşturuyoruz.
             string userFullName = $"{userProfile.FirstName} {userProfile.LastName}";
 
             // Ödeme geçmişi API'sine çağrı yaparak, kullanıcının kart bilgilerini içeren verileri elde ediyoruz.
             HttpClient client = _httpClientFactory.CreateClient();
-
             string apiUrl = $"http://localhost:5190/api/Transaction/PaymentHistoryByUser/{userFullName}";
-
             HttpResponseMessage response = await client.GetAsync(apiUrl);
-
             if (!response.IsSuccessStatusCode)
-            {
-                TempData["ErrorMessage"] = "Ödeme geçmişi alınamadı.";
-                return RedirectToAction("Index");
-            }
+                return RedirectWithError("Ödeme geçmişi alınamadı.", "Index", "Payment");
 
-            // API'den gelen JSON yanıtı okunuyor ve PaymentHistoryResponseModel listesine deserialize ediliyor.
+            // API'den gelen JSON yanıtını okuyup, PaymentHistoryResponseModel listesine deserialize ediyoruz.
             string jsonResponse = await response.Content.ReadAsStringAsync();
             List<PaymentHistoryResponseModel>? paymentHistory = JsonConvert.DeserializeObject<List<PaymentHistoryResponseModel>>(jsonResponse);
 
@@ -261,7 +241,7 @@ namespace Project.MvcUI.Controllers
             List<ReservationDto> reservations = await _reservationManager.GetAllAsync();
             List<PaymentHistoryResponseModel> userReservations = new List<PaymentHistoryResponseModel>();
 
-            // Her rezervasyon için, oda bilgilerini çekip, ödeme geçmişi verilerinden gelen kart numarası ile birleştiriyoruz.
+            // Her onaylanmış rezervasyon için, oda bilgilerini alıp, ödeme geçmişi verilerinden gelen kart numarası ile birleştiriyoruz.
             foreach (ReservationDto reservation in reservations.Where(r => r.AppUserId == user.Id && r.ReservationStatus == ReservationStatus.Confirmed))
             {
                 RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId);
@@ -283,7 +263,7 @@ namespace Project.MvcUI.Controllers
                 HelpText = "Ödeme geçmişinizi aşağıda görebilirsiniz."
             };
 
-            // PageVM view'e gönderiliyor.
+            // Hazırlanan PageVM, ilgili view'e gönderilir.
             return View(pageVm);
         }
 
@@ -293,74 +273,58 @@ namespace Project.MvcUI.Controllers
 
         /// <summary>
         /// Ödeme iptali onay sayfasını açar.
-        /// Oturum açmış kullanıcının bilgilerini, profilini ve kart bilgilerini alır; 
-        /// ilgili rezervasyonun onaylı olup olmadığını kontrol eder. Eğer rezervasyon onaylı ise,
-        /// ilgili rezervasyon ve oda bilgileriyle PaymentCancelRequestModel oluşturulur ve bu model,
-        /// PaymentCancelPageVm içerisine eklenip view'e gönderilir.
+        /// Oturum açmış kullanıcının bilgilerini ve profilini alır; ilgili rezervasyonun onaylı olup olmadığını kontrol eder.
+        /// Eğer rezervasyon onaylı ise, ilgili rezervasyon ve oda bilgileriyle PaymentCancelRequestModel oluşturulur ve 
+        /// bu model, PaymentCancelPageVm içerisine eklenip view'e gönderilir.
         /// </summary>
         /// <param name="reservationId">İptal edilecek rezervasyonun ID'si</param>
         /// <returns>Ödeme iptali onay view'i</returns>
         [HttpGet]
         public async Task<IActionResult> CancelPaymentConfirm(int reservationId)
         {
-            // Kullanıcının oturum açtığını doğruluyoruz.
+            // Kullanıcının oturum açtığından emin oluyoruz; eğer oturum açmamışsa, hata mesajı verip ana sayfaya yönlendiriyoruz.
             if (User.Identity == null || !User.Identity.IsAuthenticated)
-            {
-                TempData["ErrorMessage"] = "Ödeme iptali için giriş yapmalısınız.";
-                return RedirectToAction("Index", "Home");
-            }
+                return RedirectWithError("Ödeme iptali için giriş yapmalısınız.", "Index", "Home");
 
-            // Kullanıcı bilgilerini ve profil bilgilerini merkezi metot üzerinden alıyoruz.
+            // Kullanıcı bilgilerini ve profilini, merkezi metot aracılığıyla alıyoruz.
             var (user, userProfile) = await _appUserManager.GetUserWithProfileAsync(User.Identity.Name);
             if (user == null || userProfile == null)
-            {
-                TempData["ErrorMessage"] = "Kullanıcı veya profil bilgileri bulunamadı.";
-                return RedirectToAction("Index");
-            }
+                return RedirectWithError("Kullanıcı veya profil bilgileri bulunamadı.", "Index", "Payment");
 
             // Kullanıcının tam adını oluşturuyoruz.
             string userFullName = $"{userProfile.FirstName} {userProfile.LastName}";
 
-            // Kullanıcının kart bilgilerini almak için, HTTP client ile ödeme geçmişi API'sine çağrı yapıyoruz.
+            // Kullanıcının kart bilgilerini almak için ödeme geçmişi API'sine HTTP client ile çağrı yapıyoruz.
             HttpClient client = _httpClientFactory.CreateClient();
             string apiUrl = $"http://localhost:5190/api/Transaction/PaymentHistoryByUser/{userFullName}";
             HttpResponseMessage response = await client.GetAsync(apiUrl);
             if (!response.IsSuccessStatusCode)
-            {
-                TempData["ErrorMessage"] = "Kullanıcı kart bilgileri alınamadı.";
-                return RedirectToAction("History");
-            }
+                return RedirectWithError("Kullanıcı kart bilgileri alınamadı.", "History", "Payment");
 
             // API'den gelen JSON yanıtını okuyup, PaymentHistoryResponseModel listesine deserialize ediyoruz.
             string jsonResponse = await response.Content.ReadAsStringAsync();
             List<PaymentHistoryResponseModel> paymentHistory = JsonConvert.DeserializeObject<List<PaymentHistoryResponseModel>>(jsonResponse);
             PaymentHistoryResponseModel userCard = paymentHistory.FirstOrDefault();
             if (userCard == null || string.IsNullOrEmpty(userCard.CardNumber))
-            {
-                TempData["ErrorMessage"] = "Kart bilgisi bulunamadı.";
-                return RedirectToAction("History");
-            }
+                return RedirectWithError("Kart bilgisi bulunamadı.", "History", "Payment");
 
             // İptal edilecek rezervasyonu, onaylı rezervasyon olarak almak için ilgili manager metodunu kullanıyoruz.
             ReservationDto reservationObj = await _reservationManager.GetConfirmedReservationByIdAsync(reservationId);
             if (reservationObj == null)
-            {
-                TempData["ErrorMessage"] = "Rezervasyon bulunamadı veya onaylı değil.";
-                return RedirectToAction("History");
-            }
+                return RedirectWithError("Rezervasyon bulunamadı veya onaylı değil.", "History", "Payment");
 
-            // Rezervasyonla ilişkilendirilen oda bilgilerini alıyoruz.
+            // Rezervasyonla ilişkilendirilen oda bilgisini alıyoruz.
             RoomDto room = await _roomManager.GetByIdAsync(reservationObj.RoomId);
 
             // PaymentCancelRequestModel oluşturuluyor; gerekli form verileri dolduruluyor.
             PaymentCancelRequestModel requestModel = new()
             {
                 ReservationId = reservationId,
-                CardUserName = userCard.CardUserName,
-                CardNumber = userCard.CardNumber,
-                CVV = userCard.CVV,
-                RefundAmount = reservationObj.TotalPrice,
-                RoomNumber = (room == null) ? "Oda Bilgisi Yok" : room.RoomNumber
+                CardUserName = userCard.CardUserName, // API'den alınan kart sahibi bilgisi
+                CardNumber = userCard.CardNumber,       // API'den alınan kart numarası
+                CVV = userCard.CVV,                     // API'den alınan CVV bilgisi
+                RefundAmount = reservationObj.TotalPrice, // İptal edilecek tutar, rezervasyonun toplam fiyatı
+                RoomNumber = room == null ? "Oda Bilgisi Yok" : room.RoomNumber
             };
 
             // Oluşturulan form verilerini, sayfa başlığı ve yardım metni ile birlikte PaymentCancelPageVm'e ekliyoruz.
@@ -390,20 +354,15 @@ namespace Project.MvcUI.Controllers
             // Formdan gönderilen ödeme iptali verilerini içeren modeli alıyoruz.
             PaymentCancelRequestModel requestModel = pageVm.PaymentCancelRequest;
 
-            // Kullanıcının oturum açmış olduğunu doğruluyoruz.
+            // Kullanıcının oturum açmış olduğunu kontrol ediyoruz.
             if (User.Identity == null || !User.Identity.IsAuthenticated)
-            {
-                TempData["ErrorMessage"] = "Ödeme iptali için giriş yapmalısınız.";
-                return RedirectToAction("Index", "Home");
-            }
+                return RedirectWithError("Ödeme iptali için giriş yapmalısınız.", "Index", "Home");
 
-            // İlgili rezervasyonun onaylı olup olmadığını kontrol etmek için, manager üzerinden onaylı rezervasyonu getiriyoruz.
+            // İlgili rezervasyonun onaylı olup olmadığını kontrol etmek için onaylı rezervasyonu getiriyoruz.
             ReservationDto reservation = await _reservationManager.GetConfirmedReservationByIdAsync(requestModel.ReservationId);
-            if (reservation == null)
-            {
-                TempData["ErrorMessage"] = "Rezervasyon bulunamadı veya zaten iptal edilmiş.";
-                return RedirectToAction("History");
-            }
+            // Rezervasyon bulunamadıysa veya rezervasyon zaten iptal edilmişse hata mesajı ile yönlendiriyoruz.
+            if (reservation == null || reservation.ReservationStatus == ReservationStatus.Canceled)
+                return RedirectWithError("Rezervasyon bulunamadı veya zaten iptal edilmiş.", "History", "Payment");
 
             // Ödeme iptali için API çağrısı yapabilmek üzere, HTTP client oluşturuyoruz.
             HttpClient client = _httpClientFactory.CreateClient();
@@ -429,13 +388,190 @@ namespace Project.MvcUI.Controllers
                 await _paymentManager.CancelPaymentByReservationIdAsync(requestModel.ReservationId);
 
                 // İşlem başarılı ise, kullanıcıya başarı mesajı gösterilip, MyReservations sayfasına yönlendiriliyor.
-                TempData["SuccessMessage"] = "Ödeme ve rezervasyon iptal edildi.";
-                return RedirectToAction("MyReservations", "Reservation");
+                return RedirectWithError("Ödeme ve rezervasyon iptal edildi.");
             }
 
-            // API çağrısı başarısız ise, hata mesajı belirlenip ödeme geçmişi sayfasına yönlendiriliyor.
-            TempData["ErrorMessage"] = "Ödeme iptal edilemedi.";
-            return RedirectToAction("History");
+            // API çağrısı başarısız ise, hata mesajı belirlenip ödeme geçmişi sayfasına yönlendirme yapılır.
+            return RedirectWithError("Ödeme iptal edilemedi.", "History", "Payment");
+        }
+
+        #endregion
+
+        #region Invoice
+
+        /// <summary>
+        /// Fatura sayfasını açar. 
+        /// Kullanıcının yaptığı ödeme detayları, rezervasyon, oda ve ekstra servis bilgileri tablo şeklinde görüntülenir.
+        /// </summary>
+        /// <param name="reservationId">İlgili rezervasyonun ID'si</param>
+        /// <returns>Fatura view'i</returns>
+        public async Task<IActionResult> Invoice(int reservationId)
+        {
+            // Rezervasyon bilgisini asenkron olarak çekiyoruz.
+            ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId); // ReservationDto
+            if (reservation == null)
+                return RedirectWithError("Rezervasyon bulunamadı.");
+
+            // Tüm ödeme kayıtlarını çekip, ilgili rezervasyona ait ödeme kaydını buluyoruz.
+            List<PaymentDto> payments = await _paymentManager.GetAllAsync();
+            PaymentDto payment = payments.FirstOrDefault(p => p.ReservationId == reservationId); // PaymentDto
+            if (payment == null)
+                return RedirectWithError("Ödeme kaydı bulunamadı.");
+
+            // Rezervasyona ait oda bilgisini çekiyoruz.
+            RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId); // RoomDto
+
+            // Rezervasyona ait ekstra servis kayıtlarını, ReservationExtraServiceManager üzerinden çekiyoruz.
+            // Dönüş tipi List<ReservationExtraServiceDto> olarak varsayılmıştır.
+            List<ReservationExtraServiceDto> resExtraServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservationId);
+            List<ReservationExtraServiceDto> activeExtraServices = resExtraServices?
+                .Where(es => es.Status != DataStatus.Deleted)
+                .ToList() ?? new List<ReservationExtraServiceDto>();
+
+            // Aktif ekstra servis kayıtları için, _extraServiceManager üzerinden detay bilgilerini (ExtraServiceDto) alıyoruz.
+            List<ExtraServiceDto> extraServices = new List<ExtraServiceDto>();
+            foreach (ReservationExtraServiceDto resExtra in activeExtraServices)
+            {
+                ExtraServiceDto extraService = await _extraServiceManager.GetByIdAsync(resExtra.ExtraServiceId);
+                if (extraService != null)
+                    extraServices.Add(extraService);
+            }
+
+            // Tüm çekilen verileri kullanarak PaymentInvoicePageVm modelini oluşturuyoruz.
+            PaymentInvoicePageVm pageVm = new PaymentInvoicePageVm
+            {
+                Reservation = reservation,          // Rezervasyon bilgileri (ReservationDto)
+                Payment = payment,                  // Ödeme kaydı bilgileri (PaymentDto)
+                Room = room,                        // Oda bilgileri (RoomDto)
+                ExtraServices = extraServices,      // Ekstra servis bilgileri (List<ExtraServiceDto>)
+                PageTitle = "Fatura Detayları",      // View başlığı
+                HelpText = "Aşağıda ödeme, rezervasyon ve ekstra hizmet detaylarınız görüntülenmektedir." // Yardım metni
+            };
+
+            // Oluşturulan PageVM view'e gönderilir.
+            return View(pageVm);
+        }
+
+        #endregion
+
+        #region SendInvoiceMail
+
+        /// <summary>
+        /// Fatura detaylarını e-posta olarak gönderir.
+        /// İlgili rezervasyon, ödeme, oda ve ekstra servis bilgilerini çekip, HTML formatında fatura oluşturur ve
+        /// MailService aracılığıyla kullanıcının kayıtlı e-posta adresine gönderir.
+        /// </summary>
+        /// <param name="reservationId">Fatura gönderilecek rezervasyonun ID'si</param>
+        /// <returns>İşlem sonucuna göre yönlendirme</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendInvoiceMail(int reservationId)
+        {
+            // Rezervasyon bilgisini çekiyoruz.
+            ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId);
+            if (reservation == null)
+                return RedirectWithError("Rezervasyon bulunamadı.");
+
+            // Ödeme kayıtlarını çekip, ilgili rezervasyona ait ödeme kaydını buluyoruz.
+            List<PaymentDto> payments = await _paymentManager.GetAllAsync();
+            PaymentDto payment = payments.FirstOrDefault(p => p.ReservationId == reservationId);
+            if (payment == null)
+                return RedirectWithError("Ödeme kaydı bulunamadı.");
+
+            // Rezervasyona ait oda bilgisini alıyoruz.
+            RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId);
+
+            // Rezervasyona ait ekstra servis kayıtlarını çekiyoruz.
+            // Dönüş tipi olarak ReservationExtraServiceDto listesi bekleniyor.
+            List<ReservationExtraServiceDto> resExtraServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservationId);
+            List<ReservationExtraServiceDto> activeExtraServices = resExtraServices?
+                .Where(es => es.Status != DataStatus.Deleted)
+                .ToList() ?? new List<ReservationExtraServiceDto>();
+
+            // Her aktif ekstra servis için detay bilgilerini _extraServiceManager üzerinden alıyoruz.
+            List<ExtraServiceDto> extraServices = new();
+            foreach (ReservationExtraServiceDto resExtra in activeExtraServices)
+            {
+                // _extraServiceManager'ın controller'a enjekte edildiğini varsayıyoruz.
+                ExtraServiceDto extraService = await _extraServiceManager.GetByIdAsync(resExtra.ExtraServiceId);
+                if (extraService != null)
+                    extraServices.Add(extraService);
+            }
+
+            // HTML formatında fatura detaylarını oluşturuyoruz.
+            StringBuilder emailBody = new StringBuilder();
+            emailBody.Append("<h2>Bilge Hotel - Fatura Detayları</h2>");
+            emailBody.Append("<table style='border-collapse: collapse; width: 100%;'>");
+            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Rezervasyon ID</th>");
+            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{reservation.Id}</td></tr>");
+            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Oda Numarası</th>");
+            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{room?.RoomNumber ?? "Bilinmiyor"}</td></tr>");
+            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Ödeme Tutarı</th>");
+            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{payment.PaymentAmount} ₺</td></tr>");
+            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Ödeme Tarihi</th>");
+            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{payment.PaymentDate.ToString("yyyy-MM-dd HH:mm")}</td></tr>");
+            emailBody.Append("</table>");
+
+            // Eğer ekstra servis bilgileri varsa, ekstra hizmet detaylarını içeren ek tablo oluşturuyoruz.
+            if (extraServices.Any())
+            {
+                emailBody.Append("<h3>Ekstra Hizmetler</h3>");
+                emailBody.Append("<table style='border-collapse: collapse; width: 100%;'>");
+                emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Hizmet Adı</th>");
+                emailBody.Append("<th style='border: 1px solid #ddd; padding: 8px;'>Fiyat</th></tr>");
+                foreach (ExtraServiceDto service in extraServices)
+                {
+                    emailBody.Append("<tr>");
+                    emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{service.Name}</td>");
+                    emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{service.Price} ₺</td>");
+                    emailBody.Append("</tr>");
+                }
+                emailBody.Append("</table>");
+            }
+
+            // Kullanıcının e-posta adresini Claim üzerinden alıyoruz.
+            string userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(userEmail))
+                return RedirectWithError("Mail adresiniz bulunamadı.");
+
+            // Mail gönderme işlemini gerçekleştiriyoruz.
+            try
+            {
+                await MailService.SendAsync(
+                    receiver: userEmail,
+                    subject: "Bilge Hotel - Fatura Detaylarınız",
+                    body: emailBody.ToString()
+                );
+                TempData["SuccessMessage"] = "Fatura bilgileri e-posta ile gönderildi.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Mail gönderilirken hata oluştu: {ex.Message}";
+            }
+
+            // İşlem tamamlandıktan sonra, Invoice sayfasına yönlendirme yapıyoruz.
+            return RedirectToAction("Invoice", new { reservationId });
+        }
+
+        #endregion
+
+        #region ControllerPrivateMethods
+
+        /// <summary>
+        /// Belirtilen hata mesajını TempData'ya atar ve belirtilen action ve controller'a yönlendirir.
+        /// Böylece, hata durumlarında merkezi bir şekilde yönlendirme işlemi gerçekleştirilir.
+        /// </summary>
+        /// <param name="errorMessage">Gönderilecek hata mesajı</param>
+        /// <param name="action">Yönlendirilecek action; varsayılan "MyReservations"</param>
+        /// <param name="controller">Yönlendirilecek controller; varsayılan "Reservation"</param>
+        /// <param name="routeValues">Ek yönlendirme parametreleri (opsiyonel)</param>
+        /// <returns>Belirtilen action ve controller'a yönlendirme sonucu bir IActionResult</returns>
+        private IActionResult RedirectWithError(string errorMessage, string action = "MyReservations", string controller = "Reservation", RouteValueDictionary routeValues = null)
+        {
+            // Hata mesajını TempData'ya atıyoruz.
+            TempData["ErrorMessage"] = errorMessage;
+            // Belirtilen action, controller ve ek route değerleriyle yönlendirme yapıyoruz.
+            return RedirectToAction(action, controller, routeValues);
         }
 
         #endregion

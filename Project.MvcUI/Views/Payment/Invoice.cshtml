@@ -1,0 +1,93 @@
+﻿@model Project.MvcUI.Models.PageVms.Payments.PaymentInvoicePageVm
+
+@{
+    ViewData["Title"] = Model.PageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="container mt-5">
+        <div class="alert alert-info text-center">
+            <h4>@TempData["ErrorMessage"]</h4>
+        </div>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="container mt-5">
+        <div class="alert alert-success text-center">
+            <h4>@TempData["SuccessMessage"]</h4>
+        </div>
+    </div>
+}
+
+
+<div class="container my-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">@Model.PageTitle</h2>
+        </div>
+        <div class="card-body">
+            <p class="card-text">@Model.HelpText</p>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Rezervasyon ID</th>
+                        <td>@Model.Reservation.Id</td>
+                    </tr>
+                    <tr>
+                        <th>Oda Numarası</th>
+                        <td>@Model.Room.RoomNumber</td>
+                    </tr>
+                    <tr>
+                        <th>Ödeme Tutarı</th>
+                        <td>@Model.Payment.PaymentAmount ₺</td>
+                    </tr>
+                    <tr>
+                        <th>Ödeme Tarihi</th>
+                        <td>@Model.Payment.PaymentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                </table>
+            </div>
+
+            @if (Model.ExtraServices.Any())
+            {
+                <h3 class="mt-4">Ekstra Hizmetler</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Hizmet Adı</th>
+                                <th>Fiyat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var service in Model.ExtraServices)
+                            {
+                                <tr>
+                                    <td>@service.Name</td>
+                                    <td>@service.Price ₺</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+        <div class="card-footer text-right">
+            <a asp-action="MyReservations" asp-controller="Reservation" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Geri Dön
+            </a>
+            <form asp-action="SendInvoiceMail" asp-controller="Payment" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="reservationId" value="@Model.Reservation.Id" />
+                <button type="submit" class="btn btn-info ml-2">
+                    <i class="fas fa-envelope"></i> Fatura Mail Gönder
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -5,7 +5,19 @@
     ViewData["Title"] = Model.PageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-info text-center">
+        <h4>@TempData["ErrorMessage"]</h4>
+    </div>
+}
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success text-center">
+        <h4>@TempData["SuccessMessage"]</h4>
+    </div>
+}
 <!-- Hata mesajı varsa gösteriliyor -->
 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
 {
@@ -51,6 +63,9 @@ else
                     <td>
                         <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@item.ReservationId" class="btn btn-warning btn-sm">
                             💳 Ödemeyi İptal Et
+                        </a>
+                        <a asp-action="Invoice" asp-controller="Payment" asp-route-reservationId="@item.ReservationId" class="btn btn-info btn-sm">
+                            💳 Fatura Görüntüle
                         </a>
                     </td>
                 </tr>

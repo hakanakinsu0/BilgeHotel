@@ -28,7 +28,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var dashboardData = new DashboardViewModel
+            DashboardViewModel dashboardData = new DashboardViewModel
             {
                 TotalUsers = await _appUserManager.GetTotalUserCountAsync(),
                 ActiveUsers = await _appUserManager.GetActiveUserCountAsync(),

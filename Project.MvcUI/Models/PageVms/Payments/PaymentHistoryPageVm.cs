@@ -7,7 +7,7 @@ namespace Project.MvcUI.Models.PageVms.Payments
     /// Ödeme Geçmişi sayfası için Page View Model.
     /// API'den dönen PaymentHistoryResponseModel listesini ve UI'ya özgü ek bilgileri taşır.
     /// </summary>
-    public class PaymentHistoryPageVm // SRP: Sayfa özel verilerini yönetir
+    public class PaymentHistoryPageVm 
     {
         public PaymentHistoryPageVm()
         {

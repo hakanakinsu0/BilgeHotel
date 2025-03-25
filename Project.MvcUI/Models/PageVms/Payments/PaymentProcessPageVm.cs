@@ -7,7 +7,7 @@ namespace Project.MvcUI.Models.PageVms.Payments
     /// Ödeme işlemi sayfası için Page View Model.
     /// PaymentProcessRequestModel'ı ve API'den dönen PaymentProcessResponseModel'ı içerir.
     /// </summary>
-    public class PaymentProcessPageVm // SRP: Ödeme sayfası verilerini yönetir
+    public class PaymentProcessPageVm 
     {
         public PaymentProcessPageVm()
         {

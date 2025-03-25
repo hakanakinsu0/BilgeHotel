@@ -7,7 +7,7 @@ namespace Project.MvcUI.Models.PageVms.Payments
     /// Ödeme Checkout sayfası için Page View Model.
     /// Pure modelleri (PaymentCheckoutRequest ve PaymentCheckoutResponse) UI’ya özgü ek verilerle sarmalar.
     /// </summary>
-    public class PaymentCheckoutPageVm // SRP: Sayfa özel verilerini yönetir
+    public class PaymentCheckoutPageVm 
     {
         public PaymentCheckoutPageVm()
         {
