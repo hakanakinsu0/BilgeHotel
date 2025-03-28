@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Project.MvcUI.Controllers
 {
-    [Authorize(Roles = "Member")]
+    [Authorize(Roles = "Member,Admin")]
     public class ProfileController : Controller
     {
         private readonly IAppUserManager _appUserManager;

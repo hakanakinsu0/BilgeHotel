@@ -1,4 +1,5 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.UserListViewModel
+﻿@using Project.MvcUI.Areas.Admin.Models.ResponseModels.AppUsers
+@model UserListViewResponseModel
 
 @{
     ViewData["Title"] = "Kullanıcı Yönetimi";
@@ -6,6 +7,21 @@
 }
 
 <h2>👥 Kullanıcı Yönetimi</h2>
+
+<!-- Başarılı/Hata Mesajları -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <p>Buradan sistemdeki kullanıcıları yönetebilirsiniz.</p>
 
 <!-- 🔎 Arama & Filtreleme -->

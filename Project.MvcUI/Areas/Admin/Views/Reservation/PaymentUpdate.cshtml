@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations.ReservationPaymentUpdateRequestModel
+﻿@model ReservationPaymentUpdateRequestModel
 
 @{
     ViewData["Title"] = "💳 Ödeme Durumu Güncelle";
@@ -7,6 +7,13 @@
 
 <h2>💳 Ödeme Durumu Güncelle</h2>
 <p>Bu sayfadan rezervasyonun ödeme durumunu güncelleyebilirsiniz.</p>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
 
 <form asp-action="PaymentUpdate" method="post">
     <input type="hidden" asp-for="ReservationId" />
@@ -23,7 +30,9 @@
 
     <div class="mb-3">
         <label asp-for="NewStatus" class="form-label">Yeni Ödeme Durumu</label>
-        <select asp-for="NewStatus" asp-items="ViewBag.PaymentStatuses" class="form-control"></select>
+        <select asp-for="NewStatus" asp-items="ViewBag.PaymentStatuses" class="form-control">
+            <option value="">Lütfen bir ödeme durumu seçiniz</option>
+        </select>
         <span asp-validation-for="NewStatus" class="text-danger"></span>
     </div>
 

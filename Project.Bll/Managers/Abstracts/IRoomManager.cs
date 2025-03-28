@@ -25,6 +25,10 @@ namespace Project.Bll.Managers.Abstracts
         Task<List<RoomDto>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate);
         Task UpdateRoomStatusOnReservationChangeAsync(int oldRoomId, int newRoomId);
 
+        Task<(int TotalRooms, int OccupiedRooms, int EmptyRooms, int MaintenanceRooms, double OccupiedPercentage, double MonthlyOccupiedPercentage, int MonthlyOccupiedRooms, double MonthlyOccupiedRoomsPercentage)> GetRoomUsageReportAsync();
+
+
+
     }
 
 }

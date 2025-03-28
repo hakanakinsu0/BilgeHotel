@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports.RevenueReportResponseModel
+﻿@model RevenueReportResponseModel
 
 @{
     ViewData["Title"] = "💰 Gelir Raporları";
@@ -10,7 +10,7 @@
 
 <!-- 📌 Toplam Gelir Kartı -->
 <div class="alert alert-success text-center">
-    <h4>Toplam Gelir: <strong>@Model.TotalRevenue.ToString("C")</strong></h4>
+    <h4>Toplam Gelir: <strong>@Model.TotalRevenue.ToString("C2")</strong></h4>
 </div>
 
 <!-- 📋 Aylık Gelir Tablosu -->

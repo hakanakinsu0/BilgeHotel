@@ -104,7 +104,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             return View(model);
         }
 
-
         public async Task<IActionResult> Create()
         {
             await LoadSelectListsAsync(); // Oda tipleri ve diğer seçenekleri doldur
@@ -181,9 +180,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
         }
 
-
-
-        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var room = await _roomManager.GetByIdAsync(id);
@@ -281,9 +277,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             ViewBag.RoomTypes = new SelectList(activeRoomTypes, "Id", "Name", selectedRoomTypeId);
         }
 
-
-
-        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             var room = await _roomManager.GetByIdAsync(id);
@@ -308,7 +301,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -340,8 +332,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-
-        [HttpGet]
         public async Task<IActionResult> StatusUpdate(int id)
         {
             var room = await _roomManager.GetByIdAsync(id);
@@ -379,18 +369,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }

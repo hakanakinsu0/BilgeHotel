@@ -1,4 +1,5 @@
 ﻿using Project.Bll.DtoClasses;
+using Project.Entities.Enums;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -46,10 +47,45 @@ namespace Project.Bll.Managers.Abstracts
 
         Task<ReservationDto> GetConfirmedReservationByIdAsync(int reservationId);
 
+        Task<List<ReservationDto>> GetReservationReportsAsync();
+
+        Task<(decimal TotalRevenue, List<(int Year, int Month, decimal TotalRevenue)> MonthlyReports)> GetRevenueReportsAsync();
 
 
+        /// <summary>
+        /// Tüm rezervasyon DTO'larını alır, eksik bilgileri tamamlar ve verilen filtre parametrelerine göre filtreler.
+        /// Bu metot sayesinde controller, yalnızca eksik bilgileri tamamlanmış ve filtrelenmiş rezervasyon verisini alır.
+        /// </summary>
+        /// <param name="search">Kullanıcı adı veya e-posta araması</param>
+        /// <param name="roomId">Oda numarasına göre filtre</param>
+        /// <param name="status">Rezervasyon durumu filtre</param>
+        /// <param name="isPaid">Ödeme durumu filtre (true: ödeme yapılmış, false: ödeme bekleniyor)</param>
+        /// <returns>Filtrelenmiş ReservationDto listesini asenkron olarak döndürür.</returns>
+        Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, int? roomId, string status, bool? isPaid);
 
 
+        /// <summary>
+        /// Belirtilen rezervasyon bilgilerini, ekstra hizmetleri ve reaktivasyon durumunu dikkate alarak rezervasyonu günceller.
+        /// Bu metot oda değişikliği, tarih kontrolü, fiyat hesaplaması, rezervasyon güncellemesi, ekstra hizmet güncellemesi ve
+        /// gerekirse rezervasyonun reaktif edilmesi işlemlerini tek seferde gerçekleştirir.
+        /// </summary>
+        /// <param name="dto">Güncellenecek rezervasyon bilgilerini içeren ReservationDto</param>
+        /// <param name="extraServiceIds">Rezervasyona eklenmek istenen ekstra hizmetlerin ID listesi</param>
+        /// <param name="reactivateReservation">Rezervasyonun reaktif edilip edilmeyeceği</param>
+        /// <returns>Güncelleme işleminin başarılı olup olmadığı</returns>
+        Task<bool> UpdateReservationWithDetailsAsync(ReservationDto dto, List<int> extraServiceIds, bool reactivateReservation);
+
+
+        /// <summary>
+        /// Belirtilen rezervasyonun ödeme durumunu ve ilgili oda durumunu, yeni duruma göre günceller.
+        /// Rezervasyon ve ödeme objelerinin durumları; Confirmed, PendingPayment ve Canceled durumlarına göre ayarlanır.
+        /// Eğer yeni durum Canceled ise rezervasyon ve ödeme objeleri 'Deleted' statüsüne alınır ve oda boşaltılır.
+        /// Eğer yeni durum PendingPayment veya Confirmed ise objeler Updated statüsüne alınır ve oda dolu olarak ayarlanır.
+        /// </summary>
+        /// <param name="reservationId">Güncellenecek rezervasyonun ID'si</param>
+        /// <param name="newStatus">Yeni rezervasyon durumu (ReservationStatus)</param>
+        /// <returns>Güncelleme işleminin başarılı olup olmadığını belirten boolean değer</returns>
+        Task<bool> UpdateReservationPaymentStatusAsync(int reservationId, ReservationStatus newStatus);
 
 
     }

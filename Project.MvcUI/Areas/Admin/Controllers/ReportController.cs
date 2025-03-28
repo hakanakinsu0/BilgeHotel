@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Entities.Enums;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports;
@@ -23,176 +24,149 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             _appUserProfileManager = appUserProfileManager;
         }
 
+        #region ReportIndexAction
+
+        /// <summary>
+        /// Ana rapor sayfasını döndürür.
+        /// </summary>
         public IActionResult Index()
         {
             return View();
         }
 
-        // Rezervasyon Raporları Sayfası
+        #endregion
+
+        #region ReservationReportsAction
+
+        /// <summary>
+        /// Rezervasyon raporlarını oluşturur ve view'e gönderir.
+        /// İş mantığı BLL'de tanımlı metottan alınan veriler UI modeline map edilir.
+        /// </summary>
         public async Task<IActionResult> ReservationReports()
         {
-            var reservations = await _reservationManager.GetAllAsync(); // ✅ Tüm rezervasyonları çekiyoruz
+            // Manager'dan rezervasyon rapor verileri asenkron olarak alınır
+            List<ReservationDto> reservationReports = await _reservationManager.GetReservationReportsAsync();
 
-            var reportList = new List<ReservationReportResponseModel>();
-
-            foreach (var reservation in reservations)
+            // Alınan veriler, UI modeline dönüştürülür
+            List<ReservationReportResponseModel> reportList = reservationReports.Select(r => new ReservationReportResponseModel
             {
-                var user = await _appUserManager.GetByIdAsync(reservation.AppUserId ?? 0);
-                var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId ?? 0);
-                var room = await _roomManager.GetByIdAsync(reservation.RoomId);
-
-                reportList.Add(new ReservationReportResponseModel
-                {
-                    Id = reservation.Id,
-                    CustomerName = (userProfile != null) ? $"{userProfile.FirstName} {userProfile.LastName}" : "Bilinmeyen Müşteri",
-                    RoomNumber = room != null ? room.RoomNumber : "Bilinmeyen Oda",
-                    StartDate = reservation.StartDate,
-                    EndDate = reservation.EndDate,
-                    ReservationStatus = reservation.ReservationStatus.ToString(),
-                    TotalPrice = reservation.TotalPrice
-                });
-            }
-
-            return View(reportList);
-        }
-
-        // Gelir Raporları Sayfası
-        public async Task<IActionResult> RevenueReports()
-        {
-            var reservations = await _reservationManager.GetAllAsync();
-
-            // ✅ Yalnızca onaylanmış (Confirmed) rezervasyonların gelirini hesaplıyoruz
-            var confirmedReservations = reservations
-                .Where(r => r.ReservationStatus == ReservationStatus.Confirmed)
-                .ToList();
-
-            decimal totalRevenue = confirmedReservations.Sum(r => r.TotalPrice);
-
-            // ✅ Aylık bazda gelir hesaplaması
-            var monthlyRevenueReports = confirmedReservations
-                .GroupBy(r => new { r.StartDate.Year, r.StartDate.Month })
-                .Select(g => new MonthlyRevenueReportResponseModel
-                {
-                    Year = g.Key.Year,
-                    Month = g.Key.Month,
-                    TotalRevenue = g.Sum(r => r.TotalPrice)
-                })
-                .OrderBy(r => r.Year).ThenBy(r => r.Month)
-                .ToList();
-
-            var model = new RevenueReportResponseModel
-            {
-                TotalRevenue = totalRevenue,
-                MonthlyRevenueReports = monthlyRevenueReports
-            };
-
-            return View(model);
-        }
-
-        // Oda Raporları Sayfası
-        public async Task<IActionResult> RoomUsageReports()
-        {
-            var rooms = await _roomManager.GetAllAsync();
-            var reservations = await _reservationManager.GetAllAsync();
-
-            int totalRooms = rooms.Count;
-            int occupiedRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Occupied);
-            int emptyRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Empty);
-            int maintenanceRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Maintenance);
-
-            double occupiedPercentage = totalRooms > 0 ? (double)occupiedRooms / totalRooms * 100 : 0;
-
-            // 📅 İçinde bulunduğumuz ayın başlangıç ve bitiş tarihini alalım
-            var currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var currentMonthEnd = currentMonthStart.AddMonths(1).AddDays(-1);
-
-            // 📅 Bu ay içindeki rezervasyonları filtreleyelim
-            var reservationsThisMonth = await _reservationManager.GetAllAsync();
-            reservationsThisMonth = reservationsThisMonth
-                .Where(res => res.StartDate <= currentMonthEnd && res.EndDate >= currentMonthStart)
-                .ToList();
-
-            // 📊 Oda bazlı dolu günleri hesaplayalım
-            var roomOccupiedDays = new Dictionary<int, int>();
-
-            foreach (var reservation in reservationsThisMonth)
-            {
-                var start = reservation.StartDate < currentMonthStart ? currentMonthStart : reservation.StartDate;
-                var end = reservation.EndDate > currentMonthEnd ? currentMonthEnd : reservation.EndDate;
-                int occupiedDays = (int)(end - start).TotalDays;
-
-                if (roomOccupiedDays.ContainsKey(reservation.RoomId))
-                    roomOccupiedDays[reservation.RoomId] += occupiedDays;
-                else
-                    roomOccupiedDays[reservation.RoomId] = occupiedDays;
-            }
-
-            // 📊 Bu ay içinde rezervasyon yapılan odaları belirleyelim
-            int uniqueOccupiedRoomsThisMonth = roomOccupiedDays.Count;
-            int totalRoomDaysInMonth = totalRooms * DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-            int totalOccupiedDaysThisMonth = roomOccupiedDays.Values.Sum();
-
-            double monthlyOccupiedPercentage = totalRoomDaysInMonth > 0
-                ? (double)totalOccupiedDaysThisMonth / totalRoomDaysInMonth * 100
-                : 0;
-
-            var model = new RoomUsageReportResponseModel
-            {
-                TotalRooms = totalRooms,
-                OccupiedRooms = occupiedRooms,
-                EmptyRooms = totalRooms - occupiedRooms - maintenanceRooms,
-                MaintenanceRooms = maintenanceRooms,
-                OccupiedPercentage = occupiedPercentage,
-                MonthlyOccupiedPercentage = monthlyOccupiedPercentage,
-                MonthlyOccupiedRooms = roomOccupiedDays.Count,
-            };
-
-            return View(model);
-        }
-
-        // Musteri Raporları Sayfası
-        public async Task<IActionResult> CustomerReports()
-        {
-            var users = await _appUserManager.GetAllAsync();
-            var userProfiles = await _appUserProfileManager.GetAllAsync();
-            var reservations = await _reservationManager.GetAllAsync();
-
-            // 📌 Admin (UserId = 1) olan kullanıcıyı hariç tut, sadece Member kullanıcıları say
-            var members = users.Where(u => u.Id != 1).ToList();
-            var totalCustomers = members.Count; // 📌 Toplam müşteri sayısı (Admin hariç)
-
-            // 📌 Rezervasyon yapan müşteri sayısını hesapla (Sadece Member olanlar)
-            var customersWithReservations = reservations
-                .Where(r => r.AppUserId.HasValue && r.AppUserId != 1)
-                .Select(r => r.AppUserId)
-                .Distinct()
-                .Count();
-
-            // 📌 Rezervasyon yapmayan müşteri sayısını hesapla
-            var customersWithoutReservations = totalCustomers - customersWithReservations;
-
-            // 📌 Müşteri detaylarını içeren listeyi oluştur
-            var customerList = members.Select(user => new CustomerReportResponseModel
-            {
-                Id = user.Id,
-                FullName = userProfiles.FirstOrDefault(p => p.AppUserId == user.Id)?.FirstName + " " +
-                           userProfiles.FirstOrDefault(p => p.AppUserId == user.Id)?.LastName,
-                Email = user.Email,
-                IdentityNumber = userProfiles.FirstOrDefault(p => p.AppUserId == user.Id)?.IdentityNumber,
-                ReservationCount = reservations.Count(r => r.AppUserId == user.Id)
+                Id = r.Id, // Rezervasyon ID'si
+                CustomerName = r.CustomerName, // Müşteri adı
+                RoomNumber = r.RoomNumber, // Oda numarası
+                StartDate = r.StartDate, // Rezervasyon başlangıç tarihi
+                EndDate = r.EndDate, // Rezervasyon bitiş tarihi
+                ReservationStatus = r.ReservationStatus.ToString(), // Rezervasyon durumu (string)
+                TotalPrice = r.TotalPrice // Toplam fiyat
             }).ToList();
 
-            var model = new CustomerReportListResponseModel
-            {
-                TotalCustomers = totalCustomers,
-                CustomersWithReservations = customersWithReservations,
-                CustomersWithoutReservations = customersWithoutReservations,
-                Customers = customerList
-            };
-
-            return View(model);
+            return View(reportList); // View'e model gönderilir
         }
 
+        #endregion
 
+        #region RevenueReportsAction
+
+        /// <summary>
+        /// Gelir raporlarını oluşturur ve view'e gönderir.
+        /// Manager'dan dönen tuple verileri UI modeline map edilir.
+        /// </summary>
+        public async Task<IActionResult> RevenueReports()
+        {
+            // Manager'daki gelir raporu metodundan toplam gelir ve aylık raporlar tuple olarak alınır
+            var report = await _reservationManager.GetRevenueReportsAsync();
+
+            // Alınan veriler UI response modeline dönüştürülür
+            RevenueReportResponseModel model = new()
+            {
+                TotalRevenue = report.TotalRevenue, // Genel toplam gelir
+                MonthlyRevenueReports = report.MonthlyReports
+                    .Select(x => new MonthlyRevenueReportResponseModel
+                    {
+                        Year = x.Year, // Aylık rapor için yıl
+                        Month = x.Month, // Aylık rapor için ay
+                        TotalRevenue = x.TotalRevenue // Aylık toplam gelir
+                    })
+                    .ToList()
+            };
+
+            return View(model); // Model view'e gönderilir
+        }
+
+        #endregion
+
+        #region RoomUsageReportsAction
+
+        /// <summary>
+        /// Oda kullanım raporlarını oluşturur ve view'e gönderir.
+        /// Manager'dan alınan hesaplanmış veriler UI modeline map edilir.
+        /// </summary>
+        public async Task<IActionResult> RoomUsageReports()
+        {
+            // RoomManager'daki hesaplanmış oda kullanım raporu asenkron olarak alınır
+            var report = await _roomManager.GetRoomUsageReportAsync();
+
+            // Alınan veriler, UI modeline dönüştürülür
+            RoomUsageReportResponseModel model = new()
+            {
+                TotalRooms = report.TotalRooms, // Toplam oda sayısı
+                OccupiedRooms = report.OccupiedRooms, // Dolu oda sayısı
+                EmptyRooms = report.EmptyRooms, // Boş oda sayısı
+                MaintenanceRooms = report.MaintenanceRooms, // Bakımda olan oda sayısı
+                OccupiedPercentage = report.OccupiedPercentage, // Anlık doluluk oranı
+                MonthlyOccupiedRoomsPercentage = report.MonthlyOccupiedRoomsPercentage, // Bu ay rezervasyon yapılan odaların yüzdesi
+                MonthlyOccupiedRooms = report.MonthlyOccupiedRooms // Bu ay rezervasyon yapılan oda sayısı
+            };
+
+            return View(model); // Model view'e gönderilir
+        }
+
+        #endregion
+
+        #region CustomerReportsAction
+
+        /// <summary>
+        /// Müşteri raporlarını oluşturur ve view'e gönderir.
+        /// Manager'dan dönen ham veriler UI modeline map edilir.
+        /// </summary>
+        public async Task<IActionResult> CustomerReports()
+        {
+            // Manager'dan müşteri rapor verileri asenkron olarak alınır (tuple şeklinde)
+            var reportData = await _appUserManager.GetCustomerReportDataAsync();
+
+            // Tuple'dan dönen veriler yerel değişkenlere atanır
+            int totalCustomers = reportData.TotalCustomers;
+            int customersWithReservations = reportData.CustomersWithReservations;
+            int customersWithoutReservations = reportData.CustomersWithoutReservations;
+            List<AppUserDto> members = reportData.Members;
+            List<AppUserProfileDto> profiles = reportData.Profiles;
+            List<ReservationDto> reservations = reportData.Reservations;
+
+            // Her üye için rapor detayları oluşturulur
+            List<CustomerReportResponseModel> customerList = members.Select(user =>
+            {
+                AppUserProfileDto? profile = profiles.FirstOrDefault(p => p.AppUserId == user.Id);
+                return new CustomerReportResponseModel
+                {
+                    Id = user.Id, // Kullanıcı ID'si
+                    FullName = (profile?.FirstName ?? "") + " " + (profile?.LastName ?? ""), // İsim ve soyisim birleştirilir
+                    Email = user.Email, // Kullanıcı email adresi
+                    IdentityNumber = profile?.IdentityNumber ?? "", // Kimlik numarası
+                    ReservationCount = reservations.Count(r => r.AppUserId == user.Id) // Rezervasyon sayısı
+                };
+            }).ToList();
+
+            // UI modeline müşteri raporu bilgileri atanır
+            CustomerReportListResponseModel model = new()
+            {
+                TotalCustomers = totalCustomers, // Toplam müşteri sayısı
+                CustomersWithReservations = customersWithReservations, // Rezervasyon yapan müşteri sayısı
+                CustomersWithoutReservations = customersWithoutReservations, // Rezervasyon yapmayan müşteri sayısı
+                Customers = customerList // Müşteri detayları listesi
+            };
+
+            return View(model); // Model view'e gönderilir
+        }
+
+        #endregion
     }
 }

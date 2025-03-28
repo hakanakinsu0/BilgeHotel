@@ -2,9 +2,10 @@
 using Project.Bll.DtoClasses;
 using Project.Entities.Models;
 using Project.MvcUI.Areas.Admin.Models;
-using Project.MvcUI.Areas.Admin.Models.RequestModels;
+using Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers;
 using Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels;
+using Project.MvcUI.Areas.Admin.Models.ResponseModels.AppUsers;
 using Project.MvcUI.Models.PureVms.AppUsers.RequestModels;
 using Project.MvcUI.Models.PureVms.AppUsers.ResponseModels;
 using Project.MvcUI.Models.PureVms.Reservations.RequestModels;

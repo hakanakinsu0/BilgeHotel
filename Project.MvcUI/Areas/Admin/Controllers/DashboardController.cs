@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Project.Bll.Managers.Abstracts;
-using Project.MvcUI.Areas.Admin.Models;
+using Project.MvcUI.Areas.Admin.Models.ResponseModels.Dashboard;
 
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
@@ -35,7 +35,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             // DashboardViewModel, admin panelinde görüntülenecek istatistiksel verileri içerir.
-            DashboardViewModel dashboardData = new DashboardViewModel
+            DashboardResponseModel dashboardData = new()
             {
                 TotalUsers = await _appUserManager.GetTotalUserCountAsync(),
                 ActiveUsers = await _appUserManager.GetActiveUserCountAsync(),

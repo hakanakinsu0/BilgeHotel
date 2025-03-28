@@ -17,9 +17,11 @@ namespace Project.Bll.Managers.Concretes
     public class RoomManager : BaseManager<RoomDto, Room>, IRoomManager
     {
         readonly IRoomRepository _repository;
-        public RoomManager(IRoomRepository repository, IMapper mapper) : base(repository, mapper)
+        readonly IReservationRepository _reservationRepository;
+        public RoomManager(IRoomRepository repository, IMapper mapper, IReservationRepository reservationRepository) : base(repository, mapper)
         {
             _repository = repository;
+            _reservationRepository = reservationRepository;
         }
 
 
@@ -189,6 +191,53 @@ namespace Project.Bll.Managers.Concretes
                 }
             }
         }
+
+
+        public async Task<(int TotalRooms, int OccupiedRooms, int EmptyRooms, int MaintenanceRooms, double OccupiedPercentage, double MonthlyOccupiedPercentage, int MonthlyOccupiedRooms, double MonthlyOccupiedRoomsPercentage)> GetRoomUsageReportAsync()
+        {
+            var rooms = await GetAllAsync();
+            var reservations = await _reservationRepository.GetAllAsync();
+
+            int totalRooms = rooms.Count;
+            int occupiedRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Occupied);
+            int maintenanceRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Maintenance);
+            int emptyRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Empty);
+
+            double occupiedPercentage = totalRooms > 0 ? (double)occupiedRooms / totalRooms * 100 : 0;
+
+            var currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var currentMonthEnd = currentMonthStart.AddMonths(1).AddDays(-1);
+
+            var reservationsThisMonth = await _reservationRepository.GetAllAsync();
+            reservationsThisMonth = reservationsThisMonth
+                .Where(r => r.StartDate <= currentMonthEnd && r.EndDate >= currentMonthStart)
+                .ToList();
+
+            var roomOccupiedDays = new Dictionary<int, int>();
+
+            foreach (var reservation in reservationsThisMonth)
+            {
+                var start = reservation.StartDate < currentMonthStart ? currentMonthStart : reservation.StartDate;
+                var end = reservation.EndDate > currentMonthEnd ? currentMonthEnd : reservation.EndDate;
+                int occupiedDays = (int)(end - start).TotalDays;
+
+                if (roomOccupiedDays.ContainsKey(reservation.RoomId))
+                    roomOccupiedDays[reservation.RoomId] += occupiedDays;
+                else
+                    roomOccupiedDays[reservation.RoomId] = occupiedDays;
+            }
+
+            int uniqueOccupiedRoomsThisMonth = roomOccupiedDays.Count;
+            int totalRoomDaysInMonth = totalRooms * DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+            int totalOccupiedDaysThisMonth = roomOccupiedDays.Values.Sum();
+            double monthlyOccupiedPercentage = totalRoomDaysInMonth > 0 ? (double)totalOccupiedDaysThisMonth / totalRoomDaysInMonth * 100 : 0;
+
+            // Bu formülü, "bu ay rezervasyon yapılan odaların yüzdesi" olarak hesaplamak için ekliyoruz:
+            double monthlyOccupiedRoomsPercentage = totalRooms > 0 ? (double)uniqueOccupiedRoomsThisMonth / totalRooms * 100 : 0;
+
+            return (totalRooms, occupiedRooms, emptyRooms, maintenanceRooms, occupiedPercentage, monthlyOccupiedPercentage, uniqueOccupiedRoomsThisMonth, monthlyOccupiedRoomsPercentage);
+        }
+
 
 
     }

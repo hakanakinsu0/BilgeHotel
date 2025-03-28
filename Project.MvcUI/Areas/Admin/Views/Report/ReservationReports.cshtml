@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports.ReservationReportResponseModel>
+﻿@model IEnumerable<ReservationReportResponseModel>
 
 @{
     ViewData["Title"] = "📅 Rezervasyon Raporları";
@@ -46,7 +46,7 @@
                             <span class="badge bg-danger">İptal Edildi</span>
                         }
                     </td>
-                    <td>@reservation.TotalPrice.ToString("C")</td>
+                    <td>@reservation.TotalPrice.ToString("C2")</td>
                 </tr>
                 count++;
             }

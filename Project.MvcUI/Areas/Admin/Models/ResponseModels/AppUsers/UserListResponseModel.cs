@@ -1,4 +1,4 @@
-﻿namespace Project.MvcUI.Areas.Admin.Models.ResponseModels
+﻿namespace Project.MvcUI.Areas.Admin.Models.ResponseModels.AppUsers
 {
     public class UserListResponseModel
     {

@@ -1,6 +1,6 @@
-﻿namespace Project.MvcUI.Areas.Admin.Models
+﻿namespace Project.MvcUI.Areas.Admin.Models.ResponseModels.Dashboard
 {
-    public class DashboardViewModel
+    public class DashboardResponseModel
     {
         public int TotalUsers { get; set; }
         public int ActiveUsers { get; set; }

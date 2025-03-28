@@ -17,12 +17,22 @@ namespace Project.Bll.Managers.Concretes
         private readonly IReservationRepository _repository;
         private readonly IRoomRepository _roomRepository;
         private readonly IExtraServiceManager _extraServiceManager; // Yeni: Ekstra hizmetleri almak için
+        private readonly IAppUserManager _appUserManager;                   // Yeni: Kullanıcı manager
+        private readonly IAppUserProfileManager _appUserProfileManager;    // Yeni: Kullanıcı profil manager
+        private readonly IRoomManager _roomManager;       // Yeni: Oda manager
+        private readonly IReservationExtraServiceManager _reservationExtraServiceManager;
+        private readonly IPaymentManager _paymentManager;
 
-        public ReservationManager(IReservationRepository repository, IRoomRepository roomRepository, IMapper mapper, IExtraServiceManager extraServiceManager) : base(repository, mapper)
+        public ReservationManager(IReservationRepository repository, IRoomRepository roomRepository, IMapper mapper, IExtraServiceManager extraServiceManager, IAppUserManager appUserManager, IAppUserProfileManager appUserProfileManager, IRoomManager roomManager, IReservationExtraServiceManager reservationExtraServiceManager, IPaymentManager paymentManager) : base(repository, mapper)
         {
             _repository = repository;
             _roomRepository = roomRepository;
             _extraServiceManager = extraServiceManager;
+            _appUserManager = appUserManager;
+            _appUserProfileManager = appUserProfileManager;
+            _roomManager = roomManager;
+            _reservationExtraServiceManager = reservationExtraServiceManager;
+            _paymentManager = paymentManager;
         }
 
         public async Task<bool> CancelReservationAsync(int reservationId)
@@ -280,7 +290,7 @@ namespace Project.Bll.Managers.Concretes
                     extraTotal += extraService.Price;
                 }
             }
-      
+
             // Mevcut toplam fiyata ekstra hizmetlerin ücretini ekliyoruz
             reservationEntity.TotalPrice += extraTotal;
             reservationEntity.ModifiedDate = DateTime.Now;
@@ -349,6 +359,322 @@ namespace Project.Bll.Managers.Concretes
             //}
             return _mapper.Map<ReservationDto>(reservation);
         }
+
+
+        //public async Task<List<ReservationDto>> GetReservationReportsAsync() // Rapor DTO listesini asenkron getirir
+        //{
+        //    // BaseManager üzerinden tüm rezervasyon DTO'larını alıyoruz
+        //    var reservations = await GetAllAsync(); // Tüm rezervasyonları getirir
+
+        //    // Her rezervasyon için ek rapor bilgilerini dolduruyoruz
+        //    foreach (var reservation in reservations) // Her rezervasyon üzerinde döner
+        //    {
+        //        // Kullanıcı profil bilgisini getiriyoruz (AppUser profil bilgileri CustomerName için)
+        //        var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId ?? 0); // Kullanıcı profil bilgisi alınır
+        //        reservation.CustomerName = userProfile != null
+        //            ? $"{userProfile.FirstName} {userProfile.LastName}" // İsim ve soyisim birleştirilir
+        //            : "Bilinmeyen Müşteri"; // Profil bulunamazsa default değer
+
+        //        // Oda bilgisini getiriyoruz (RoomNumber için)
+        //        var room = await _roomManager.GetByIdAsync(reservation.RoomId); // Oda bilgisi alınır
+        //        reservation.RoomNumber = room != null
+        //            ? room.RoomNumber // Oda numarası atanır
+        //            : "Bilinmeyen Oda"; // Oda bilgisi bulunamazsa default değer
+
+        //        // Ek olarak, müşteri e-postasını da getirebiliriz
+        //        var user = await _appUserManager.GetByIdAsync(reservation.AppUserId ?? 0); // Kullanıcı bilgisi alınır
+        //        reservation.CustomerEmail = user != null
+        //            ? user.Email // Email bilgisi atanır
+        //            : "Bilinmeyen Email"; // Kullanıcı bulunamazsa default değer
+        //    }
+
+        //    return reservations; // Güncellenmiş rezervasyon DTO listesini döner
+        //}
+
+        public async Task<(decimal TotalRevenue, List<(int Year, int Month, decimal TotalRevenue)> MonthlyReports)> GetRevenueReportsAsync()
+        {
+            // Tüm rezervasyon DTO'larını alıyoruz (ReservationDto kullanılarak)
+            var reservations = await GetAllAsync(); // BaseManager'dan tüm rezervasyonları getirir
+
+            // Yalnızca onaylanmış (Confirmed) rezervasyonları filtreliyoruz
+            var confirmedReservations = reservations
+                .Where(r => r.ReservationStatus == ReservationStatus.Confirmed)
+                .ToList();
+
+            // Tüm onaylanmış rezervasyonların toplam gelirini hesaplıyoruz
+            decimal totalRevenue = confirmedReservations.Sum(r => r.TotalPrice);
+
+            // Aylık bazda gelir hesaplaması: Rezervasyonları başlangıç tarihine göre gruplandırıyoruz
+            var monthlyReports = confirmedReservations
+                .GroupBy(r => new { r.StartDate.Year, r.StartDate.Month })
+                .Select(g => (Year: g.Key.Year, Month: g.Key.Month, TotalRevenue: g.Sum(r => r.TotalPrice)))
+                .OrderBy(x => x.Year)
+                .ThenBy(x => x.Month)
+                .ToList();
+
+            return (totalRevenue, monthlyReports);
+        }
+
+        /// <summary>
+        /// Tüm rezervasyon DTO'larını alır ve her rezervasyon için eksik bilgileri (kullanıcı, kullanıcı profili ve oda bilgileri) tamamlar.
+        /// Bu metot sayesinde controller, yalnızca tamamlanmış rezervasyon verisini alır.
+        /// </summary>
+        /// <returns>Tamamlanmış rezervasyon DTO'larının listesini döndürür.</returns>
+        public async Task<List<ReservationDto>> GetReservationReportsAsync()
+        {
+            // BaseManager üzerinden tüm rezervasyon DTO'larını alıyoruz
+            var reservations = await GetAllAsync();
+
+            // Her rezervasyon için eksik bilgileri tamamlıyoruz
+            foreach (var reservation in reservations)
+            {
+                // Kullanıcı bilgilerini çekiyoruz
+                if (reservation.AppUserId.HasValue)
+                {
+                    var user = await _appUserManager.GetByIdAsync(reservation.AppUserId.Value);
+                    var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId.Value);
+
+                    if (user != null && userProfile != null)
+                    {
+                        reservation.CustomerName = $"{userProfile.FirstName} {userProfile.LastName}";
+                        reservation.CustomerEmail = user.Email;
+                    }
+                    else
+                    {
+                        reservation.CustomerName = "Bilinmeyen Kullanıcı";
+                        reservation.CustomerEmail = "Email Yok";
+                    }
+                }
+                else
+                {
+                    reservation.CustomerName = "Anonim Kullanıcı";
+                    reservation.CustomerEmail = "Email Yok";
+                }
+
+                // Oda bilgilerini çekiyoruz
+                var room = await _roomManager.GetByIdAsync(reservation.RoomId);
+                reservation.RoomNumber = room != null ? room.RoomNumber.ToString() : "Bilinmeyen Oda";
+            }
+
+            return reservations;
+        }
+
+        /// <summary>
+        /// Tüm rezervasyon DTO'larını alır, eksik bilgileri (kullanıcı, kullanıcı profili ve oda bilgileri) tamamlar
+        /// ve verilen filtre parametrelerine göre filtreleyerek döndürür.
+        /// </summary>
+        /// <param name="search">Kullanıcı adı veya e-posta araması</param>
+        /// <param name="roomId">Oda numarasına göre filtre</param>
+        /// <param name="status">Rezervasyon durumu filtre</param>
+        /// <param name="isPaid">Ödeme durumu filtre (true: ödeme yapılmış, false: ödeme bekleniyor)</param>
+        /// <returns>Filtrelenmiş ve eksik bilgileri tamamlanmış ReservationDto listesini döndürür.</returns>
+        public async Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, int? roomId, string status, bool? isPaid)
+        {
+            // Tüm rezervasyon DTO'larını alıyoruz
+            var reservations = await GetAllAsync();
+
+            // Her rezervasyon için eksik bilgileri tamamlıyoruz
+            foreach (var reservation in reservations)
+            {
+                // Kullanıcı bilgilerini çekiyoruz
+                if (reservation.AppUserId.HasValue)
+                {
+                    var user = await _appUserManager.GetByIdAsync(reservation.AppUserId.Value);
+                    var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId.Value);
+
+                    if (user != null && userProfile != null)
+                    {
+                        reservation.CustomerName = $"{userProfile.FirstName} {userProfile.LastName}";
+                        reservation.CustomerEmail = user.Email;
+                    }
+                    else
+                    {
+                        reservation.CustomerName = "Bilinmeyen Kullanıcı";
+                        reservation.CustomerEmail = "Email Yok";
+                    }
+                }
+                else
+                {
+                    reservation.CustomerName = "Anonim Kullanıcı";
+                    reservation.CustomerEmail = "Email Yok";
+                }
+
+                // Oda bilgilerini çekiyoruz
+                var room = await _roomManager.GetByIdAsync(reservation.RoomId);
+                reservation.RoomNumber = room != null ? room.RoomNumber.ToString() : "Bilinmeyen Oda";
+            }
+
+            // Filtreleme işlemleri:
+            // Kullanıcı adı veya e-posta ile arama
+            if (!string.IsNullOrEmpty(search))
+            {
+                reservations = reservations.Where(r =>
+                    r.CustomerName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    r.CustomerEmail.Contains(search, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
+            // Oda numarasına göre filtreleme (r.RoomNumber, string tipinde tutulduğu varsayılmıştır)
+            if (roomId.HasValue)
+            {
+                reservations = reservations.Where(r => r.RoomNumber == roomId.ToString()).ToList();
+            }
+
+            // Rezervasyon durumuna göre filtreleme
+            if (!string.IsNullOrEmpty(status))
+            {
+                reservations = reservations.Where(r => r.ReservationStatus.ToString() == status).ToList();
+            }
+
+            // Ödeme durumuna göre filtreleme (Confirmed: ödeme yapılmış, PendingPayment: ödeme bekleniyor)
+            if (isPaid.HasValue)
+            {
+                reservations = reservations.Where(r =>
+                    isPaid.Value ? r.ReservationStatus == ReservationStatus.Confirmed : r.ReservationStatus == ReservationStatus.PendingPayment
+                ).ToList();
+            }
+
+            return reservations;
+        }
+
+
+        /// <summary>
+        /// Belirtilen rezervasyon bilgilerini, ekstra hizmetleri ve reaktivasyon durumunu dikkate alarak rezervasyonu günceller.
+        /// Bu metot; oda değişikliği kontrolü, tarih kontrolü, fiyat hesaplaması, rezervasyon güncellemesi,
+        /// ekstra hizmetlerin güncellenmesi ve gerekirse rezervasyonun reaktif edilmesi işlemlerini gerçekleştirir.
+        /// </summary>
+        /// <param name="dto">Güncellenecek rezervasyon bilgilerini içeren ReservationDto</param>
+        /// <param name="extraServiceIds">Rezervasyona eklenmek istenen ekstra hizmetlerin ID listesi</param>
+        /// <param name="reactivateReservation">Rezervasyonun reaktif edilip edilmeyeceğini belirler</param>
+        /// <returns>Güncelleme işleminin başarılı olup olmadığını gösteren boolean değer</returns>
+        public async Task<bool> UpdateReservationWithDetailsAsync(ReservationDto dto, List<int> extraServiceIds, bool reactivateReservation)
+        {
+            // Mevcut rezervasyonu veritabanından alıyoruz
+            var existingReservation = await _repository.GetByIdAsync(dto.Id);
+            if (existingReservation == null)
+            {
+                throw new Exception("Rezervasyon bulunamadı.");
+            }
+
+            // Oda değişikliğini kontrol ediyoruz
+            if (existingReservation.RoomId != dto.RoomId)
+            {
+                // Eski odanın durumunu boş (Empty) olarak güncelliyoruz
+                await _roomManager.UpdateRoomStatusAsync(existingReservation.RoomId, RoomStatus.Empty);
+                // Yeni odanın durumunu dolu (Occupied) olarak güncelliyoruz
+                await _roomManager.UpdateRoomStatusAsync(dto.RoomId, RoomStatus.Occupied);
+            }
+
+            // Tarihler için oda doluluk kontrolü
+            bool isAvailable = CheckAvailabilityForUpdate(dto.Id, dto.RoomId, dto.StartDate, dto.EndDate);
+            if (!isAvailable)
+            {
+                throw new Exception("Seçtiğiniz tarihler arasında oda dolu.");
+            }
+
+            // Güncellenmiş toplam fiyatı hesaplıyoruz
+            dto.TotalPrice = CalculateUpdatedPrice(dto.RoomId, dto.StartDate, dto.EndDate, dto.PackageId);
+
+            // Rezervasyon güncelleme işlemini gerçekleştiriyoruz
+            bool updateResult = await UpdateReservationAsync(dto);
+            if (!updateResult)
+            {
+                throw new Exception("Rezervasyon güncellenirken bir hata oluştu.");
+            }
+
+            // Rezervasyona ait ekstra hizmetleri güncelliyoruz (varsa)
+            if (extraServiceIds != null && extraServiceIds.Any())
+            {
+                // _reservationExtraServiceManager'ın UpdateExtraServicesForReservation metodunu kullanıyoruz
+                await _reservationExtraServiceManager.UpdateExtraServicesForReservation(dto.Id, extraServiceIds);
+            }
+
+            // Eğer reaktivasyon isteniyorsa rezervasyonu tekrar aktif hale getiriyoruz
+            if (reactivateReservation)
+            {
+                await ReactivateReservationAsync(dto.Id);
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Belirtilen rezervasyonun ödeme durumunu ve ilgili oda durumunu, yeni duruma göre günceller.
+        /// Rezervasyon ve ödeme objelerinin durumları; Confirmed, PendingPayment ve Canceled durumlarına göre ayarlanır.
+        /// Eğer yeni durum Canceled ise rezervasyon ve ödeme objeleri 'Deleted' statüsüne alınır ve oda boşaltılır.
+        /// Eğer yeni durum PendingPayment veya Confirmed ise objeler Updated statüsüne alınır ve oda dolu olarak ayarlanır.
+        /// </summary>
+        /// <param name="reservationId">Güncellenecek rezervasyonun ID'si</param>
+        /// <param name="newStatus">Yeni rezervasyon durumu (ReservationStatus)</param>
+        /// <returns>Güncelleme işleminin başarılı olup olmadığını belirten boolean değer</returns>
+        public async Task<bool> UpdateReservationPaymentStatusAsync(int reservationId, ReservationStatus newStatus)
+        {
+            // Rezervasyonu çekiyoruz
+            var reservation = await _repository.GetByIdAsync(reservationId);
+            if (reservation == null)
+                throw new Exception("Rezervasyon bulunamadı.");
+
+            // IPaymentManager üzerinden ödeme bilgilerini çekiyoruz
+            var payments = await _paymentManager.GetAllAsync();
+            var payment = payments.FirstOrDefault(p => p.ReservationId == reservationId);
+            if (payment == null)
+                throw new Exception("Rezervasyona ait ödeme bilgisi bulunamadı.");
+
+            // Orijinal (eski) nesneleri oluşturuyoruz (clone işlemi)
+            var originalReservation = _mapper.Map<Reservation>(reservation);
+            var originalPayment = _mapper.Map<PaymentDto>(payment);
+
+            // Durum güncelleme işlemleri
+            if (newStatus == ReservationStatus.Canceled)
+            {
+                reservation.Status = DataStatus.Deleted;
+                reservation.DeletedDate = DateTime.Now;
+                reservation.ModifiedDate = null;
+
+                payment.Status = DataStatus.Deleted;
+                payment.DeletedDate = DateTime.Now;
+                payment.ModifiedDate = null;
+
+                // Oda durumunu boş (Empty) olarak güncelliyoruz
+                await _roomManager.UpdateRoomStatusAsync(reservation.RoomId, RoomStatus.Empty);
+            }
+            else if (newStatus == ReservationStatus.PendingPayment || newStatus == ReservationStatus.Confirmed)
+            {
+                reservation.Status = DataStatus.Updated;
+                reservation.ModifiedDate = DateTime.Now;
+                reservation.DeletedDate = null;
+
+                payment.Status = DataStatus.Updated;
+                payment.ModifiedDate = DateTime.Now;
+                payment.DeletedDate = null;
+
+                // Oda durumunu dolu (Occupied) olarak güncelliyoruz
+                await _roomManager.UpdateRoomStatusAsync(reservation.RoomId, RoomStatus.Occupied);
+            }
+
+            // Yeni rezervasyon durumunu atıyoruz
+            reservation.ReservationStatus = newStatus;
+
+            // Güncellenmiş rezervasyon ve ödeme nesnelerini oluşturuyoruz
+            var updatedReservation = _mapper.Map<Reservation>(reservation);
+            var updatedPayment = _mapper.Map<PaymentDto>(payment);
+
+            // Orijinal ve güncellenmiş nesneler ile UpdateAsync metodlarını çağırıyoruz
+            await _repository.UpdateAsync(originalReservation, updatedReservation);
+            await _paymentManager.UpdateAsync(updatedPayment);
+
+            return true;
+        }
+
+
+
+
+
+
+
+
+
 
     }
 }

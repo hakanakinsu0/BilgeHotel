@@ -37,8 +37,8 @@ builder.Services.AddSession(x =>
 // **Kimlik Doğrulama ve Yetkilendirme**
 builder.Services.ConfigureApplicationCookie(x =>
 {
-    x.AccessDeniedPath = "/Home/SignIn";
-    x.LoginPath = "/Home/SignIn";
+    x.AccessDeniedPath = "/Home/Index";
+    x.LoginPath = "/Home/Index";
 });
 
 WebApplication app = builder.Build();

@@ -21,6 +21,7 @@ namespace Project.Bll.Managers.Concretes
 
         readonly IAppUserRepository _repository; // Repository bağımlılığı
         readonly IAppUserProfileManager _appUserProfileManager; // Profil manager bağımlılığı
+        readonly IReservationRepository _reservationRepository;
         readonly IMapper _mapper; // AutoMapper bağımlılığı
         readonly UserManager<AppUser> _userManager; // UserManager bağımlılığı
         readonly RoleManager<IdentityRole<int>> _roleManager; // Rol yönetimi bağımlılığı
@@ -31,7 +32,8 @@ namespace Project.Bll.Managers.Concretes
             IAppUserProfileManager appUserProfileManager,
             IMapper mapper,
             UserManager<AppUser> userManager,
-            RoleManager<IdentityRole<int>> roleManager)
+            RoleManager<IdentityRole<int>> roleManager,
+            IReservationRepository reservationRepository)
             : base(repository, mapper)
         {
             _repository = repository;
@@ -39,6 +41,7 @@ namespace Project.Bll.Managers.Concretes
             _mapper = mapper;
             _userManager = userManager;
             _roleManager = roleManager;
+            _reservationRepository = reservationRepository;
         }
 
         /// <summary>
@@ -46,22 +49,25 @@ namespace Project.Bll.Managers.Concretes
         /// </summary>
         public async Task<bool> ChangeUserPasswordAsync(int userId, string currentPassword, string newPassword)
         {
-            AppUser? user = await _repository.GetByIdAsync(userId); // Kullanıcıyı ID'ye göre getir 
+            // Kullanıcıyı ID'ye göre bul
+            var user = await _repository.GetByIdAsync(userId);
+            if (user == null)
+                return false; // veya throw new Exception("Kullanıcı bulunamadı.");
 
-            if (user == null) return false;                     // Eğer kullanıcı bulunamazsa false döndür 
+            // Identity üzerinden mevcut şifre -> yeni şifre değişikliği
+            IdentityResult result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!result.Succeeded)
+                return false;
 
-            IdentityResult? result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword); // Şifre değiştir 
+            // Eğer başarılıysa, ek veritabanı alanlarını güncelleyebilirsiniz:
+            user.ModifiedDate = DateTime.Now;
+            user.Status = DataStatus.Updated;
 
-            if (result.Succeeded) // Değişim başarılı ise
-            {
-                user.ModifiedDate = DateTime.Now; // ModifiedDate güncelle
-                user.Status = DataStatus.Updated; // Status güncelle
+            // Burada, Repository veya userManager tekrar güncellemeyi yapabilir:
+            await _repository.UpdateAsync(user, user); // or
+                                                       // var updateResult = await _userManager.UpdateAsync(user);
 
-                await _repository.UpdateAsync(user, user); // Repository üzerinden güncelleme yap
-                return true; // True döndür
-            }
-
-            return false; // Aksi halde false döndür
+            return true;
         }
 
         /// <summary>
@@ -262,8 +268,8 @@ namespace Project.Bll.Managers.Concretes
         /// <returns>Kullanıcı ve profil bilgilerini içeren bir tuple (AppUserDto, AppUserProfileDto)</returns>
         public async Task<(AppUserDto user, AppUserProfileDto profile)> GetUserWithProfileAsync(string username)
         {
-            var allUsers = await GetAllAsync();
-            var user = allUsers.FirstOrDefault(u => u.UserName == username);
+            List<AppUserDto> allUsers = await GetAllAsync();
+            AppUserDto user = allUsers.FirstOrDefault(u => u.UserName == username);
             if (user == null)
             {
                 return (null, null);
@@ -271,6 +277,215 @@ namespace Project.Bll.Managers.Concretes
             var profile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
             return (user, profile);
         }
+
+        public async Task<(int TotalCustomers, int CustomersWithReservations, int CustomersWithoutReservations, List<AppUserDto> Members, List<AppUserProfileDto> Profiles, List<ReservationDto> Reservations)> GetCustomerReportDataAsync()
+        {
+            var users = await GetAllAsync(); // AppUserManager'ın mevcut metodu, tüm kullanıcıları getirir.
+            var userProfiles = await _appUserProfileManager.GetAllAsync(); // Kullanıcı profillerini getirir.
+            var reservations = _mapper.Map<List<ReservationDto>>(await _reservationRepository.GetAllAsync());
+
+            var members = users.Where(u => u.Id != 1).ToList(); // Admin (UserId = 1) dışındaki kullanıcılar.
+            int totalCustomers = members.Count;
+            int customersWithReservations = reservations
+                .Where(r => r.AppUserId.HasValue && r.AppUserId != 1)
+                .Select(r => r.AppUserId)
+                .Distinct()
+                .Count();
+            int customersWithoutReservations = totalCustomers - customersWithReservations;
+
+            return (totalCustomers, customersWithReservations, customersWithoutReservations, members, userProfiles, reservations);
+        }
+
+
+        public async Task<List<AppUserDto>> GetUsersWithDetailsAsync(string search, string role, string status)
+        {
+            // Identity üzerinden tüm kullanıcıları çekiyoruz
+            var users = await _userManager.Users.ToListAsync();
+            var userDtos = new List<AppUserDto>();
+
+            // Her kullanıcı için ilgili profil ve rol bilgilerini çekip DTO'ya mapliyoruz
+            foreach (var user in users)
+            {
+                // Kullanıcının rollerini alıyoruz
+                var roles = await _userManager.GetRolesAsync(user);
+                // Kullanıcının profil bilgilerini alıyoruz
+                var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
+
+                var dto = new AppUserDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    EmailConfirmed = user.EmailConfirmed,
+                    PhoneNumber = user.PhoneNumber,
+                    PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                    Role = roles.Any() ? string.Join(", ", roles) : "Üye",
+                    FirstName = userProfile?.FirstName ?? "-",
+                    LastName = userProfile?.LastName ?? "-",
+                    Address = userProfile?.Address ?? "-",
+                    Nationality = userProfile?.Nationality ?? "-",
+                    Gender = userProfile?.Gender ?? Gender.Other,
+                    IdentityNumber = userProfile?.IdentityNumber ?? "-",
+                    Status = user.Status
+                };
+
+                userDtos.Add(dto);
+            }
+
+            // Filtreleme işlemleri
+
+            // Arama: Kullanıcı adı, soyadı, email veya kullanıcı adı içeriyorsa
+            if (!string.IsNullOrEmpty(search))
+            {
+                userDtos = userDtos.Where(u =>
+                    u.FirstName.Contains(search) ||
+                    u.LastName.Contains(search) ||
+                    u.Email.Contains(search) ||
+                    u.UserName.Contains(search)
+                ).ToList();
+            }
+
+            // Rol filtresi
+            if (!string.IsNullOrEmpty(role))
+            {
+                userDtos = userDtos.Where(u => u.Role.Contains(role)).ToList();
+            }
+
+            // Durum filtresi: "Aktif" veya "Pasif"
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "Aktif")
+                    userDtos = userDtos.Where(u => u.Status != DataStatus.Deleted).ToList();
+                else if (status == "Pasif")
+                    userDtos = userDtos.Where(u => u.Status == DataStatus.Deleted).ToList();
+            }
+
+            return userDtos;
+        }
+
+        public async Task<AppUserDto> CreateUserWithProfileAsync(AppUserDto userDto, string password, string role = "Member")
+        {
+            // AppUserDto'yu AppUser entity'sine mapliyoruz
+            var newUser = _mapper.Map<AppUser>(userDto);
+
+            // Eğer UserName boşsa, e-posta adresini UserName olarak atıyoruz
+            if (string.IsNullOrWhiteSpace(newUser.UserName))
+                newUser.UserName = newUser.Email;
+
+            newUser.EmailConfirmed = true;
+            newUser.CreatedDate = DateTime.Now;
+            newUser.Status = DataStatus.Inserted;
+
+            // Kullanıcıyı Identity sistemi üzerinden oluşturuyoruz
+            var result = await _userManager.CreateAsync(newUser, password);
+            if (!result.Succeeded)
+            {
+                // Hata durumunda exception fırlatıyoruz, isteğe göre farklı hata yönetimi yapılabilir
+                throw new Exception("Kullanıcı oluşturulurken bir hata oluştu.");
+            }
+
+            // Kullanıcıya rol ataması yapıyoruz
+            if (!string.IsNullOrEmpty(role))
+            {
+                var roleExists = await _roleManager.RoleExistsAsync(role);
+                if (!roleExists)
+                {
+                    var createRoleResult = await _roleManager.CreateAsync(new IdentityRole<int> { Name = role });
+                    if (!createRoleResult.Succeeded)
+                        throw new Exception("Rol oluşturulurken bir hata oluştu.");
+                }
+                await _userManager.AddToRoleAsync(newUser, role);
+            }
+
+            // Kullanıcı profilini oluşturuyoruz
+            var userProfile = new AppUserProfile
+            {
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Address = userDto.Address,
+                Nationality = userDto.Nationality,
+                IdentityNumber = userDto.IdentityNumber,
+                Gender = userDto.Gender,
+                AppUserId = newUser.Id,
+                CreatedDate = DateTime.Now,
+                Status = DataStatus.Inserted
+            };
+
+            // Profil bilgilerini kaydetmek için, ilgili DTO'ya mapleyip CreateAsync metodunu çağırıyoruz
+            await _appUserProfileManager.CreateAsync(_mapper.Map<AppUserProfileDto>(userProfile));
+
+            // Oluşturulan kullanıcıyı DTO'ya mapliyoruz ve döndürüyoruz
+            var createdUserDto = _mapper.Map<AppUserDto>(newUser);
+            return createdUserDto;
+        }
+
+        public async Task<AppUserDto> GetUserEditDataAsync(int userId)
+        {
+            // Kullanıcıyı ID'sine göre çekiyoruz.
+            var user = await _repository.GetByIdAsync(userId);
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            // Kullanıcıyı DTO'ya mapliyoruz.
+            var userDto = _mapper.Map<AppUserDto>(user);
+
+            // Kullanıcının profil bilgilerini çekiyoruz.
+            var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(userId);
+            if (userProfile != null)
+            {
+                userDto.FirstName = userProfile.FirstName;
+                userDto.LastName = userProfile.LastName;
+                userDto.Address = userProfile.Address;
+                userDto.Nationality = userProfile.Nationality;
+                userDto.IdentityNumber = userProfile.IdentityNumber;
+                userDto.Gender = userProfile.Gender;
+            }
+
+            return userDto;
+        }
+
+        
+        public async Task<bool> DeactivateUserAsync(int userId, int currentUserId)
+        {
+            // Kullanıcıyı ID'sine göre çekiyoruz.
+            var user = await _repository.GetByIdAsync(userId);
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            // Admin kendi hesabını silemez!
+            if (user.Id == currentUserId)
+                throw new Exception("Kendi hesabınızı silemezsiniz.");
+
+            // Kullanıcı zaten pasif ise işlem iptal edilir.
+            if (user.Status == DataStatus.Deleted)
+                throw new Exception("Bu kullanıcı zaten pasif durumda.");
+
+            // Kullanıcıyı pasif hale getiriyoruz.
+            user.Status = DataStatus.Deleted;
+            user.DeletedDate = DateTime.Now;
+
+            // UpdateAsync sonucunu kontrol ediyoruz.
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                string errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new Exception("Kullanıcı güncellenirken hata oluştu: " + errors);
+            }
+
+            // Kullanıcının profil bilgilerini de pasif hale getiriyoruz.
+            var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
+            if (userProfile != null)
+            {
+                userProfile.Status = DataStatus.Deleted;
+                userProfile.DeletedDate = DateTime.Now;
+                await _appUserProfileManager.MakePassiveAsync(userProfile);
+            }
+
+            return true;
+        }
+
+
+
 
     }
 }
