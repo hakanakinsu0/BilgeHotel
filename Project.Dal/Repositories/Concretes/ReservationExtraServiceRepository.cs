@@ -27,7 +27,7 @@ namespace Project.Dal.Repositories.Concretes
         /// <param name="entities">Eklenmek istenen ekstra hizmetlerin listesi.</param>
         public async Task CreateRangeAsync(List<ReservationExtraService> entities)
         {
-            await _context.Set<ReservationExtraService>().AddRangeAsync(entities);  // Çoklu veri ekleme işlemi.
+            await _dbSet.AddRangeAsync(entities);                                  // DbSet üzerinden çoklu veri ekleme işlemi.
             await _context.SaveChangesAsync();                                      // Değişiklikleri veritabanına kaydeder.
         }
     }

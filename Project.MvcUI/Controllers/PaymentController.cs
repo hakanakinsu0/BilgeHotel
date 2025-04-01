@@ -361,7 +361,7 @@ namespace Project.MvcUI.Controllers
             // İlgili rezervasyonun onaylı olup olmadığını kontrol etmek için onaylı rezervasyonu getiriyoruz.
             ReservationDto reservation = await _reservationManager.GetConfirmedReservationByIdAsync(requestModel.ReservationId);
             // Rezervasyon bulunamadıysa veya rezervasyon zaten iptal edilmişse hata mesajı ile yönlendiriyoruz.
-            if (reservation == null || reservation.ReservationStatus == ReservationStatus.Canceled)
+            if (reservation == null)
                 return RedirectWithError("Rezervasyon bulunamadı veya zaten iptal edilmiş.", "History", "Payment");
 
             // Ödeme iptali için API çağrısı yapabilmek üzere, HTTP client oluşturuyoruz.

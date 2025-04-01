@@ -81,8 +81,6 @@ namespace Project.WebApi.Controllers
             return Ok(new List<PaymentHistoryResponseModel> { paymentHistory });
         }
 
-
-
     }
 }
 

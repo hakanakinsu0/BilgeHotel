@@ -354,7 +354,7 @@ namespace Project.MvcUI.Controllers
             // Eğer rezervasyon onaylı ise, ödeme iptali için PaymentController'ın CancelPaymentConfirm action'ına yönlendirme yapılır.
             if (reservation.ReservationStatus == ReservationStatus.Confirmed)
             {
-                return RedirectWithMessage("Ödeme iptali onay sayfasına yönlendiriliyorsunuz.", false, "CancelPaymentConfirm", "Payment",
+                return RedirectWithMessage("Ödeme iptali onay sayfasına yönlendirildiniz.", false, "CancelPaymentConfirm", "Payment",
                     new RouteValueDictionary(new { reservationId = reservation.Id }));
             }
             else

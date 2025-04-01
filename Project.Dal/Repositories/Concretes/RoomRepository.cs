@@ -29,7 +29,7 @@ namespace Project.Dal.Repositories.Concretes
         /// <returns>Belirtilen numaraya sahip oda bilgisi.</returns>
         public async Task<Room> GetByRoomNumberAsync(string roomNumber)
         {
-            return await _dbSet.FirstOrDefaultAsync(r => r.RoomNumber == roomNumber); 
+            return await Where(r => r.RoomNumber == roomNumber).FirstOrDefaultAsync();
         }
     }
 }

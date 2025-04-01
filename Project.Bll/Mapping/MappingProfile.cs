@@ -20,7 +20,7 @@ namespace Project.Bll.Mapping
             CreateMap<RoomType, RoomTypeDto>().ReverseMap();
 
             // Rezervasyon, Ödeme ve Paketler
-            CreateMap<Reservation, ReservationDto>();
+            CreateMap<Reservation, ReservationDto>().ReverseMap();
             CreateMap<Payment, PaymentDto>().ReverseMap();
             CreateMap<Package, PackageDto>().ReverseMap();
 
