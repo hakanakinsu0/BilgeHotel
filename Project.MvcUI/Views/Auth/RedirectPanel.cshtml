@@ -2,6 +2,15 @@
     ViewData["Title"] = "Bilgilendirme";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger text-center">@TempData["ErrorMessage"]</div>
+}
+
 <div class="container mt-5">
     <div class="alert alert-info text-center">
         <h4>@TempData["Message"]</h4>
