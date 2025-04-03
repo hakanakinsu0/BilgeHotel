@@ -169,7 +169,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 // Sayfa tekrar yükleneceği için pozisyonlar yeniden getirilir
-                var positions = await _employeeManager.GetDistinctPositionsAsync();
+                List<string> positions = await _employeeManager.GetDistinctPositionsAsync();
                 ViewBag.Positions = new SelectList(positions);
 
                 // Hatalı form tekrar gösterilir
