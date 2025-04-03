@@ -510,21 +510,21 @@ namespace Project.MvcUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendInvoiceMail(int reservationId)
         {
-            // 1. Rezervasyon
+            // Rezervasyon
             ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId);
             if (reservation == null)
                 return RedirectWithError("Rezervasyon bulunamadı.");
 
-            // 2. Ödeme
+            // Ödeme
             List<PaymentDto> payments = await _paymentManager.GetAllAsync();
             PaymentDto payment = payments.FirstOrDefault(p => p.ReservationId == reservationId);
             if (payment == null)
                 return RedirectWithError("Ödeme kaydı bulunamadı.");
 
-            // 3. Oda
+            // Oda
             RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId);
 
-            // 4. Ekstra Servisler
+            // Ekstra Servisler
             List<ReservationExtraServiceDto> resExtraServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservationId);
             List<ReservationExtraServiceDto> activeExtraServices = resExtraServices?
                 .Where(es => es.Status != DataStatus.Deleted)
@@ -538,15 +538,15 @@ namespace Project.MvcUI.Controllers
                     extraServices.Add(extraService);
             }
 
-            // 5. Kullanıcı e-posta
+            // Kullanıcı e-posta
             string userEmail = User.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(userEmail))
                 return RedirectWithError("Mail adresiniz bulunamadı.");
 
-            // 6. Fatura HTML içeriğini oluştur
+            // Fatura HTML içeriğini oluştur
             string htmlBody = InvoiceHtmlGenerator.GenerateInvoiceHtml(reservation, payment, room, extraServices);
 
-            // 7. Mail gönderimi
+            // Mail gönderimi
             try
             {
                 await MailService.SendAsync(
