@@ -3,8 +3,19 @@ using System.Text;
 
 namespace Project.MvcUI.Helpers
 {
+    /// <summary>
+    /// Fatura e-postası için HTML içerik üretmeye yarayan yardımcı sınıftır.
+    /// </summary>
     public static class InvoiceHtmlGenerator
     {
+        /// <summary>
+        /// Rezervasyon, ödeme, oda ve ekstra hizmet bilgilerini kullanarak HTML formatında fatura detaylarını oluşturur.
+        /// </summary>
+        /// <param name="reservation">Rezervasyon bilgisi</param>
+        /// <param name="payment">Ödeme bilgisi</param>
+        /// <param name="room">Oda bilgisi</param>
+        /// <param name="extraServices">Ekstra hizmetlerin listesi</param>
+        /// <returns>HTML formatında string fatura içeriği</returns>
         public static string GenerateInvoiceHtml(ReservationDto reservation, PaymentDto payment, RoomDto room, List<ExtraServiceDto> extraServices)
         {
             StringBuilder emailBody = new StringBuilder();
