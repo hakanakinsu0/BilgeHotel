@@ -4,7 +4,14 @@
     ViewData["Title"] = Model.PageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="container mt-5">
+        <div class="alert alert-info text-center">
+            <h4>@Model.ErrorMessage</h4>
+        </div>
+    </div>
+}
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
@@ -13,6 +20,11 @@
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div asp-validation-summary="All" class="alert alert-danger mt-3"></div>
 }
 
 <h2>⚠️ Ödeme İptal Onayı</h2>

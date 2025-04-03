@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Models.PageVms.Payments.PaymentInvoicePageVm
+﻿@model PaymentInvoicePageVm
 
 @{
     ViewData["Title"] = Model.PageTitle;
@@ -7,21 +7,13 @@
 
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="container mt-5">
-        <div class="alert alert-info text-center">
-            <h4>@TempData["ErrorMessage"]</h4>
-        </div>
-    </div>
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
-
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="container mt-5">
-        <div class="alert alert-success text-center">
-            <h4>@TempData["SuccessMessage"]</h4>
-        </div>
-    </div>
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
+
 
 <div class="container my-4">
     <div class="card shadow">

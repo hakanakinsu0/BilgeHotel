@@ -24,12 +24,6 @@
     <div class="alert alert-info">@Model.ErrorMessage</div>
 }
 
-<!-- TempData ile gönderilen başarı mesajı -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-
 <h2>@Model.PageTitle</h2>
 @if (!string.IsNullOrEmpty(Model.HelpText))
 {
