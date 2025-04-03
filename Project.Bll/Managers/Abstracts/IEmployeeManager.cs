@@ -1,4 +1,5 @@
 ﻿using Project.Bll.DtoClasses;
+using Project.Entities.Enums;
 using Project.Entities.Models;
 using System.Threading.Tasks;
 
@@ -19,5 +20,17 @@ namespace Project.Bll.Managers.Abstracts
         Task<int> GetRandomReceptionistEmployeeIdAsync();
         Task<List<string>> GetDistinctPositionsAsync();
 
+        /// <summary>
+        /// Telefon numarasını veritabanına uygun şekilde formatlar. (örn: 0555... → +90555...)
+        /// </summary>
+        /// <param name="rawPhone">Ham telefon numarası</param>
+        /// <returns>Formatlanmış telefon numarası</returns>
+        string FormatPhoneNumber(string rawPhone);
+
+        /// <summary>
+        /// Rastgele bir ShiftType (vardiya türü) döner.
+        /// </summary>
+        /// <returns>ShiftType enum'undan rastgele değer</returns>
+        ShiftType GetRandomShift();
     }
 }

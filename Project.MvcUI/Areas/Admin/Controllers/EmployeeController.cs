@@ -92,10 +92,10 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             }
 
             // Telefon numarası +90 formatına çevrilir (örnek: 0555... → +90555...)
-            string formattedPhone = "+9" + model.PhoneNumber;
+            string formattedPhone = _employeeManager.FormatPhoneNumber(model.PhoneNumber);
 
             // Rastgele vardiya seçimi yapılır (ShiftType enum'undan)
-            ShiftType randomShift = Enum.GetValues<ShiftType>().OrderBy(x => Guid.NewGuid()).First();
+            ShiftType randomShift = _employeeManager.GetRandomShift();
 
             // RequestModel → DTO dönüşümü yapılır
             EmployeeDto dto = new()
@@ -177,7 +177,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             }
 
             // Telefon numarası +90 formatına çevrilir (örnek: 0555... → +90555...)
-            string formattedPhone = "+9" + model.PhoneNumber;
+            string formattedPhone = _employeeManager.FormatPhoneNumber(model.PhoneNumber);
 
             // RequestModel → DTO dönüşümü yapılır
             EmployeeDto dto = new()

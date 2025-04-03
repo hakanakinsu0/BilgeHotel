@@ -3,6 +3,7 @@ using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Dal.Repositories.Abstracts;
 using Project.Dal.Repositories.Concretes;
+using Project.Entities.Enums;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,22 @@ namespace Project.Bll.Managers.Concretes
         public async Task<List<string>> GetDistinctPositionsAsync()
         {
             return await _repository.GetDistinctPositionsAsync();
+        }
+
+        public string FormatPhoneNumber(string rawPhone)
+        {
+            if (string.IsNullOrWhiteSpace(rawPhone))
+                return null;
+
+            return "+9" + rawPhone.Trim(); // 05554443322 → +905554443322
+        }
+
+        public ShiftType GetRandomShift()
+        {
+            return Enum.GetValues<ShiftType>()
+                       .Cast<ShiftType>()
+                       .OrderBy(x => Guid.NewGuid())
+                       .First();
         }
 
     }

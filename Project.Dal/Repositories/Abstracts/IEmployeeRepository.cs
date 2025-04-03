@@ -1,4 +1,5 @@
-﻿using Project.Entities.Models;
+﻿using Project.Entities.Enums;
+using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace Project.Dal.Repositories.Abstracts
     public interface IEmployeeRepository : IRepository<Employee> 
     {
         Task<List<string>> GetDistinctPositionsAsync();
+
+
     }
 }

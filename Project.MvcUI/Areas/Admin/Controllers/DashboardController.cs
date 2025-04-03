@@ -7,7 +7,7 @@ using Project.MvcUI.Areas.Admin.Models.ResponseModels.Dashboard;
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // Bu controller'a yalnızca Admin rolündeki kullanıcılar erişebilir.
+    [Authorize(Roles = "Admin")] 
     public class DashboardController : Controller
     {
         readonly IAppUserManager _appUserManager;
