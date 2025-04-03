@@ -49,11 +49,11 @@
     <div class="text-center">
         @if (User.Identity.IsAuthenticated)
         {
-            <a href="/Reservation/Create" class="btn btn-warning reservation-btn">Rezervasyon Yap</a>
+            <a asp-controller="Reservation" asp-action="Create" class="btn btn-warning reservation-btn">Rezervasyon Yap</a>
         }
         else
         {
-            <a href="/Auth/Login?returnUrl=/Reservation/Create" class="btn btn-warning reservation-btn">Rezervasyon Yap</a>
+            <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="/Reservation/Create" class="btn btn-warning reservation-btn">Rezervasyon Yap</a>
         }
     </div>
 
