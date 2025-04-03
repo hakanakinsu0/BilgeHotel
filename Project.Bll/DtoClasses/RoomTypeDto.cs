@@ -13,7 +13,7 @@ namespace Project.Bll.DtoClasses
     /// </summary>
     public class RoomTypeDto : BaseDto
     {
-        public string Name { get; set; } // Oda türünün adı (ör. "Tek Kişilik", "Çift Kişilik")
+        public string Name { get; set; }        // Oda türünün adı (ör. "Tek Kişilik", "Çift Kişilik")
         public string Description { get; set; } // Oda türünün açıklaması (opsiyonel)
     }
 }

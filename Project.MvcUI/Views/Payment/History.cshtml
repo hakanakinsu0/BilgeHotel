@@ -48,6 +48,8 @@ else
                 <th>📌 Kart Sahibi</th>
                 <th>💳 Kart Numarası</th>
                 <th>🏨 Oda Numarası</th>
+                <th>📅 Giriş Tarihi</th> 
+                <th>📅 Çıkış Tarihi</th> 
                 <th>💰 Ödeme Tutarı</th>
                 <th>❌ İşlem</th>
             </tr>
@@ -57,8 +59,19 @@ else
             {
                 <tr>
                     <td>@item.CardUserName</td>
-                    <td>@item.CardNumber</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.CardNumber) && item.CardNumber.Length >= 4)
+                        {
+                            @($"{item.CardNumber.Substring(0, 4)} **** **** ****")
+                        }
+                        else
+                        {
+                            @("Kart Bilgisi Yok")
+                        }
+                    </td>
                     <td>@item.RoomNumber</td>
+                    <td>@item.StartDate.ToString("dd.MM.yyyy")</td> 
+                    <td>@item.EndDate.ToString("dd.MM.yyyy")</td>   
                     <td>@item.PaymentAmount ₺</td>
                     <td>
                         <a asp-action="CancelPaymentConfirm" asp-controller="Payment" asp-route-reservationId="@item.ReservationId" class="btn btn-warning btn-sm">

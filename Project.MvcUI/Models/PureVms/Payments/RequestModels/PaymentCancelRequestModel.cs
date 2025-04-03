@@ -29,5 +29,18 @@ namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
         [Display(Name = "Oda Numarası")]
         [Required(ErrorMessage = "{0} gereklidir.")]
         public string RoomNumber { get; set; }
+
+        [Display(Name = "Giriş Tarihi")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        public DateTime StartDate { get; set; }
+
+        [Display(Name = "Çıkış Tarihi")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "{0} gereklidir.")]
+        public DateTime EndDate { get; set; }
+
     }
 }

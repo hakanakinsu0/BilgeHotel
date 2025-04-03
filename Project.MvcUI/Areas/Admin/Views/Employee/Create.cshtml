@@ -1,0 +1,43 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Employees.EmployeeCreateRequestModel
+
+@{
+    ViewData["Title"] = "Yeni Çalışan Ekle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>👨‍🔧 Yeni Çalışan Ekle</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="FirstName" class="form-label">Ad</label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LastName" class="form-label">Soyad</label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Position" class="form-label">Pozisyon</label>
+        <input asp-for="Position" class="form-control" />
+        <span asp-validation-for="Position" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

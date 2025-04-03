@@ -11,6 +11,10 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
+<div class="alert alert-info">
+    <strong>Bilgilendirme:</strong> Aşağıda listelenen ekstra hizmetlerin her biri sabit fiyata sahiptir. Seçtiğiniz her bir hizmet, rezervasyon tutarınıza ayrı ayrı eklenecektir.
+</div>
+
 <form asp-action="SelectExtras" method="post">
     <!-- Form modelindeki ReservationSelectExtrasRequest içindeki ReservationId gönderiliyor -->
     <input type="hidden" asp-for="ReservationSelectExtrasRequest.ReservationId" />
@@ -20,7 +24,7 @@
         <div>
             @if (Model.ExtraServices != null)
             {
-                foreach (var service in Model.ExtraServices)
+                foreach (SelectListItem service in Model.ExtraServices)
                 {
                     <div class="form-check">
                         <!-- Checkbox name attribute'unu form modelinin içindeki ExtraServiceIds olarak ayarlıyoruz -->

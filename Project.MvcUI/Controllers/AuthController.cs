@@ -177,6 +177,11 @@ namespace Project.MvcUI.Controllers
             if (!user.EmailConfirmed)
                 return ProcessResponse(response, viewModel, false, "Lütfen e-postanızı onaylayın.", "MailPanel");
 
+            // Hesap pasifse giriş reddedilir
+            if (user.Status == DataStatus.Deleted)
+                return ProcessResponse(response, viewModel, false, "Hesabınız pasif durumdadır. Lütfen yönetici ile iletişime geçin.");
+
+
             SignInManager result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true); // Giriş işlemini dene 
 
             // Hesap kilitlendiyse
@@ -202,9 +207,9 @@ namespace Project.MvcUI.Controllers
                     return RedirectToAction("Index", "Dashboard", new { Area = "Admin" }); // Admin paneline yönlendir 
 
                 else if (roles.Contains(MemberRole)) // Member rolüne sahipse
-                    return RedirectToAction("Index", "Profile"); // Üye (şimdilik Home) paneline yönlendir 
+                    return RedirectToAction("Index", "Home"); // Üye (şimdilik Home) paneline yönlendir 
 
-                return RedirectToAction("Index", "Profile"); // Diğer durumlarda varsayılan yönlendirme 
+                return RedirectToAction("Index", "Home"); // Diğer durumlarda varsayılan yönlendirme 
             }
 
             return ProcessResponse(response, viewModel, false, "Geçersiz giriş bilgileri.", "Login");

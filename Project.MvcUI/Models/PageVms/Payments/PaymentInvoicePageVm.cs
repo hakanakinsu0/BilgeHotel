@@ -16,6 +16,7 @@ namespace Project.MvcUI.Models.PageVms.Payments
         public string PageTitle { get; set; }
         public string HelpText { get; set; }
 
+        public string CardNumber { get; set; } // Ödeme yapan kart numarasının ilk 4 hanesi için kullanılır
 
     }
 }

@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Concretes
 {
+    /// <summary>
+    /// Package işlemleri için iş mantığını yöneten manager sınıfıdır.
+    /// Temel CRUD işlemleri BaseManager üzerinden sağlanır.
+    /// </summary>
     public class PackageManager : BaseManager<PackageDto, Package>, IPackageManager
     {
         readonly IPackageRepository _repository;

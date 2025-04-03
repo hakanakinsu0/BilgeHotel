@@ -25,7 +25,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             _roomTypeManager = roomTypeManager;
         }
 
-        public async Task<IActionResult> Index(int? roomTypeId, string status, int? floor, decimal? minPrice, decimal? maxPrice, bool? hasReservation, int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int? roomTypeId, string roomStatus, int? floor, decimal? minPrice, decimal? maxPrice, bool? hasReservation, int page = 1, int pageSize = 10)
         {
             var rooms = await _roomManager.GetAllAsync();
             // ✅ Yalnızca silinmemiş odaları getiriyoruz
@@ -61,7 +61,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
             // ✅ Filtreleme işlemleri
             if (roomTypeId.HasValue) rooms = rooms.Where(r => r.RoomTypeId == roomTypeId.Value).ToList();
-            if (!string.IsNullOrEmpty(status) && Enum.TryParse(status, out RoomStatus roomStatus)) rooms = rooms.Where(r => r.RoomStatus == roomStatus).ToList();
+            if (!string.IsNullOrEmpty(roomStatus) && Enum.TryParse(roomStatus, out RoomStatus parsedStatus)) rooms = rooms.Where(r => r.RoomStatus == parsedStatus).ToList();
             if (floor.HasValue) rooms = rooms.Where(r => r.Floor == floor.Value).ToList();
             if (minPrice.HasValue) rooms = rooms.Where(r => r.PricePerNight >= minPrice.Value).ToList();
             if (maxPrice.HasValue) rooms = rooms.Where(r => r.PricePerNight <= maxPrice.Value).ToList();
@@ -75,7 +75,13 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             // ✅ ViewBag için seçenekleri doldur
             ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
             ViewBag.Floors = new SelectList(rooms.Select(r => r.Floor).Distinct());
-            ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(RoomStatus)).Cast<RoomStatus>());
+            // ✅ RoomStatus enum'larını Türkçe gösterecek şekilde ViewBag'e atıyoruz
+            ViewBag.Statuses = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Value = RoomStatus.Empty.ToString(), Text = "Boş" },
+                new SelectListItem { Value = RoomStatus.Occupied.ToString(), Text = "Dolu" },
+                new SelectListItem { Value = RoomStatus.Maintenance.ToString(), Text = "Bakımda" }
+            }, "Value", "Text", roomStatus); 
 
             // ✅ Response Model'e taşıma
             var model = new RoomListResponseModel

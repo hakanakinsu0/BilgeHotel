@@ -60,10 +60,12 @@ namespace Project.Bll.Managers.Concretes
         // Çakışma kontrolü
         public bool CheckAvailability(int roomId, DateTime startDate, DateTime endDate)
         {
-            return !_repository.Where(r => r.RoomId == roomId &&
-                                           ((startDate >= r.StartDate && startDate < r.EndDate) ||
-                                            (endDate > r.StartDate && endDate <= r.EndDate)))
-                               .Any();
+            return !_repository.Where(r =>
+                r.RoomId == roomId &&
+                r.DeletedDate == null && 
+                (
+                    (startDate < r.EndDate && endDate > r.StartDate) 
+                )).Any();
         }
 
         // Yeni rezervasyon ekleme

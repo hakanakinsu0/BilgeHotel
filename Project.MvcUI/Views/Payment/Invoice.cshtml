@@ -23,7 +23,6 @@
     </div>
 }
 
-
 <div class="container my-4">
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
@@ -41,6 +40,27 @@
                     <tr>
                         <th>Oda Numarası</th>
                         <td>@Model.Room.RoomNumber</td>
+                    </tr>
+                    <tr>
+                        <th>Giriş Tarihi</th> 
+                        <td>@Model.Reservation.StartDate.ToString("dd.MM.yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th>Çıkış Tarihi</th> 
+                        <td>@Model.Reservation.EndDate.ToString("dd.MM.yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th>Kart Numarası</th> 
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.CardNumber) && Model.CardNumber.Length >= 4)
+                            {
+                                @($"{Model.CardNumber.Substring(0, 4)} **** **** ****")
+                            }
+                            else
+                            {
+                                @("Kart Bilgisi Yok")
+                            }
+                        </td>
                     </tr>
                     <tr>
                         <th>Ödeme Tutarı</th>

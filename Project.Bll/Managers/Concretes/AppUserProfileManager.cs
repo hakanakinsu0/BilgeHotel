@@ -14,7 +14,7 @@ namespace Project.Bll.Managers.Concretes
 {
     /// <summary>
     /// AppUserProfile ile ilgili iş mantığı işlemlerini yöneten manager sınıfı. 
-    /// BaseManager üzerinden temel CRUD işlemleri sağlanır. // AppUserProfile işlemleri için manager.
+    /// BaseManager üzerinden temel CRUD işlemleri sağlanır. 
     /// </summary>
     public class AppUserProfileManager : BaseManager<AppUserProfileDto, AppUserProfile>, IAppUserProfileManager
     {
@@ -25,14 +25,23 @@ namespace Project.Bll.Managers.Concretes
         }
 
         /// <summary>
-        /// Belirtilen AppUserId'ye sahip kullanıcının profilini getirir. // AppUserId'ye göre profil getirir.
+        /// Belirtilen AppUserId'ye sahip kullanıcının profil bilgilerini getirir.
         /// </summary>
-        /// <param name="appUserId">Kullanıcının ID'si</param>
-        /// <returns>AppUserProfileDto</returns>
+        /// <param name="appUserId">Kullanıcının AppUser ID'si.</param>
+        /// <returns>
+        /// Eğer profil bulunursa ilgili AppUserProfileDto, aksi takdirde null döner.
+        /// </returns>
         public async Task<AppUserProfileDto> GetByAppUserIdAsync(int appUserId)
         {
-            AppUserProfile? profile = await _repository.Where(x => x.AppUserId == appUserId).FirstOrDefaultAsync(); // AppUserId'ye göre profili getir
-            return _mapper.Map<AppUserProfileDto>(profile);  // DTO'ya map et ve döndür
+            // İlgili AppUserId'ye sahip profili çekiyoruz.
+            AppUserProfile? profile = await _repository.Where(x => x.AppUserId == appUserId).FirstOrDefaultAsync();
+
+            // Eğer profil bulunamazsa null döner.
+            if (profile == null)
+                return null;
+
+            // Profili DTO'ya mapleyerek geri döneriz.
+            return _mapper.Map<AppUserProfileDto>(profile);
         }
     }
 }

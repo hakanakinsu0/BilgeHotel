@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Concretes
 {
+    /// <summary>
+    /// Employee işlemleri için iş mantığını yöneten manager sınıfıdır.
+    /// Temel CRUD işlemleri BaseManager üzerinden sağlanır.
+    /// </summary>
     public class EmployeeManager : BaseManager<EmployeeDto, Employee>, IEmployeeManager
     {
         readonly IEmployeeRepository _repository;
@@ -19,20 +23,25 @@ namespace Project.Bll.Managers.Concretes
             _repository = repository;
         }
 
+        /// <summary>
+        /// Sistemdeki "Resepsiyonist" pozisyonundaki çalışanlar arasından rastgele birinin ID’sini döner.
+        /// Eğer hiç resepsiyonist yoksa -1 döner.
+        /// </summary>
+        /// <returns>Rastgele seçilen resepsiyonistin ID'si ya da -1.</returns>
         public async Task<int> GetRandomReceptionistEmployeeIdAsync()
         {
-            var employees = await GetAllAsync(); // BaseManager üzerinden tüm çalışanlar alınıyor
-            var receptionists = employees
-                .Where(e => e.Position.Equals("Resepsiyonist"))
-                .ToList();
+            List<EmployeeDto> employees = await GetAllAsync(); // Tüm çalışanları getiriyoruz.
+            
+            List<EmployeeDto> receptionists = employees.Where(e => e.Position.Equals("Resepsiyonist")).ToList(); // Sadece "Resepsiyonist" pozisyonunda olanları filtreliyoruz.
 
+            // Eğer resepsiyonist varsa rastgele bir ID döndür.
             if (receptionists.Any())
             {
-                var random = new Random();
-                var randomEmployee = receptionists[random.Next(receptionists.Count)];
+                Random random = new();
+                EmployeeDto randomEmployee = receptionists[random.Next(receptionists.Count)];
                 return randomEmployee.Id;
             }
-            return -1;
+            return -1; // Resepsiyonist bulunamadıysa -1 döndür.
         }
     }
 }

@@ -7,6 +7,7 @@ using Project.Bll.Managers.Concretes;
 using Project.Common.Tools;
 using Project.Entities.Enums;
 using Project.Entities.Models;
+using Project.MvcUI.Helpers;
 using Project.MvcUI.Models.PageVms.Payments;
 using Project.MvcUI.Models.PureVms.Payments.RequestModels;
 using Project.MvcUI.Models.PureVms.Payments.ResponseModels;
@@ -130,6 +131,23 @@ namespace Project.MvcUI.Controllers
             if (!ModelState.IsValid)
                 return RedirectWithError("Lütfen tüm alanları eksiksiz doldurun.", "Checkout", "Payment", new RouteValueDictionary(new { reservationId = model.ReservationId }));
 
+            // Ödeme yapan kişinin ismi ile kullanıcının profil ismi eşleşmeli:
+            AppUserProfileDto userProfile = await _appUserProfileManager.GetByAppUserIdAsync(Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+
+            if (userProfile == null)
+            {
+                return RedirectWithError("Kullanıcı profil bilgisi bulunamadı.", "Checkout", "Payment",
+                    new RouteValueDictionary(new { reservationId = model.ReservationId }));
+            }
+
+            // Kart sahibi ismi ile kullanıcı profilindeki isim uyuşuyor mu kontrol edilir.
+            string userFullName = $"{userProfile.FirstName} {userProfile.LastName}".Trim();
+            if (!string.Equals(userFullName, model.CardUserName.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectWithError("Ödeme yalnızca rezervasyon sahibi adına kayıtlı bir kart ile yapılabilir.", "Checkout", "Payment",
+                    new RouteValueDictionary(new { reservationId = model.ReservationId }));
+            }
+
             // HTTP client örneği oluşturuluyor.
             HttpClient client = _httpClientFactory.CreateClient();
 
@@ -251,7 +269,9 @@ namespace Project.MvcUI.Controllers
                     CardUserName = userFullName,
                     RoomNumber = room?.RoomNumber ?? "Oda Bilgisi Yok",
                     PaymentAmount = reservation.TotalPrice,
-                    CardNumber = paymentHistory?.FirstOrDefault()?.CardNumber ?? "Kart Bilgisi Yok"
+                    CardNumber = paymentHistory?.FirstOrDefault()?.CardNumber ?? "Kart Bilgisi Yok",
+                    StartDate = reservation.StartDate, 
+                    EndDate = reservation.EndDate      
                 });
             }
 
@@ -324,7 +344,9 @@ namespace Project.MvcUI.Controllers
                 CardNumber = userCard.CardNumber,       // API'den alınan kart numarası
                 CVV = userCard.CVV,                     // API'den alınan CVV bilgisi
                 RefundAmount = reservationObj.TotalPrice, // İptal edilecek tutar, rezervasyonun toplam fiyatı
-                RoomNumber = room == null ? "Oda Bilgisi Yok" : room.RoomNumber
+                RoomNumber = room == null ? "Oda Bilgisi Yok" : room.RoomNumber,
+                StartDate = reservationObj.StartDate,  
+                EndDate = reservationObj.EndDate       
             };
 
             // Oluşturulan form verilerini, sayfa başlığı ve yardım metni ile birlikte PaymentCancelPageVm'e ekliyoruz.
@@ -408,27 +430,25 @@ namespace Project.MvcUI.Controllers
         public async Task<IActionResult> Invoice(int reservationId)
         {
             // Rezervasyon bilgisini asenkron olarak çekiyoruz.
-            ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId); // ReservationDto
+            ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId);
             if (reservation == null)
                 return RedirectWithError("Rezervasyon bulunamadı.");
 
-            // Tüm ödeme kayıtlarını çekip, ilgili rezervasyona ait ödeme kaydını buluyoruz.
+            // Ödeme kayıtlarını çekiyoruz.
             List<PaymentDto> payments = await _paymentManager.GetAllAsync();
-            PaymentDto payment = payments.FirstOrDefault(p => p.ReservationId == reservationId); // PaymentDto
+            PaymentDto payment = payments.FirstOrDefault(p => p.ReservationId == reservationId);
             if (payment == null)
                 return RedirectWithError("Ödeme kaydı bulunamadı.");
 
             // Rezervasyona ait oda bilgisini çekiyoruz.
-            RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId); // RoomDto
+            RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId);
 
-            // Rezervasyona ait ekstra servis kayıtlarını, ReservationExtraServiceManager üzerinden çekiyoruz.
-            // Dönüş tipi List<ReservationExtraServiceDto> olarak varsayılmıştır.
+            // Ekstra servisleri çekiyoruz.
             List<ReservationExtraServiceDto> resExtraServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservationId);
             List<ReservationExtraServiceDto> activeExtraServices = resExtraServices?
                 .Where(es => es.Status != DataStatus.Deleted)
                 .ToList() ?? new List<ReservationExtraServiceDto>();
 
-            // Aktif ekstra servis kayıtları için, _extraServiceManager üzerinden detay bilgilerini (ExtraServiceDto) alıyoruz.
             List<ExtraServiceDto> extraServices = new List<ExtraServiceDto>();
             foreach (ReservationExtraServiceDto resExtra in activeExtraServices)
             {
@@ -437,18 +457,41 @@ namespace Project.MvcUI.Controllers
                     extraServices.Add(extraService);
             }
 
-            // Tüm çekilen verileri kullanarak PaymentInvoicePageVm modelini oluşturuyoruz.
+            // Kullanıcı bilgisini ve profilini alıyoruz.
+            var (user, userProfile) = await _appUserManager.GetUserWithProfileAsync(User.Identity.Name);
+            if (user == null || userProfile == null)
+                return RedirectWithError("Kullanıcı bilgileri bulunamadı.");
+
+            // Kullanıcı adını oluşturuyoruz.
+            string userFullName = $"{userProfile.FirstName} {userProfile.LastName}";
+
+            // Ödeme geçmişi API çağrısı yapıyoruz ve kart bilgisini çekiyoruz.
+            HttpClient client = _httpClientFactory.CreateClient();
+            string apiUrl = $"http://localhost:5190/api/Transaction/PaymentHistoryByUser/{userFullName}";
+            HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+            if (!response.IsSuccessStatusCode)
+                return RedirectWithError("Kullanıcı kart bilgileri alınamadı.");
+
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            List<PaymentHistoryResponseModel> paymentHistory = JsonConvert.DeserializeObject<List<PaymentHistoryResponseModel>>(jsonResponse);
+
+            // İlgili rezervasyonun kart numarasını çekiyoruz.
+            string cardNumber = paymentHistory?.FirstOrDefault()?.CardNumber ?? "Kart Bilgisi Yok";
+
+
+            // ViewModel'i dolduruyoruz.
             PaymentInvoicePageVm pageVm = new PaymentInvoicePageVm
             {
-                Reservation = reservation,          // Rezervasyon bilgileri (ReservationDto)
-                Payment = payment,                  // Ödeme kaydı bilgileri (PaymentDto)
-                Room = room,                        // Oda bilgileri (RoomDto)
-                ExtraServices = extraServices,      // Ekstra servis bilgileri (List<ExtraServiceDto>)
-                PageTitle = "Fatura Detayları",      // View başlığı
-                HelpText = "Aşağıda ödeme, rezervasyon ve ekstra hizmet detaylarınız görüntülenmektedir." // Yardım metni
+                Reservation = reservation,
+                Payment = payment,
+                Room = room,
+                ExtraServices = extraServices,
+                PageTitle = "Fatura Detayları",
+                HelpText = "Aşağıda ödeme, rezervasyon ve ekstra hizmet detaylarınız görüntülenmektedir.",
+                CardNumber = cardNumber // Yeni eklendi ✅
             };
 
-            // Oluşturulan PageVM view'e gönderilir.
             return View(pageVm);
         }
 
@@ -467,81 +510,51 @@ namespace Project.MvcUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendInvoiceMail(int reservationId)
         {
-            // Rezervasyon bilgisini çekiyoruz.
+            // 1. Rezervasyon
             ReservationDto reservation = await _reservationManager.GetByIdAsync(reservationId);
             if (reservation == null)
                 return RedirectWithError("Rezervasyon bulunamadı.");
 
-            // Ödeme kayıtlarını çekip, ilgili rezervasyona ait ödeme kaydını buluyoruz.
+            // 2. Ödeme
             List<PaymentDto> payments = await _paymentManager.GetAllAsync();
             PaymentDto payment = payments.FirstOrDefault(p => p.ReservationId == reservationId);
             if (payment == null)
                 return RedirectWithError("Ödeme kaydı bulunamadı.");
 
-            // Rezervasyona ait oda bilgisini alıyoruz.
+            // 3. Oda
             RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId);
 
-            // Rezervasyona ait ekstra servis kayıtlarını çekiyoruz.
-            // Dönüş tipi olarak ReservationExtraServiceDto listesi bekleniyor.
+            // 4. Ekstra Servisler
             List<ReservationExtraServiceDto> resExtraServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservationId);
             List<ReservationExtraServiceDto> activeExtraServices = resExtraServices?
                 .Where(es => es.Status != DataStatus.Deleted)
                 .ToList() ?? new List<ReservationExtraServiceDto>();
 
-            // Her aktif ekstra servis için detay bilgilerini _extraServiceManager üzerinden alıyoruz.
             List<ExtraServiceDto> extraServices = new();
-            foreach (ReservationExtraServiceDto resExtra in activeExtraServices)
+            foreach (var resExtra in activeExtraServices)
             {
-                // _extraServiceManager'ın controller'a enjekte edildiğini varsayıyoruz.
-                ExtraServiceDto extraService = await _extraServiceManager.GetByIdAsync(resExtra.ExtraServiceId);
+                var extraService = await _extraServiceManager.GetByIdAsync(resExtra.ExtraServiceId);
                 if (extraService != null)
                     extraServices.Add(extraService);
             }
 
-            // HTML formatında fatura detaylarını oluşturuyoruz.
-            StringBuilder emailBody = new StringBuilder();
-            emailBody.Append("<h2>Bilge Hotel - Fatura Detayları</h2>");
-            emailBody.Append("<table style='border-collapse: collapse; width: 100%;'>");
-            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Rezervasyon ID</th>");
-            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{reservation.Id}</td></tr>");
-            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Oda Numarası</th>");
-            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{room?.RoomNumber ?? "Bilinmiyor"}</td></tr>");
-            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Ödeme Tutarı</th>");
-            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{payment.PaymentAmount} ₺</td></tr>");
-            emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Ödeme Tarihi</th>");
-            emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{payment.PaymentDate.ToString("yyyy-MM-dd HH:mm")}</td></tr>");
-            emailBody.Append("</table>");
-
-            // Eğer ekstra servis bilgileri varsa, ekstra hizmet detaylarını içeren ek tablo oluşturuyoruz.
-            if (extraServices.Any())
-            {
-                emailBody.Append("<h3>Ekstra Hizmetler</h3>");
-                emailBody.Append("<table style='border-collapse: collapse; width: 100%;'>");
-                emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Hizmet Adı</th>");
-                emailBody.Append("<th style='border: 1px solid #ddd; padding: 8px;'>Fiyat</th></tr>");
-                foreach (ExtraServiceDto service in extraServices)
-                {
-                    emailBody.Append("<tr>");
-                    emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{service.Name}</td>");
-                    emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{service.Price} ₺</td>");
-                    emailBody.Append("</tr>");
-                }
-                emailBody.Append("</table>");
-            }
-
-            // Kullanıcının e-posta adresini Claim üzerinden alıyoruz.
+            // 5. Kullanıcı e-posta
             string userEmail = User.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(userEmail))
                 return RedirectWithError("Mail adresiniz bulunamadı.");
 
-            // Mail gönderme işlemini gerçekleştiriyoruz.
+            // 6. Fatura HTML içeriğini oluştur
+            string htmlBody = InvoiceHtmlGenerator.GenerateInvoiceHtml(reservation, payment, room, extraServices);
+
+            // 7. Mail gönderimi
             try
             {
                 await MailService.SendAsync(
                     receiver: userEmail,
                     subject: "Bilge Hotel - Fatura Detaylarınız",
-                    body: emailBody.ToString()
+                    body: htmlBody
                 );
+
                 TempData["SuccessMessage"] = "Fatura bilgileri e-posta ile gönderildi.";
             }
             catch (Exception ex)
@@ -549,7 +562,6 @@ namespace Project.MvcUI.Controllers
                 TempData["ErrorMessage"] = $"Mail gönderilirken hata oluştu: {ex.Message}";
             }
 
-            // İşlem tamamlandıktan sonra, Invoice sayfasına yönlendirme yapıyoruz.
             return RedirectToAction("Invoice", new { reservationId });
         }
 

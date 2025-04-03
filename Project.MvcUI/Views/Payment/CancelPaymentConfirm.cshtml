@@ -1,9 +1,10 @@
 ﻿@model PaymentCancelPageVm
 
 @{
-    ViewData["Title"] = Model.PageTitle; // Sayfa başlığı PageVM'den alınıyor.
+    ViewData["Title"] = Model.PageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
@@ -13,6 +14,7 @@
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
+
 <h2>⚠️ Ödeme İptal Onayı</h2>
 <p>@Model.HelpText</p>
 
@@ -23,11 +25,28 @@
     </tr>
     <tr>
         <th>💳 Kart Numarası</th>
-        <td>@Model.PaymentCancelRequest.CardNumber</td>
+        <td>
+            @if (!string.IsNullOrEmpty(Model.PaymentCancelRequest.CardNumber) && Model.PaymentCancelRequest.CardNumber.Length >= 4)
+            {
+                @($"{Model.PaymentCancelRequest.CardNumber.Substring(0, 4)} **** **** ****")
+            }
+            else
+            {
+                @("Kart Bilgisi Yok")
+            }
+        </td>
     </tr>
     <tr>
         <th>🏨 Oda Numarası</th>
         <td>@Model.PaymentCancelRequest.RoomNumber</td>
+    </tr>
+    <tr>
+        <th>📅 Giriş Tarihi</th>
+        <td>@Model.PaymentCancelRequest.StartDate.ToString("dd.MM.yyyy")</td>
+    </tr>
+    <tr>
+        <th>📅 Çıkış Tarihi</th>
+        <td>@Model.PaymentCancelRequest.EndDate.ToString("dd.MM.yyyy")</td>
     </tr>
     <tr>
         <th>💰 İade Edilecek Tutar</th>
@@ -36,13 +55,14 @@
 </table>
 
 <form asp-action="CancelPaymentConfirm" method="post">
-    @* Form verileri PaymentCancelRequestModel içinden gönderiliyor *@
     <input type="hidden" asp-for="PaymentCancelRequest.ReservationId" />
     <input type="hidden" asp-for="PaymentCancelRequest.CardUserName" />
     <input type="hidden" asp-for="PaymentCancelRequest.CardNumber" />
     <input type="hidden" asp-for="PaymentCancelRequest.CVV" />
     <input type="hidden" asp-for="PaymentCancelRequest.RefundAmount" />
     <input type="hidden" asp-for="PaymentCancelRequest.RoomNumber" />
+    <input type="hidden" asp-for="PaymentCancelRequest.StartDate" />
+    <input type="hidden" asp-for="PaymentCancelRequest.EndDate" />
 
     <button type="submit" class="btn btn-danger">Evet, Ödemeyi İptal Et</button>
     <a asp-action="History" class="btn btn-secondary">Hayır, Vazgeç</a>

@@ -1,0 +1,38 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Employees.EmployeeDeleteResponseModel
+
+@{
+    ViewData["Title"] = "Çalışan Sil";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>🗑️ Çalışanı Sil</h2>
+
+<div class="alert alert-warning">
+    <strong>Dikkat!</strong> Aşağıdaki çalışanı silmek üzeresiniz. Bu işlem geri alınamaz.
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Ad Soyad:</label>
+    <p class="form-control-plaintext">@Model.FullName</p>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Pozisyon:</label>
+    <p class="form-control-plaintext">@Model.Position</p>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Telefon:</label>
+    <p class="form-control-plaintext">@Model.PhoneNumber</p>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Email:</label>
+    <p class="form-control-plaintext">@Model.Email</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

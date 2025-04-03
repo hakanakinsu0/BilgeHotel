@@ -17,10 +17,15 @@
             </select>
         </div>
         <div class="col-md-2">
-            <select name="status" class="form-control" asp-items="ViewBag.Statuses">
+            <select name="roomStatus" class="form-control">
                 <option value="">Oda Durumunu Seç</option>
+                <option value="Empty">Boş</option>
+                <option value="Occupied">Dolu</option>
+                <option value="Maintenance">Bakımda</option>
             </select>
         </div>
+
+
         <div class="col-md-2">
             <select name="pageSize" class="form-control">
                 <option value="10" selected>10 Oda</option>
@@ -30,7 +35,7 @@
                 <option value="90">90 Oda</option>
             </select>
         </div>
-        <div class="col-md-2 mt-2">
+        <div class="col-md-2">
             <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
         </div>
     </div>

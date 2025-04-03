@@ -13,9 +13,9 @@ namespace Project.Bll.DtoClasses
     /// </summary>
     public class EmployeeDto : BaseDto
     {
-        public string FirstName { get; set; } // Çalışanın adı
-        public string LastName { get; set; } // Çalışanın soyadı
         public string Position { get; set; } // Çalışanın pozisyonu
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
 

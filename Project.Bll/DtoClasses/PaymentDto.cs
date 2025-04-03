@@ -14,9 +14,11 @@ namespace Project.Bll.DtoClasses
     /// </summary>
     public class PaymentDto : BaseDto
     {
-        public DateTime PaymentDate { get; set; } // Ödemenin yapıldığı tarih
-        public decimal PaymentAmount { get; set; } // Ödenen toplam tutar
-        public PaymentMethod PaymentMethod { get; set; } // Ödeme yöntemi (Kredi Kartı, Nakit, Banka Havalesi)
-        public int ReservationId { get; set; } // Ödemeye bağlı rezervasyon ID'si
+        public DateTime PaymentDate { get; set; }           // Ödemenin yapıldığı tarih
+        public decimal PaymentAmount { get; set; }          // Ödenen toplam tutar
+        public PaymentMethod PaymentMethod { get; set; }    // Ödeme yöntemi (Kredi Kartı, Nakit, Banka Havalesi)
+        public int ReservationId { get; set; }              // Ödemeye bağlı rezervasyon ID'si
+        public string CardNumber { get; set; }              // Ödemenin yapıldığı kart numarası
+
     }
 }

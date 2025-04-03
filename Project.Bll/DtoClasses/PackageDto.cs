@@ -13,7 +13,5 @@ namespace Project.Bll.DtoClasses
     public class PackageDto : BaseDto
     {
         public string Name { get; set; } // Paket adı (ör. "Tam Pansiyon")
-        public string Description { get; set; } // Paket açıklaması (ör. "Kahvaltı, öğle yemeği ve akşam yemeği dahildir")
-        public decimal PriceMultiplier { get; set; } // Paket fiyat çarpanı
     }
 }

@@ -240,5 +240,8 @@ namespace Project.Bll.Managers.Concretes
 
 
 
+
+
+
     }
 }

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Abstracts
 {
+    /// <summary>
+    /// Otelde sunulan konaklama paketleri ile ilgili işlemleri tanımlayan arayüzdür.
+    /// Bu arayüz, IManager arayüzünü genişleterek, paketler için genel CRUD işlemlerini sağlar.
+    /// </summary>
     public interface IPackageManager : IManager<PackageDto, Package> { }
-
 }

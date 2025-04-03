@@ -1,0 +1,67 @@
+﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Employees.EmployeeListResponseModel
+
+@{
+    ViewData["Title"] = "Çalışan Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>👨‍💼 Çalışan Yönetimi</h2>
+
+<a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-success mb-3">
+    <i class="fas fa-plus"></i> Yeni Çalışan Ekle
+</a>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Ad Soyad</th>
+            <th>Pozisyon</th>
+            <th>Durum</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            int count = 1;
+            @foreach (var emp in Model.Employees)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@($"{emp.FirstName} {emp.LastName}")</td>
+                    <td>@emp.Position</td>
+                    <td>
+                        @if (emp.Status == "Inserted")
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else if (emp.Status == "Updated")
+                        {
+                            <span class="badge bg-warning text-dark">Güncellendi</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Silinmiş</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <a asp-area="Admin" asp-controller="Employee" asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Sil
+                        </a>
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">Hiç çalışan bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>

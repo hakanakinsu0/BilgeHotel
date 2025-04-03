@@ -6,6 +6,10 @@ using Project.Entities.Models;
 
 namespace Project.Bll.Managers.Concretes
 {
+    /// <summary>
+    /// ExtraService işlemleri için iş mantığını yöneten manager sınıfıdır.
+    /// Temel CRUD işlemleri BaseManager üzerinden sağlanır.
+    /// </summary>
     public class ExtraServiceManager : BaseManager<ExtraServiceDto, ExtraService>, IExtraServiceManager
     {
         readonly IExtraServiceRepository _repository;

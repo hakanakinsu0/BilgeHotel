@@ -60,7 +60,7 @@ namespace Project.MvcUI.Controllers
         public async Task<IActionResult> Create()
         {
             // Kat bilgilerini içeren bir dictionary oluşturuluyor.
-            var floorsInfo = new Dictionary<int, string>
+            Dictionary<int,string> floorsInfo = new()
             {
                 { 1, "Tek Kişilik ve Üç Kişilik Odalar - Minibar bulunmamaktadır." },
                 { 2, "Tek Kişilik ve İki Kişilik Odalar - Klima, TV, Saç Kurutma Makinesi, Kablosuz İnternet mevcut." },
@@ -68,13 +68,20 @@ namespace Project.MvcUI.Controllers
                 { 4, "Çift Kişilik (Duble), Dört Kişilik ve Kral Dairesi - Balkon, Minibar, Tüm olanaklar mevcut." }
             };
 
-            // Oluşturulan kat bilgileri, view içerisinde kullanılmak üzere ViewBag'e aktarılıyor.
-            ViewBag.FloorsInfo = floorsInfo;
+            // Paket bilgilerini içeren bir dictionary oluşturuluyor.
+            Dictionary<string, string> packageInfo = new()
+            {
+                { "Tam Pansiyon", "Kahvaltı, öğle ve akşam yemeği dahil. Temel fiyata %20 ekleme yapılır." },
+                { "Her Şey Dahil", "Tüm yemekler, alkollü-alkolsüz içecekler ve otelin sunduğu belirli hizmetler dahil. Temel fiyata %50 ekleme yapılır." }
+            };
 
-            // Oda, paket ve ekstra hizmet seçim listeleri, LoadSelectListsAsync metodu ile yükleniyor.
+            // Oluşturulan bilgiler ViewBag'e aktarılıyor.
+            ViewBag.FloorsInfo = floorsInfo;
+            ViewBag.PackageInfo = packageInfo;
+
+            // Seçim listelerini yükle.
             await LoadSelectListsAsync();
 
-            // Oluşturulan seçim listeleri ile birlikte view render ediliyor.
             return View();
         }
 
@@ -89,8 +96,15 @@ namespace Project.MvcUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ReservationCreateRequestModel model)
         {
+            // Genel model validasyonu yapılır.
+            if (!ModelState.IsValid)
+            {
+                await LoadSelectListsAsync(model.StartDate, model.EndDate, model.RoomId, model.PackageId);
+                return View(model);
+            }
+
             // Girilen tarih aralığının doğruluğu kontrol ediliyor.
-            string dateValidationError = _reservationManager.ValidateReservationDates(model.StartDate, model.EndDate);
+            string dateValidationError = _reservationManager.ValidateReservationDates(model.StartDate.Value, model.EndDate.Value);
             if (dateValidationError != null)
             {
                 // Eğer tarih validasyonu başarısız olursa, hata mesajı ModelState'e eklenir.
@@ -98,13 +112,6 @@ namespace Project.MvcUI.Controllers
                 // Seçim listeleri, girilen tarih, oda ve paket bilgilerine göre yeniden yüklenir.
                 await LoadSelectListsAsync(model.StartDate, model.EndDate, model.RoomId, model.PackageId);
                 // Hatalı model ile view yeniden render edilir.
-                return View(model);
-            }
-
-            // Genel model validasyonu yapılır.
-            if (!ModelState.IsValid)
-            {
-                await LoadSelectListsAsync(model.StartDate, model.EndDate, model.RoomId, model.PackageId);
                 return View(model);
             }
 
@@ -200,7 +207,7 @@ namespace Project.MvcUI.Controllers
             var model = pageVm.ReservationSelectExtrasRequest;
 
             // Response modeli oluşturuluyor.
-            var responseModel = new ReservationSelectExtrasResponseModel();
+            ReservationSelectExtrasResponseModel responseModel = new();
 
             // Kullanıcı ekstra hizmet seçimi yapmışsa:
             if (model.ExtraServiceIds != null && model.ExtraServiceIds.Any())

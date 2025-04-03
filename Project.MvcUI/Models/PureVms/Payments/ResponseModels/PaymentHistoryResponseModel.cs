@@ -36,5 +36,16 @@
         /// Bu değer, API’den dinamik olarak alınacaktır.
         /// </summary>
         public string CVV { get; set; }
+
+        /// <summary>
+        /// Rezervasyon başlangıç tarihi.
+        /// </summary>
+        public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// Rezervasyon bitiş tarihi.
+        /// </summary>
+        public DateTime EndDate { get; set; }
+
     }
 }

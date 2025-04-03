@@ -70,7 +70,5 @@ namespace Project.Dal.ContextClasses
         public DbSet<ReservationExtraService> ReservationExtraServices { get; set; } // Ekstra Hizmet - Rezervasyon Junction Tablosu
         public DbSet<Room> Rooms { get; set; }                     // Odalar
         public DbSet<RoomType> RoomTypes { get; set; }             // Oda Türleri
-
-
     }
 }

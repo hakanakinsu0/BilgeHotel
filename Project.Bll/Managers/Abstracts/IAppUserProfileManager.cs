@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 namespace Project.Bll.Managers.Abstracts
 {
     /// <summary>
-    /// AppUserProfile için ortak CRUD işlemlerini içeren IManager arayüzünü genişleten arayüz. AppUserProfile işlemleri için arayüz
+    /// AppUserProfile işlemlerine özel CRUD ve diğer operasyonları tanımlayan arayüzdür.
+    /// Bu arayüz, genel IManager arayüzünü genişleterek, kullanıcı profil verilerine erişim ve yönetim işlevlerini içerir.
     /// </summary>
-    public interface IAppUserProfileManager : IManager<AppUserProfileDto, AppUserProfile> 
+    public interface IAppUserProfileManager : IManager<AppUserProfileDto, AppUserProfile>
     {
         /// <summary>
-        /// Belirtilen AppUserId'ye sahip kullanıcının profilini getirir. // AppUserId'ye göre profil getirir
+        /// Belirtilen AppUserId'ye sahip kullanıcının profil bilgilerini asenkron olarak getirir.
         /// </summary>
-        /// <param name="appUserId">Kullanıcının ID'si</param>
-        /// <returns>AppUserProfileDto</returns>
-        Task<AppUserProfileDto> GetByAppUserIdAsync(int appUserId); // AppUserId'ye göre profil getir
+        /// <param name="appUserId">Kullanıcının ID'si.</param>
+        /// <returns>İlgili kullanıcının profil bilgilerini taşıyan AppUserProfileDto.</returns>
+        Task<AppUserProfileDto> GetByAppUserIdAsync(int appUserId);
     }
 }

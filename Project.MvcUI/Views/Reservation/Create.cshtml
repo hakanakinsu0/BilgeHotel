@@ -11,68 +11,102 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
-    </div>
-}
 
-<!-- Kat Bilgileri -->
-<h4>Katlardaki Odaların Bilgileri:</h4>
-<div class="alert alert-info">
-    @if (ViewBag.FloorsInfo != null)
-    {
-        @foreach (var floor in ViewBag.FloorsInfo)
-        {
-            <p><strong>@floor.Key. Kat:</strong> @floor.Value</p>
-        }
-    }
-    else
-    {
-        <p>Kat bilgileri mevcut değil.</p>
-    }
-</div>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label for="StartDate">Giriş Tarihi</label>
-        <input asp-for="StartDate" class="form-control" type="date" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="EndDate">Çıkış Tarihi</label>
-        <input asp-for="EndDate" class="form-control" type="date" />
-        <span asp-validation-for="EndDate" class="text-danger"></span>
+
+
+<div class="row">
+    <!-- Sol Taraf: Rezervasyon Formu -->
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="StartDate"></label>
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="EndDate"></label>
+                <input asp-for="EndDate" class="form-control" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div><br />
+
+            <div class="form-group">
+                <label asp-for="RoomId"></label>
+                <div id="RoomSelectContainer">
+                    <select asp-for="RoomId" class="form-control" asp-items="ViewBag.Rooms">
+                        <option value="">Oda seçiniz</option>
+                    </select>
+                    <span asp-validation-for="RoomId" class="text-danger"></span>
+                </div>
+            </div><br />
+
+            <div class="form-group">
+                <label asp-for="PackageId"></label>
+                <select asp-for="PackageId" class="form-control" asp-items="ViewBag.Packages">
+                    <option value="">Lütfen bir paket seçiniz</option>
+                </select>
+                <span asp-validation-for="PackageId" class="text-danger"></span>
+            </div><br />
+
+            <button type="submit" class="btn btn-primary">Rezervasyonu Oluştur</button>
+        </form>
     </div>
 
-    <div class="form-group">
-        <label for="RoomSelect">Oda Seçimi</label>
-        <div id="RoomSelectContainer">
-            <select id="RoomSelect" name="RoomId" class="form-control">
-                <option value="">Önce giriş ve çıkış tarihlerini seçiniz</option>
-            </select>
+    <div class="col-md-6">
+
+        <!-- Kat Bilgileri -->
+        <h4>Katlardaki Odaların Bilgileri:</h4>
+        <div class="alert alert-info">
+            @if (ViewBag.FloorsInfo != null)
+            {
+                @foreach (var floor in ViewBag.FloorsInfo)
+                {
+                    <p><strong>@floor.Key. Kat:</strong> @floor.Value</p>
+                }
+            }
+            else
+            {
+                <p>Kat bilgileri mevcut değil.</p>
+            }
+        </div>
+
+        <!-- Paket Bilgileri -->
+        <h4>Konaklama Paketleri Bilgileri:</h4>
+        <div class="alert alert-info">
+            @if (ViewBag.PackageInfo != null)
+            {
+                @foreach (var package in ViewBag.PackageInfo)
+                {
+                    <p><strong>@package.Key:</strong> @package.Value</p>
+                }
+            }
+            else
+            {
+                <p>Paket bilgileri mevcut değil.</p>
+            }
+        </div>
+        <div>
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+            {
+                <div class="alert alert-danger mt-4">
+                    <ul>
+                        @foreach (var modelState in ViewData.ModelState.Values)
+                        {
+                            foreach (var error in modelState.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
         </div>
     </div>
-
-    <div class="form-group">
-        <label for="PackageId">Paket Seçimi (Opsiyonel)</label>
-        <select asp-for="PackageId" class="form-control" asp-items="ViewBag.Packages">
-            <option value="">Paket seçilmedi</option>
-        </select>
-        <span asp-validation-for="PackageId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Rezervasyonu Oluştur</button>
-</form>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Tarih alanlarına değişiklik event'ini bağlayın
         $('#StartDate, #EndDate').change(function () {
             var startDate = $('#StartDate').val();
             var endDate = $('#EndDate').val();
@@ -83,7 +117,6 @@
                     type: 'GET',
                     data: { startDate: startDate, endDate: endDate },
                     success: function (data) {
-                        // Gelen partial view içeriğini oda select alanına yerleştirin.
                         $('#RoomSelectContainer').html(data);
                     },
                     error: function () {

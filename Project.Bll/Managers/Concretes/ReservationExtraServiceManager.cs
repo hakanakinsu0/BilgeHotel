@@ -27,8 +27,8 @@ namespace Project.Bll.Managers.Concretes
 
             // 1️⃣ Silinecek hizmetleri belirle: Yeni listede olmayan ve henüz silinmemiş kayıtlar.
             var servicesToDelete = existingServices
-                .Where(es => !newExtraServiceIds.Contains(es.ExtraServiceId) && es.Status != DataStatus.Deleted)
-                .ToList();
+                  .Where(es => !newExtraServiceIds.Contains(es.ExtraServiceId) && es.Status != DataStatus.Deleted)
+                  .ToList();
 
             foreach (var service in servicesToDelete)
             {
@@ -40,8 +40,8 @@ namespace Project.Bll.Managers.Concretes
 
             // 2️⃣ Daha önce silinmiş (Deleted) kayıtları yeniden aktif hale getirme.
             var servicesToReactivate = existingServices
-                .Where(es => newExtraServiceIds.Contains(es.ExtraServiceId) && es.Status == DataStatus.Deleted)
-                .ToList();
+                 .Where(es => newExtraServiceIds.Contains(es.ExtraServiceId) && es.Status == DataStatus.Deleted)
+                 .ToList();
 
             foreach (var service in servicesToReactivate)
             {
