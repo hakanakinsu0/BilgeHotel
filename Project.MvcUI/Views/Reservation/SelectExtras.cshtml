@@ -11,6 +11,16 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Count > 0)
+{
+    <div asp-validation-summary="All" class="alert alert-danger mt-3"></div>
+}
+
 <div class="alert alert-info">
     <strong>Bilgilendirme:</strong> Aşağıda listelenen ekstra hizmetlerin her biri sabit fiyata sahiptir. Seçtiğiniz her bir hizmet, rezervasyon tutarınıza ayrı ayrı eklenecektir.
 </div>

@@ -16,7 +16,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/Home/Index">Ana Sayfa</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                     </li>
 
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -30,7 +30,7 @@
                     {
                         <!-- Üye kullanıcılar için -->
                         <li class="nav-item">
-                            <a href="/Reservation/Create" class="nav-link text-warning">Rezervasyon Yap</a>
+                            <a asp-controller="Reservation" asp-action="Create" class="nav-link text-warning">Rezervasyon Yap</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Reservation" asp-action="MyReservations">Rezervasyonlarım</a>
@@ -43,14 +43,14 @@
                     {
                         <!-- Giriş yapmayan kullanıcılar için -->
                         <li class="nav-item">
-                            <a href="/Auth/Login?returnUrl=/Reservation/Create" class="nav-link text-warning">Rezervasyon Yap</a>
+                            <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="/Reservation/Create" class="nav-link text-warning">Rezervasyon Yap</a>
                         </li>
                     }
 
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
-                            <a href="/Profile/Index" class="nav-link">Profil</a>
+                            <a asp-controller="Profile" asp-action="Index" class="nav-link">Profil</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-danger" asp-controller="Auth" asp-action="Logout">Çıkış Yap</a>
@@ -59,10 +59,10 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Auth/Login">Giriş Yap</a>
+                            <a class="nav-link" asp-controller="Auth" asp-action="Login">Giriş Yap</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Auth/Register">Kayıt Ol</a>
+                            <a class="nav-link" asp-controller="Auth" asp-action="Register">Kayıt Ol</a>
                         </li>
                     }
                 </ul>
