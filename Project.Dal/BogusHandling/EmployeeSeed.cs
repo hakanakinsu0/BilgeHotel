@@ -52,7 +52,7 @@ namespace Project.Dal.BogusHandling
                         LastName = lastName,        // Soyadı
                         Position = position.Key,    // Çalışanın görevi
                         Address = faker.Address.FullAddress(),      // Tam adres bilgisi
-                        PhoneNumber = faker.Phone.PhoneNumber(),    // Telefon numarası
+                        PhoneNumber = "+90" + faker.Random.Replace("5#########"), // Telefon numarası
                         Salary = monthlyRate,       // Aylik ücret
                         Shift = shiftType,          // Çalışma vardiyası
                         HireDate = faker.Date.Past(10, DateTime.Now.AddYears(-1)),      // 1 yıldan fazla süredir çalışanlar, en fazla 10 yıl önce işe başlamış olabilir

@@ -1,5 +1,7 @@
-﻿using Project.Dal.ContextClasses;
+﻿using Microsoft.EntityFrameworkCore;
+using Project.Dal.ContextClasses;
 using Project.Dal.Repositories.Abstracts;
+using Project.Entities.Enums;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -20,5 +22,14 @@ namespace Project.Dal.Repositories.Concretes
         /// </summary>
         /// <param name="context">Veritabanı bağlantısını sağlayan MyContext nesnesi.</param>
         public EmployeeRepository(MyContext context) : base(context) { }
+
+        public async Task<List<string>> GetDistinctPositionsAsync()
+        {
+            return await _context.Employees
+                      .Where(e => e.Status != DataStatus.Deleted)
+                      .Select(e => e.Position)
+                      .Distinct()
+                      .ToListAsync();
+        }
     }
 }

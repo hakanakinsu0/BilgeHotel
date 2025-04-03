@@ -13,7 +13,7 @@
 
 <div class="mb-3">
     <label class="form-label">Ad Soyad:</label>
-    <p class="form-control-plaintext">@Model.FullName</p>
+    <p class="form-control-plaintext">@Model.FirstName @Model.LastName</p>
 </div>
 
 <div class="mb-3">
@@ -24,11 +24,6 @@
 <div class="mb-3">
     <label class="form-label">Telefon:</label>
     <p class="form-control-plaintext">@Model.PhoneNumber</p>
-</div>
-
-<div class="mb-3">
-    <label class="form-label">Email:</label>
-    <p class="form-control-plaintext">@Model.Email</p>
 </div>
 
 <form asp-action="DeleteConfirmed" method="post">

@@ -2,6 +2,7 @@
 using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Dal.Repositories.Abstracts;
+using Project.Dal.Repositories.Concretes;
 using Project.Entities.Models;
 using System;
 using System.Collections.Generic;
@@ -43,5 +44,11 @@ namespace Project.Bll.Managers.Concretes
             }
             return -1; // Resepsiyonist bulunamadıysa -1 döndür.
         }
+
+        public async Task<List<string>> GetDistinctPositionsAsync()
+        {
+            return await _repository.GetDistinctPositionsAsync();
+        }
+
     }
 }

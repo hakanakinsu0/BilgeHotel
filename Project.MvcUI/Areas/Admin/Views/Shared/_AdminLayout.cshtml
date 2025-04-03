@@ -45,6 +45,7 @@
         <hr>
         <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><i class="fas fa-chart-line"></i> Dashboard</a>
         <a asp-area="Admin" asp-controller="User" asp-action="Index"><i class="fas fa-users"></i> Kullanıcı Yönetimi</a>
+        <a asp-area="Admin" asp-controller="Employee" asp-action="Index"><i class="fas fa-portrait"></i> Çalışan Yönetimi</a>
         <a asp-area="Admin" asp-controller="Reservation" asp-action="Index"><i class="fas fa-calendar-check"></i> Rezervasyon ve Ödeme Yönetimi</a>
         <a asp-area="Admin" asp-controller="Room" asp-action="Index"><i class="fas fa-bed"></i> Oda Yönetimi</a>
         @* <a asp-area="Admin" asp-controller="Payment" asp-action="Index"><i class="fas fa-credit-card"></i> Ödeme Yönetimi</a> *@
@@ -86,8 +87,10 @@
             <p>&copy; 2025 Bilge Hotel | Admin Paneli</p>
             <p>📍 Adres: Kemer, Antalya, Türkiye | 📞 Telefon: +90 555 123 45 67 | ✉️ E-posta: info@bilgehotel.com</p>
         </footer>
-    </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        @RenderSection("Scripts", required: false)
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

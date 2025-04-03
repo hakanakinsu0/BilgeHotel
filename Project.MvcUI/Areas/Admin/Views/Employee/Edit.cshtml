@@ -5,6 +5,13 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+{
+    <div class="alert alert-danger">
+        <div asp-validation-summary="All"></div>
+    </div>
+}
+
 <h2>✏️ Çalışanı Güncelle</h2>
 
 <form asp-action="Edit" method="post">
@@ -24,20 +31,28 @@
 
     <div class="mb-3">
         <label asp-for="Position" class="form-label">Pozisyon</label>
-        <input asp-for="Position" class="form-control" />
+        <select asp-for="Position" asp-items="ViewBag.Positions" class="form-select">
+            <option value="">Lütfen pozisyon seçiniz</option>
+        </select>
         <span asp-validation-for="Position" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="PhoneNumber" class="form-label">Telefon</label>
-        <input asp-for="PhoneNumber" class="form-control" />
+        <input asp-for="PhoneNumber" class="form-control" maxlength="11" pattern="05[0-9]{9}" />
         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Email" class="form-label">Email</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+        <label asp-for="Address" class="form-label">Adres</label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Salary" class="form-label">Maaş</label>
+        <input asp-for="Salary" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="Salary" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Güncelle</button>

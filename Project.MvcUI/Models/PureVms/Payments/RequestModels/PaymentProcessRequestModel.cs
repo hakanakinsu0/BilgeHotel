@@ -20,7 +20,7 @@ namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
         /// </summary>
         [Display(Name = "Kart Sahibi Adı")]
         [Required(ErrorMessage = "{0} gereklidir.")]
-        public string CardUserName { get; set; } = string.Empty;
+        public string CardUserName { get; set; } 
 
         /// <summary>
         /// Kart numarası (16-19 karakter aralığında olmalı).
@@ -28,7 +28,7 @@ namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
         [Display(Name = "Kart Numarası")]
         [Required(ErrorMessage = "{0} gereklidir.")]
         [StringLength(19, MinimumLength = 16, ErrorMessage = "{0} 16-19 karakter olmalıdır.")]
-        public string CardNumber { get; set; } = string.Empty;
+        public string CardNumber { get; set; } 
 
         /// <summary>
         /// Kartın arka yüzündeki güvenlik kodu (CVV).
@@ -36,7 +36,7 @@ namespace Project.MvcUI.Models.PureVms.Payments.RequestModels
         [Display(Name = "CVV")]
         [Required(ErrorMessage = "{0} gereklidir.")]
         [StringLength(3, MinimumLength = 3, ErrorMessage = "{0} 3 haneli olmalıdır.")]
-        public string CVV { get; set; } = string.Empty;
+        public string CVV { get; set; } 
 
         /// <summary>
         /// Kartın son kullanım ayı (1-12 arası).

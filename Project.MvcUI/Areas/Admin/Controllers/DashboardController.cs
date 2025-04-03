@@ -10,10 +10,10 @@ namespace Project.MvcUI.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")] // Bu controller'a yalnızca Admin rolündeki kullanıcılar erişebilir.
     public class DashboardController : Controller
     {
-        private readonly IAppUserManager _appUserManager;
-        private readonly IReservationManager _reservationManager;
-        private readonly IRoomManager _roomManager;
-        private readonly IPaymentManager _paymentManager;
+        readonly IAppUserManager _appUserManager;
+        readonly IReservationManager _reservationManager;
+        readonly IRoomManager _roomManager;
+        readonly IPaymentManager _paymentManager;
 
         public DashboardController(
             IAppUserManager appUserManager,
@@ -26,6 +26,8 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             _roomManager = roomManager;
             _paymentManager = paymentManager;
         }
+
+        #region DashboardIndex
 
         /// <summary>
         /// Dashboard sayfası için gerekli verileri getirir.
@@ -53,6 +55,8 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
             // Toplanan veriler Dashboard view'ine gönderilir.
             return View(dashboardData);
-        }
+        } 
+
+        #endregion
     }
 }

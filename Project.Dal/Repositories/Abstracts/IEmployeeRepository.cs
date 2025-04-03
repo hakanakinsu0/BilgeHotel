@@ -13,5 +13,6 @@ namespace Project.Dal.Repositories.Abstracts
     /// </summary>
     public interface IEmployeeRepository : IRepository<Employee> 
     {
+        Task<List<string>> GetDistinctPositionsAsync();
     }
 }

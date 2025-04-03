@@ -12,11 +12,6 @@
 
         public string PhoneNumber { get; set; }
 
-        public string Email { get; set; }
-
         public string Status { get; set; }
-
-        // ✅ Ad ve Soyadı birleştirerek FullName olarak döner
-        public string FullName => $"{FirstName} {LastName}";
     }
 }

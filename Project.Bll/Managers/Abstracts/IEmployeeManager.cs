@@ -17,5 +17,7 @@ namespace Project.Bll.Managers.Abstracts
         /// </summary>
         /// <returns>"Resepsiyonist" pozisyonundaki çalışan ID'si veya bulunamazsa null.</returns>
         Task<int> GetRandomReceptionistEmployeeIdAsync();
+        Task<List<string>> GetDistinctPositionsAsync();
+
     }
 }

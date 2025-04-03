@@ -5,6 +5,15 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
 <h2>👨‍💼 Çalışan Yönetimi</h2>
 
 <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-success mb-3">
@@ -17,6 +26,7 @@
             <th>#</th>
             <th>Ad Soyad</th>
             <th>Pozisyon</th>
+            <th>Telefon</th> <!-- Yeni -->
             <th>Durum</th>
             <th>İşlemler</th>
         </tr>
@@ -31,6 +41,7 @@
                     <td>@count</td>
                     <td>@($"{emp.FirstName} {emp.LastName}")</td>
                     <td>@emp.Position</td>
+                    <td>@emp.PhoneNumber</td> <!-- Yeni -->
                     <td>
                         @if (emp.Status == "Inserted")
                         {
@@ -49,8 +60,7 @@
                         <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Düzenle
                         </a>
-                        <a asp-area="Admin" asp-controller="Employee" asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Sil
+                        <a asp-area="Admin" asp-controller="Employee"  asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-danger btn-sm" title="Silme onayı ekranına git"> <i class="fas fa-trash-alt"></i> Sil
                         </a>
                     </td>
                 </tr>
@@ -60,7 +70,7 @@
         else
         {
             <tr>
-                <td colspan="5" class="text-center text-muted">Hiç çalışan bulunamadı.</td>
+                <td colspan="7" class="text-center text-muted">Hiç çalışan bulunamadı.</td>
             </tr>
         }
     </tbody>
