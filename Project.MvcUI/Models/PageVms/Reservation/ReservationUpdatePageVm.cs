@@ -11,33 +11,46 @@ namespace Project.MvcUI.Models.PageVms.Reservations
     public class ReservationUpdatePageVm
     {
         /// <summary>
+        /// Constructor: Form modeli ve seçim listeleri varsayılan olarak başlatılır.
+        /// </summary>
+        public ReservationUpdatePageVm()
+        {
+            ReservationUpdateRequest = new ReservationUpdateRequestModel();
+            Rooms = new List<SelectListItem>();
+            Packages = new List<SelectListItem>();
+            ExtraServices = new List<SelectListItem>();
+            PageTitle = "Rezervasyon Güncelleme";
+            HelpText = "Rezervasyon bilgilerinizi güncellemek için aşağıdaki alanları düzenleyin.";
+        }
+
+        /// <summary>
         /// Rezervasyon güncelleme form modelidir.
         /// </summary>
-        public ReservationUpdateRequestModel ReservationUpdateRequest { get; set; } = new ReservationUpdateRequestModel();
+        public ReservationUpdateRequestModel ReservationUpdateRequest { get; set; }
 
         /// <summary>
         /// Oda seçim listesi.
         /// </summary>
-        public IEnumerable<SelectListItem> Rooms { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> Rooms { get; set; }
 
         /// <summary>
         /// Paket seçim listesi.
         /// </summary>
-        public IEnumerable<SelectListItem> Packages { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> Packages { get; set; }
 
         /// <summary>
         /// Ekstra hizmet seçim listesi.
         /// </summary>
-        public IEnumerable<SelectListItem> ExtraServices { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> ExtraServices { get; set; }
 
         /// <summary>
         /// Sayfa başlığı.
         /// </summary>
-        public string PageTitle { get; set; } = "Rezervasyon Güncelleme";
+        public string PageTitle { get; set; }
 
         /// <summary>
         /// Kullanıcıya gösterilecek yardımcı metin.
         /// </summary>
-        public string HelpText { get; set; } = "Rezervasyon bilgilerinizi güncellemek için aşağıdaki alanları düzenleyin.";
+        public string HelpText { get; set; }
     }
 }

@@ -23,14 +23,13 @@ namespace Project.MvcUI.Controllers
     [Authorize(Roles = "Member")]
     public class ReservationController : Controller
     {
-        private readonly IReservationManager _reservationManager;
-        private readonly IEmployeeManager _employeeManager;
-        private readonly IRoomManager _roomManager;
-        private readonly IPackageManager _packageManager;
-        private readonly IExtraServiceManager _extraServiceManager;
-        private readonly IReservationExtraServiceManager _reservationExtraServiceManager;
+        readonly IReservationManager _reservationManager;
+        readonly IEmployeeManager _employeeManager;
+        readonly IRoomManager _roomManager;
+        readonly IPackageManager _packageManager;
+        readonly IExtraServiceManager _extraServiceManager;
+        readonly IReservationExtraServiceManager _reservationExtraServiceManager;
         readonly IMapper _mapper;
-
 
         public ReservationController(
             IReservationManager reservationManager,
@@ -60,7 +59,7 @@ namespace Project.MvcUI.Controllers
         public async Task<IActionResult> Create()
         {
             // Kat bilgilerini içeren bir dictionary oluşturuluyor.
-            Dictionary<int,string> floorsInfo = new()
+            Dictionary<int, string> floorsInfo = new()
             {
                 { 1, "Tek Kişilik ve Üç Kişilik Odalar - Minibar bulunmamaktadır." },
                 { 2, "Tek Kişilik ve İki Kişilik Odalar - Klima, TV, Saç Kurutma Makinesi, Kablosuz İnternet mevcut." },

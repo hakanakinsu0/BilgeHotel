@@ -7,6 +7,15 @@
     public class ReservationCancelPageVm
     {
         /// <summary>
+        /// Constructor: Sayfa başlığı ve yardım metni varsayılan olarak tanımlanır.
+        /// </summary>
+        public ReservationCancelPageVm()
+        {
+            PageTitle = "Rezervasyon İptal Onayı";
+            HelpText = "Lütfen rezervasyonu iptal etmek istediğinize emin olun.";
+        }
+
+        /// <summary>
         /// İptal edilecek rezervasyonun ID'si.
         /// </summary>
         public int ReservationId { get; set; }
@@ -19,11 +28,11 @@
         /// <summary>
         /// Sayfa başlığı.
         /// </summary>
-        public string PageTitle { get; set; } = "Rezervasyon İptal Onayı";
+        public string PageTitle { get; set; }
 
         /// <summary>
         /// Kullanıcıya gösterilecek yardımcı metin.
         /// </summary>
-        public string HelpText { get; set; } = "Lütfen rezervasyonu iptal etmek istediğinize emin olun.";
+        public string HelpText { get; set; }
     }
 }

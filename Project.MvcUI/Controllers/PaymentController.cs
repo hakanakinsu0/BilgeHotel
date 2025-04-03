@@ -22,14 +22,14 @@ namespace Project.MvcUI.Controllers
     public class PaymentController : Controller
     {
         // Controller'ın ihtiyaç duyduğu manager ve servis bağımlılıkları tanımlanıyor.
-        private readonly IReservationManager _reservationManager;
-        private readonly IAppUserManager _appUserManager;
-        private readonly IAppUserProfileManager _appUserProfileManager;
-        private readonly IRoomManager _roomManager;
-        private readonly IPaymentManager _paymentManager;
-        private readonly IReservationExtraServiceManager _reservationExtraServiceManager;
-        private readonly IExtraServiceManager _extraServiceManager;
-        private readonly IHttpClientFactory _httpClientFactory;
+        readonly IReservationManager _reservationManager;
+        readonly IAppUserManager _appUserManager;
+        readonly IAppUserProfileManager _appUserProfileManager;
+        readonly IRoomManager _roomManager;
+        readonly IPaymentManager _paymentManager;
+        readonly IReservationExtraServiceManager _reservationExtraServiceManager;
+        readonly IExtraServiceManager _extraServiceManager;
+        readonly IHttpClientFactory _httpClientFactory;
 
         // Constructor enjeksiyonu ile tüm bağımlılıklar sağlanıyor.
         public PaymentController(IReservationManager reservationManager, IAppUserManager appUserManager, IAppUserProfileManager appUserProfileManager, IRoomManager roomManager, IPaymentManager paymentManager, IReservationExtraServiceManager reservationExtraServiceManager, IHttpClientFactory httpClientFactory, IExtraServiceManager extraServiceManager)

@@ -17,8 +17,6 @@ namespace Project.MvcUI.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-
-
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -60,9 +58,6 @@ namespace Project.MvcUI.Controllers
         //    }
         //} 
         #endregion
-
-        // **GET: Register**
-        
 
     }
 }

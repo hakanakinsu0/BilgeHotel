@@ -1,5 +1,4 @@
 ﻿using Project.MvcUI.Models.PureVms.Payments.ResponseModels;
-using System.Collections.Generic;
 
 namespace Project.MvcUI.Models.PageVms.Payments
 {

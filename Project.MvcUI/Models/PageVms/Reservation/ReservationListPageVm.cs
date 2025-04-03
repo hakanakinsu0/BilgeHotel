@@ -10,18 +10,27 @@ namespace Project.MvcUI.Models.PageVms.Reservations
     public class ReservationListPageVm
     {
         /// <summary>
+        /// Constructor: Sayfa başlığı ve yardım metni varsayılan olarak tanımlanır.
+        /// </summary>
+        public ReservationListPageVm()
+        {
+            PageTitle = "Rezervasyonlarım";
+            HelpText = "Aşağıda rezervasyon bilgileriniz görüntülenmektedir.";
+        }
+
+        /// <summary>
         /// Kullanıcının rezervasyon bilgilerini içerir.
         /// </summary>
-        public IEnumerable<ReservationDto> Reservations { get; set; } = new List<ReservationDto>();
+        public IEnumerable<ReservationDto> Reservations { get; set; }
 
         /// <summary>
         /// Sayfa başlığı.
         /// </summary>
-        public string PageTitle { get; set; } = "Rezervasyonlarım";
+        public string PageTitle { get; set; }
 
         /// <summary>
         /// Yardımcı metin (kullanıcıya ek bilgi vermek için).
         /// </summary>
-        public string HelpText { get; set; } = "Aşağıda rezervasyon bilgileriniz görüntülenmektedir.";
+        public string HelpText { get; set; }
     }
 }

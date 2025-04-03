@@ -16,9 +16,9 @@ namespace Project.MvcUI.Controllers
     [Authorize(Roles = "Member,Admin")]
     public class ProfileController : Controller
     {
-        private readonly IAppUserManager _appUserManager;
-        private readonly IMapper _mapper;
-        private readonly UserManager<AppUser> _userManager;
+        readonly IAppUserManager _appUserManager;
+        readonly IMapper _mapper;
+        readonly UserManager<AppUser> _userManager;
 
         public ProfileController(IAppUserManager appUserManager, IMapper mapper, UserManager<AppUser> userManager)
         {
