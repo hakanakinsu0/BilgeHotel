@@ -7,13 +7,9 @@
     public class CustomerReportResponseModel
     {
         public int Id { get; set; }                 // Müşterinin benzersiz kimlik numarası
-
         public string FullName { get; set; }        // Müşterinin tam adı (ad + soyad)
-
         public string Email { get; set; }           // Müşterinin e-posta adresi
-
         public string IdentityNumber { get; set; }  // Müşterinin kimlik numarası
-
         public int ReservationCount { get; set; }   // Müşterinin yaptığı rezervasyon sayısı
     }
 }

@@ -10,11 +10,8 @@ namespace Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports
     public class CustomerReportListResponseModel
     {
         public int TotalCustomers { get; set; }                 // Otelde kayıtlı toplam müşteri sayısı
-
         public int CustomersWithReservations { get; set; }      // Rezervasyon yapmış müşteri sayısı
-
         public int CustomersWithoutReservations { get; set; }   // Henüz rezervasyon yapmamış müşteri sayısı
-
         public List<CustomerReportResponseModel> Customers { get; set; } // Her bir müşteriye ait detayları içeren liste
     }
 }

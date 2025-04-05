@@ -1,19 +1,21 @@
-﻿@model RevenueReportResponseModel
+﻿@using System.Globalization
+@model RevenueReportResponseModel
 
 @{
     ViewData["Title"] = "💰 Gelir Raporları";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    // "tr-TR" ay isimlerini Türkçe döndürecektir
+    CultureInfo culture = new System.Globalization.CultureInfo("tr-TR");
 }
 
 <h2>💰 Gelir Raporları</h2>
 <p>Bu sayfadan otelinizin toplam ve aylık gelirlerini inceleyebilirsiniz.</p>
 
-<!-- 📌 Toplam Gelir Kartı -->
 <div class="alert alert-success text-center">
     <h4>Toplam Gelir: <strong>@Model.TotalRevenue.ToString("C2")</strong></h4>
 </div>
 
-<!-- 📋 Aylık Gelir Tablosu -->
 <table class="table table-bordered table-hover">
     <thead class="table-dark">
         <tr>
@@ -29,7 +31,16 @@
             {
                 <tr>
                     <td>@report.Year</td>
-                    <td>@report.Month</td>
+
+                    <!-- Aşağıda 'MMMM' formatı + culture kullanarak Türkçe ay ismi elde ediyoruz -->
+                    <td>
+                        @{
+                            var dateValue = new DateTime(report.Year, report.Month, 1);
+                            var monthName = dateValue.ToString("MMMM", culture); // "Mart", "Nisan" vb.
+                        }
+                        @monthName
+                    </td>
+
                     <td>@report.TotalRevenue.ToString("C")</td>
                 </tr>
             }
@@ -43,5 +54,6 @@
     </tbody>
 </table>
 
-<!-- 🔙 Geri Dön -->
-<a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Geri Dön</a>
+<a asp-action="Index" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Geri Dön
+</a>

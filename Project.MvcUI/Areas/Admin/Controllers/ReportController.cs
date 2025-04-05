@@ -55,7 +55,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 RoomNumber = r.RoomNumber, // Oda numarası
                 StartDate = r.StartDate, // Rezervasyon başlangıç tarihi
                 EndDate = r.EndDate, // Rezervasyon bitiş tarihi
-                ReservationStatus = r.ReservationStatus.ToString(), // Rezervasyon durumu (string)
+                ReservationStatus = r.ReservationStatus.ToString(), // Rezervasyon durumu 
                 TotalPrice = r.TotalPrice // Toplam fiyat
             }).ToList();
 
