@@ -148,7 +148,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 FirstName = employee.FirstName,                        // Ad
                 LastName = employee.LastName,                          // Soyad
                 Position = employee.Position,                          // Pozisyon
-                PhoneNumber = employee.PhoneNumber?.Replace("+90", "0"), // +90 → 0 formatına çevrilir
+                PhoneNumber = employee.PhoneNumber.Replace("+90", "0"), // +90 → 0 formatına çevrilir
                 Salary = employee.Salary,                              // Maaş
                 Address = employee.Address                             // Adres
             };
