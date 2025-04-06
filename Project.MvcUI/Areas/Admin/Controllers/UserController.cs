@@ -35,15 +35,19 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         #region UserIndexAction
 
-        public async Task<IActionResult> Index(string search, string role, string status)
+        public async Task<IActionResult> Index(UserIndexRequestModel request)
         {
             // BLL'den, filtre parametrelerine göre detayları tamamlanmış kullanıcı listesini alıyoruz
-            List<AppUserDto> userDtos = await _appUserManager.GetUsersWithDetailsAsync(search, role, status);
+            List<AppUserDto> userDtos = await _appUserManager.GetUsersWithDetailsAsync(
+                request.Search,
+                request.Role,
+                request.Status
+            );
 
             // DTO'ları UI modeline dönüştürüyoruz
             UserListViewResponseModel model = new()
             {
-                Users = userDtos.Select(u => new UserViewModel
+                Users = userDtos.Select(u => new UserViewResponseModel
                 {
                     Id = u.Id,
                     FullName = $"{u.FirstName} {u.LastName}",
@@ -186,8 +190,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             user.ModifiedDate = DateTime.Now;
             user.Status = model.IsActive ? DataStatus.Inserted : DataStatus.Updated;
 
-
-
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
@@ -255,7 +257,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             // Kullanıcıyı Identity üzerinden çekiyoruz.
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            AppUser user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
@@ -308,7 +310,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region UserCjangePassword
+        #region UserChangePassword
 
         // GET: ChangePassword
         public async Task<IActionResult> ChangePassword(int id)

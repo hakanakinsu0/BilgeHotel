@@ -24,7 +24,7 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers
 
         [Display(Name = "Telefon Numarası")]
         [Required(ErrorMessage = "{0} gereklidir.")]
-        [Phone(ErrorMessage = "Geçerli bir {0} giriniz.")]
+        [RegularExpression(@"^05\d{9}$", ErrorMessage = "Telefon 11 haneli olmalıdır (05xxxxxxxxx).")]
         public string PhoneNumber { get; set; }
 
         // 📌 Kullanıcı Profil Bilgileri
@@ -35,6 +35,7 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers
         public string Nationality { get; set; } // Uyruğu
 
         [Display(Name = "Kimlik Numarası")]
+        [RegularExpression(@"^[0-9]{11}$", ErrorMessage = "T.C. Kimlik Numarası 11 rakamdan oluşmalıdır.")]
         public string IdentityNumber { get; set; } // TC Kimlik No / Pasaport No
 
         [Display(Name = "Cinsiyet")]

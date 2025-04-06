@@ -4,6 +4,6 @@ namespace Project.MvcUI.Areas.Admin.Models.ResponseModels.AppUsers
 {
     public class UserListViewResponseModel
     {
-        public List<UserViewModel> Users { get; set; }
+        public List<UserViewResponseModel> Users { get; set; }
     }
 }

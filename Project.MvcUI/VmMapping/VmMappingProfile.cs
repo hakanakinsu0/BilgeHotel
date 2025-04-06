@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Project.Bll.DtoClasses;
 using Project.Entities.Models;
-using Project.MvcUI.Areas.Admin.Models;
 using Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers;
 using Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels;
@@ -28,7 +27,7 @@ namespace Project.MvcUI.VmMapping
 
 
             // ✅ Admin Paneli Kullanıcı Yönetimi
-            CreateMap<UserViewModel, AppUserDto>().ReverseMap();
+            CreateMap<UserViewResponseModel, AppUserDto>().ReverseMap();
             CreateMap<CreateUserRequestModel, AppUserDto>().ReverseMap();
             CreateMap<UpdateUserRequestModel, AppUserDto>().ReverseMap();
             CreateMap<UserListResponseModel, AppUserDto>().ReverseMap();

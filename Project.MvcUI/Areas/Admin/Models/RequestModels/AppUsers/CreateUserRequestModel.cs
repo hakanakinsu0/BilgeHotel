@@ -25,6 +25,7 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers
         [Display(Name = "Şifre Tekrarı")]
         [Required(ErrorMessage = "{0} gereklidir.")]
         [MinLength(6, ErrorMessage = "{0} en az 6 karakter olmalıdır.")]
+        [Compare("Password", ErrorMessage = "Şifre ve Şifre (Tekrar) eşleşmiyor.")]
         public string ConfirmPassword { get; set; }
 
         [Display(Name = "Telefon Numarası")]
@@ -57,6 +58,7 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers
         public string Nationality { get; set; }
 
         [Display(Name = "Kimlik Numarası")]
+        [RegularExpression("^[0-9]{11}$", ErrorMessage = "TC Kimlik No 11 rakamdan oluşmalıdır.")]
         public string IdentityNumber { get; set; }
 
         // 📌 Rol Seçimi

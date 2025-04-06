@@ -28,7 +28,9 @@
 <form method="get" class="mb-4">
     <div class="row">
         <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Ad veya e-posta ile ara" value="@Context.Request.Query["search"]" />
+            <!-- name="search" => request.Search alanına maplenecek -->
+            <input type="text" name="search" class="form-control" placeholder="Ad veya e-posta ile ara"
+                   value="@Context.Request.Query["search"]" />
         </div>
         <div class="col-md-3">
             <select name="role" class="form-control">
@@ -45,7 +47,9 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Filtrele
+            </button>
         </div>
     </div>
 </form>

@@ -2,6 +2,6 @@
 {
     public class UserListResponseModel
     {
-        public List<UserViewModel> Users { get; set; } = new List<UserViewModel>();
+        public List<UserViewResponseModel> Users { get; set; } = new List<UserViewResponseModel>();
     }
 }
