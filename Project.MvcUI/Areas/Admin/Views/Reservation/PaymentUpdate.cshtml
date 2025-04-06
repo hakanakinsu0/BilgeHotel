@@ -30,12 +30,14 @@
 
     <div class="mb-3">
         <label asp-for="NewStatus" class="form-label">Yeni Ödeme Durumu</label>
-        <select asp-for="NewStatus" asp-items="ViewBag.PaymentStatuses" class="form-control">
-            <option value="">Lütfen bir ödeme durumu seçiniz</option>
-        </select>
+        <select asp-for="NewStatus" asp-items="ViewBag.PaymentStatuses" class="form-control"></select>
         <span asp-validation-for="NewStatus" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Güncelle</button>
     <a asp-action="Index" class="btn btn-secondary">İptal</a>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Entities.Enums;
+using Project.MvcUI.Areas.Admin.Models.PageVms.Reservations;
 using Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels;
 
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // Sadece Admin yetkisi olanlar erişebilir
+    [Authorize(Roles = "Admin")] 
     public class ReservationController : Controller
     {
         private readonly IReservationManager _reservationManager;
@@ -49,34 +50,35 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// BLL'den eksik bilgileri tamamlanmış ve filtre parametrelerine göre filtrelenmiş rezervasyon DTO'larını alır,
         /// ardından bu verileri UI modeline dönüştürerek view'e gönderir.
         /// </summary>
-        /// <param name="search">Kullanıcı adı veya e-posta araması</param>
-        /// <param name="roomId">Oda numarasına göre filtre</param>
-        /// <param name="status">Rezervasyon durumu filtre</param>
-        /// <param name="isPaid">Ödeme durumu filtre (true: ödeme yapılmış, false: ödeme bekleniyor)</param>
+        /// <param name="model">Rezervasyon filtre parametrelerini tutan request model.</param>
         /// <returns>Filtrelenmiş rezervasyonların UI modeline dönüştürülmüş listesi</returns>
-        public async Task<IActionResult> Index(string search, int? roomId, string status, bool? isPaid)
+        public async Task<IActionResult> Index(ReservationIndexPageViewModel model)
         {
-            // BLL'den eksik bilgileri tamamlanmış ve filtre parametrelerine göre filtrelenmiş rezervasyon DTO'larını alıyoruz
-            List<ReservationDto> reservations = await _reservationManager.GetFilteredReservationReportsAsync(search, roomId, status, isPaid);
+            // Filtre parametreleri
+            string search = model.Search;
+            bool? isPaid = model.IsPaid;
 
-            // Rezervasyon DTO'larını UI modeline dönüştürüyoruz
-            ReservationListResponseModel model = new()
+            // BLL'den filtreli liste çek 
+            // (Dikkat: BLL tarafında da metot imzasını arındırdığınızı varsayıyoruz)
+            List<ReservationDto> reservationDtos = await _reservationManager
+                .GetFilteredReservationReportsAsync(search, isPaid);
+
+            // DTO'ları, UI için "ReservationListRequestModel" haline dönüştür
+            model.Reservations = reservationDtos.Select(r => new ReservationListRequestModel
             {
-                Reservations = reservations.Select(r => new ReservationListRequestModel
-                {
-                    Id = r.Id,
-                    CustomerName = r.CustomerName,         // BLL'de tamamlanan müşteri adı
-                    CustomerEmail = r.CustomerEmail,       // BLL'de tamamlanan e-posta
-                    RoomNumber = r.RoomNumber,             // BLL'de tamamlanan oda numarası
-                    StartDate = r.StartDate,
-                    EndDate = r.EndDate,
-                    TotalPrice = r.TotalPrice,
-                    IsPaid = r.ReservationStatus == ReservationStatus.Confirmed,
-                    ReservationStatus = r.ReservationStatus.ToString()
-                }).ToList()
-            };
+                Id = r.Id,
+                CustomerName = r.CustomerName,
+                CustomerEmail = r.CustomerEmail,
+                RoomNumber = r.RoomNumber,
+                StartDate = r.StartDate,
+                EndDate = r.EndDate,
+                TotalPrice = r.TotalPrice,
+                IsPaid = (r.ReservationStatus == ReservationStatus.Confirmed),
+                ReservationStatus = r.ReservationStatus.ToString()
+            }).ToList();
 
-            return View(model); // UI modelini view'e gönderir
+            // Gerekirse ViewBag doldurma vs.
+            return View(model);
         }
 
         #endregion
@@ -90,58 +92,45 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// </summary>
         /// <param name="id">Düzenlenecek rezervasyonun ID'si</param>
         /// <returns>Rezervasyon güncelleme formu view'i</returns>
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            // Rezervasyon bilgilerini BLL'den alıyoruz (ReservationDto)
-            ReservationDto reservation = await _reservationManager.GetByIdAsync(id);
+            // Rezervasyonu BLL'den detaylı şekilde çek
+            ReservationDto reservation = await _reservationManager.GetDetailedReservationByIdAsync(id);
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = "Rezervasyon bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            // Kullanıcı bilgilerini tamamlıyoruz
-            string customerName = "Anonim Kullanıcı";
-            string customerEmail = "Email Yok";
-
-            if (reservation.AppUserId.HasValue)
-            {
-                AppUserDto user = await _appUserManager.GetByIdAsync(reservation.AppUserId.Value);
-                AppUserProfileDto userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId.Value);
-
-                if (user != null && userProfile != null)
-                {
-                    customerName = $"{userProfile.FirstName} {userProfile.LastName}";
-                    customerEmail = user.Email;
-                }
-            }
-
-            // Rezervasyona ait ekstra hizmetleri çekiyoruz (Deleted olanları hariç)
+            // Rezervasyona ait ekstra hizmetleri al
             List<ReservationExtraServiceDto> existingExtraServices = await _reservationExtraServiceManager.GetByReservationIdAsync(reservation.Id);
             List<int> selectedExtraServiceIds = existingExtraServices
-                .Where(es => es.Status != DataStatus.Deleted) // Deleted olanları listeleme
+                .Where(es => es.Status != DataStatus.Deleted)
                 .Select(es => es.ExtraServiceId)
                 .ToList();
 
-            // UI modeline dönüştürüyoruz
-            ReservationUpdateRequestModel model = new()
+            // UI model
+            var model = new ReservationUpdateRequestModel
             {
                 ReservationId = reservation.Id,
-                CustomerName = customerName,
-                CustomerEmail = customerEmail,
+                CustomerName = reservation.CustomerName,   // BLL’de zaten set edilmiş
+                CustomerEmail = reservation.CustomerEmail, // BLL’de zaten set edilmiş
                 RoomId = reservation.RoomId,
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
                 PackageId = reservation.PackageId,
-                ExtraServiceIds = selectedExtraServiceIds, // Seçili ekstra hizmetler
+                ExtraServiceIds = selectedExtraServiceIds,
                 ReservationStatus = reservation.ReservationStatus
             };
 
-            // Form için gerekli dropdown listeleri yüklüyoruz
+            // Dropdown'ları dolduralım
             await LoadSelectListsAsync(model.RoomId, model.PackageId, model.ExtraServiceIds);
-            ViewBag.ReservationStatuses = new SelectList(Enum.GetValues(typeof(ReservationStatus))); // Rezervasyon durumları
+            ViewBag.ReservationStatuses = new SelectList(Enum.GetValues(typeof(ReservationStatus)));
+
             return View(model);
         }
+
 
         /// <summary>
         /// POST: Rezervasyon güncelleme işlemini gerçekleştirir.
@@ -191,6 +180,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// </summary>
         /// <param name="id">Rezervasyon ID'si</param>
         /// <returns>Ödeme güncelleme formu view'i</returns>
+        [HttpGet]
         public async Task<IActionResult> PaymentUpdate(int id)
         {
             // Rezervasyon bilgisini BLL'den alıyoruz
@@ -216,19 +206,21 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             RoomDto room = await _roomManager.GetByIdAsync(reservation.RoomId);
             string roomNumber = room != null ? room.RoomNumber : "Bilinmeyen Oda";
 
-            // UI modelini oluşturuyoruz
+            // UI modelini oluşturuyoruz ve yeni ödeme durumu için varsayılan olarak mevcut durumu atıyoruz
             ReservationPaymentUpdateRequestModel model = new()
             {
                 ReservationId = reservation.Id,
                 CustomerName = customerName,
                 RoomNumber = roomNumber,
-                CurrentStatus = reservation.ReservationStatus
+                CurrentStatus = reservation.ReservationStatus,
+                NewStatus = reservation.ReservationStatus // Varsayılan olarak mevcut durum gösterilsin
             };
 
-            // PaymentStatuses için dropdown listesi oluşturuyoruz
-            ViewBag.PaymentStatuses = new SelectList(Enum.GetValues(typeof(ReservationStatus)).Cast<ReservationStatus>());
+            // PaymentStatuses için dropdown listesi oluşturuyoruz, model.NewStatus seçili olacak şekilde
+            ViewBag.PaymentStatuses = new SelectList(Enum.GetValues(typeof(ReservationStatus)).Cast<ReservationStatus>(), model.NewStatus);
             return View(model);
         }
+
 
         /// <summary>
         /// POST: Rezervasyonun ödeme durumunu günceller.
@@ -276,7 +268,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             ViewBag.Packages = new SelectList(packages, "Id", "Name", selectedPackageId);
 
             // Aktif ekstra hizmetleri alıyoruz.
-            List<ExtraServiceDto> extraServices = _extraServiceManager.GetActives();
+            List<ExtraServiceDto> extraServices =  _extraServiceManager.GetActives();
             ViewBag.ExtraServices = extraServices.Select(es => new SelectListItem
             {
                 Value = es.Id.ToString(),

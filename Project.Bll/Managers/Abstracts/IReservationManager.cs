@@ -157,12 +157,11 @@ namespace Project.Bll.Managers.Abstracts
         /// Belirtilen filtre parametrelerine göre eksik bilgileri tamamlanmış rezervasyon DTO'larını asenkron olarak getirir.
         /// Bu metot, controller'ın filtreleme işlemlerini basitleştirmek için kullanılır.
         /// </summary>
-        /// <param name="search">Kullanıcı adı veya e-posta araması.</param>
-        /// <param name="roomId">Oda numarası filtresi (opsiyonel).</param>
-        /// <param name="status">Rezervasyon durumu filtresi (örn. "Confirmed", "Pending", "Canceled").</param>
-        /// <param name="isPaid">Ödeme durumu filtresi (true: ödeme yapılmış, false: ödeme bekliyor).</param>
+        /// <param name="search">Müşteri adı veya e-posta araması.</param>
+        /// <param name="isPaid">Ödeme durumu filtresi (true: ödenmiş, false: bekliyor).</param>
         /// <returns>Filtrelenmiş rezervasyon DTO'larının listesini döndürür.</returns>
-        Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, int? roomId, string status, bool? isPaid);
+        Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid);
+
 
         /// <summary>
         /// Belirtilen rezervasyon bilgilerini, ekstra hizmetleri ve reaktivasyon durumunu dikkate alarak rezervasyonu günceller.
@@ -185,5 +184,8 @@ namespace Project.Bll.Managers.Abstracts
         /// <param name="newStatus">Yeni rezervasyon durumu (ReservationStatus).</param>
         /// <returns>Güncelleme işleminin başarılı olup olmadığını belirten boolean değer.</returns>
         Task<bool> UpdateReservationPaymentStatusAsync(int reservationId, ReservationStatus newStatus);
+
+        Task<ReservationDto> GetDetailedReservationByIdAsync(int id);
+
     }
 }

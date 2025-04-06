@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.ReservationListResponseModel
+﻿@model Project.MvcUI.Areas.Admin.Models.PageVms.Reservations.ReservationIndexPageViewModel
 
 @{
     ViewData["Title"] = "Rezervasyon Yönetimi";
@@ -18,46 +18,29 @@
     <div class="alert alert-warning">@TempData["WarningMessage"]</div>
 }
 
-
 <h2>📅 Rezervasyon Yönetimi</h2>
 <p>Buradan sistemdeki rezervasyonları yönetebilirsiniz.</p>
 
-<!-- 🔎 Arama & Filtreleme -->
-<form method="get" class="mb-4">
+<!-- 🔎 Arama & Filtreleme (strongly-typed) -->
+<form method="get" asp-action="Index" class="mb-4">
     <div class="row">
-        <!-- Kullanıcı Adı / E-Posta ile Arama -->
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Müşteri adı veya e-posta ile ara" value="@Context.Request.Query["search"]" />
+        <div class="col-md-6">
+            <label asp-for="Search" class="form-label"></label>
+            <input asp-for="Search" class="form-control"
+                   placeholder="Müşteri adı veya e-posta" />
         </div>
 
-        <!-- Oda Numarası Seçimi -->
-        <div class="col-md-2">
-            <select name="roomId" class="form-control" asp-items="ViewBag.Rooms">
-                <option value="">Tüm Odalar</option>
-            </select>
-        </div>
-
-        <!-- Rezervasyon Durumu -->
-        <div class="col-md-2">
-            <select name="status" class="form-control" asp-items="ViewBag.Statuses">
-                <option value="">Tüm Durumlar</option>
-            </select>
-        </div>
-
-        <!-- Ödeme Durumu -->
-        <div class="col-md-2">
-            <select name="isPaid" class="form-control">
+        <div class="col-md-6">
+            <label asp-for="IsPaid" class="form-label">Ödeme</label>
+            <select asp-for="IsPaid" class="form-control">
                 <option value="">Tüm Ödemeler</option>
                 <option value="true">Ödenmiş</option>
                 <option value="false">Bekliyor</option>
             </select>
         </div>
-
-        <!-- Filtrele Butonu -->
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
-        </div>
     </div>
+
+    <button type="submit" class="btn btn-primary mt-3 w-100">Filtrele</button>
 </form>
 
 <!-- 📋 Rezervasyon Listesi -->
@@ -79,7 +62,7 @@
         @if (Model.Reservations != null && Model.Reservations.Any())
         {
             int count = 1;
-            @foreach (var reservation in Model.Reservations)
+            foreach (var reservation in Model.Reservations)
             {
                 <tr>
                     <td>@count</td>
@@ -89,7 +72,7 @@
                     <td>@reservation.StartDate.ToShortDateString()</td>
                     <td>@reservation.EndDate.ToShortDateString()</td>
                     <td>@reservation.TotalPrice.ToString("C")</td>
-           
+
                     <td>
                         @if (reservation.ReservationStatus == "Completed")
                         {

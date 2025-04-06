@@ -41,5 +41,8 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations
 
         [Display(Name = "Rezervasyon Durumu")]
         public ReservationStatus ReservationStatus { get; set; }
+
+        [Display(Name = "Rezervasyonu tekrar aktif yap")]
+        public bool ReactivateReservation { get; set; }
     }
 }

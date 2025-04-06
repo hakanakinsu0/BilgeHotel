@@ -463,22 +463,20 @@ namespace Project.Bll.Managers.Concretes
 
         /// <summary>
         /// Tüm rezervasyon DTO'larını alır, eksik bilgileri (kullanıcı, kullanıcı profili ve oda bilgileri) tamamlar
-        /// ve verilen filtre parametrelerine göre filtreleyerek döndürür.
+        /// ve verilen arama/ödeme durumu parametrelerine göre filtreleyerek döndürür.
         /// </summary>
-        /// <param name="search">Kullanıcı adı veya e-posta araması</param>
-        /// <param name="roomId">Oda numarasına göre filtre</param>
-        /// <param name="status">Rezervasyon durumu filtre</param>
-        /// <param name="isPaid">Ödeme durumu filtre (true: ödeme yapılmış, false: ödeme bekleniyor)</param>
+        /// <param name="search">Müşteri adı veya e-posta metni.</param>
+        /// <param name="isPaid">Ödeme durumu (true: ödeme yapılmış / Confirmed, false: ödeme bekleniyor / PendingPayment).</param>
         /// <returns>Filtrelenmiş ve eksik bilgileri tamamlanmış ReservationDto listesini döndürür.</returns>
-        public async Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, int? roomId, string status, bool? isPaid)
+        public async Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid)
         {
-            // Tüm rezervasyon DTO'larını alıyoruz
+            // 1) Tüm rezervasyon DTO'larını al
             var reservations = await GetAllAsync();
 
-            // Her rezervasyon için eksik bilgileri tamamlıyoruz
+            // 2) Eksik bilgileri (kullanıcı ve oda) tamamla
             foreach (var reservation in reservations)
             {
-                // Kullanıcı bilgilerini çekiyoruz
+                // Kullanıcı bilgisi
                 if (reservation.AppUserId.HasValue)
                 {
                     var user = await _appUserManager.GetByIdAsync(reservation.AppUserId.Value);
@@ -501,43 +499,38 @@ namespace Project.Bll.Managers.Concretes
                     reservation.CustomerEmail = "Email Yok";
                 }
 
-                // Oda bilgilerini çekiyoruz
+                // Oda bilgisi
                 var room = await _roomManager.GetByIdAsync(reservation.RoomId);
-                reservation.RoomNumber = room != null ? room.RoomNumber.ToString() : "Bilinmeyen Oda";
+                reservation.RoomNumber = (room != null)
+                    ? room.RoomNumber.ToString()
+                    : "Bilinmeyen Oda";
             }
 
-            // Filtreleme işlemleri:
-            // Kullanıcı adı veya e-posta ile arama
+            // 3) Filtreleme
+            // a) Arama: (Müşteri Adı + Soyadı) veya e-posta
             if (!string.IsNullOrEmpty(search))
             {
-                reservations = reservations.Where(r =>
-                    r.CustomerName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    r.CustomerEmail.Contains(search, StringComparison.OrdinalIgnoreCase)
-                ).ToList();
+                reservations = reservations
+                    .Where(r =>
+                        r.CustomerName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        r.CustomerEmail.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
             }
 
-            // Oda numarasına göre filtreleme (r.RoomNumber, string tipinde tutulduğu varsayılmıştır)
-            if (roomId.HasValue)
-            {
-                reservations = reservations.Where(r => r.RoomNumber == roomId.ToString()).ToList();
-            }
-
-            // Rezervasyon durumuna göre filtreleme
-            if (!string.IsNullOrEmpty(status))
-            {
-                reservations = reservations.Where(r => r.ReservationStatus.ToString() == status).ToList();
-            }
-
-            // Ödeme durumuna göre filtreleme (Confirmed: ödeme yapılmış, PendingPayment: ödeme bekleniyor)
+            // b) Ödeme durumu: (Confirmed / PendingPayment)
             if (isPaid.HasValue)
             {
                 reservations = reservations.Where(r =>
-                    isPaid.Value ? r.ReservationStatus == ReservationStatus.Confirmed : r.ReservationStatus == ReservationStatus.PendingPayment
+                    isPaid.Value
+                        ? r.ReservationStatus == ReservationStatus.Confirmed
+                        : r.ReservationStatus == ReservationStatus.PendingPayment
                 ).ToList();
             }
 
             return reservations;
         }
+
 
 
         /// <summary>
@@ -669,9 +662,45 @@ namespace Project.Bll.Managers.Concretes
             return true;
         }
 
+        public async Task<ReservationDto> GetDetailedReservationByIdAsync(int id)
+        {
+            // Basitçe "GetByIdAsync" veya "GetAllAsync" ile veriyi çekebilirsiniz.
+            // Mesela base.GetByIdAsync(id) diyelim. Bu size bir ReservationDto verir.
+            var reservation = await GetByIdAsync(id);
+            if (reservation == null)
+                return null;
 
+            // 1) Kullanıcı
+            if (reservation.AppUserId.HasValue)
+            {
+                var user = await _appUserManager.GetByIdAsync(reservation.AppUserId.Value);
+                var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(reservation.AppUserId.Value);
 
+                if (user != null && userProfile != null)
+                {
+                    reservation.CustomerName = $"{userProfile.FirstName} {userProfile.LastName}";
+                    reservation.CustomerEmail = user.Email;
+                }
+                else
+                {
+                    reservation.CustomerName = "Bilinmeyen Kullanıcı";
+                    reservation.CustomerEmail = "Email Yok";
+                }
+            }
+            else
+            {
+                reservation.CustomerName = "Anonim Kullanıcı";
+                reservation.CustomerEmail = "Email Yok";
+            }
 
+            // 2) Oda
+            var room = await _roomManager.GetByIdAsync(reservation.RoomId);
+            reservation.RoomNumber = room != null
+                ? room.RoomNumber.ToString()
+                : "Bilinmeyen Oda";
+
+            return reservation;
+        }
 
 
 
