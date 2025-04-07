@@ -52,7 +52,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// </summary>
         /// <param name="model">Rezervasyon filtre parametrelerini tutan request model.</param>
         /// <returns>Filtrelenmiş rezervasyonların UI modeline dönüştürülmüş listesi</returns>
-        public async Task<IActionResult> Index(ReservationIndexPageViewModel model)
+        public async Task<IActionResult> Index(ReservationIndexPageView model)
         {
             // Filtre parametreleri
             string search = model.Search;
