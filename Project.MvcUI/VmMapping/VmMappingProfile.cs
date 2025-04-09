@@ -3,6 +3,7 @@ using Project.Bll.DtoClasses;
 using Project.Entities.Models;
 using Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers;
 using Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations;
+using Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels;
 using Project.MvcUI.Areas.Admin.Models.ResponseModels.AppUsers;
 using Project.MvcUI.Models.PureVms.AppUsers.RequestModels;
@@ -35,6 +36,16 @@ namespace Project.MvcUI.VmMapping
             // ✅ Admin Paneli Rezervasyon Yönetimi
             CreateMap<ReservationDto, ReservationListRequestModel>().ReverseMap();
             CreateMap<ReservationListResponseModel, ReservationDto>().ReverseMap();
+
+            CreateMap<RoomCreateRequestModel, RoomDto>().ReverseMap();
+            CreateMap<RoomDto, RoomUpdateRequestModel>()
+                .ForMember(dest => dest.RoomId, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoomId))
+                .ForMember(dest => dest.RoomStatus, opt => opt.Ignore()); 
+
+
+
         }
     }
 }

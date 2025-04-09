@@ -93,6 +93,7 @@ namespace Project.Bll.Managers.Abstracts
         /// </returns>
         Task<(int TotalRooms, int OccupiedRooms, int EmptyRooms, int MaintenanceRooms, double OccupiedPercentage, double MonthlyOccupiedPercentage, int MonthlyOccupiedRooms, double MonthlyOccupiedRoomsPercentage)> GetRoomUsageReportAsync();
 
+        Task<List<RoomDto>> GetFilteredRoomsAsync(RoomDto filter);
 
 
     }

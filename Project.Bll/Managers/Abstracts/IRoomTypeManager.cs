@@ -12,5 +12,8 @@ namespace Project.Bll.Managers.Abstracts
     /// Oteldeki oda türleri ile ilgili işlemleri tanımlayan arayüzdür.
     /// Bu arayüz, oda türlerine ilişkin genel CRUD işlemlerini IManager arayüzü üzerinden sağlar.
     /// </summary>
-    public interface IRoomTypeManager : IManager<RoomTypeDto, RoomType> { }
+    public interface IRoomTypeManager : IManager<RoomTypeDto, RoomType> {
+        Task<int?> GetRoomTypeIdByNameAsync(string name);
+
+    }
 }

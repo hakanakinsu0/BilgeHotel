@@ -7,6 +7,7 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms
     {
         public int RoomId { get; set; }
 
+        [RegularExpression(@"^\d+$", ErrorMessage = "Oda numarası yalnızca rakam içermelidir.")]
         [Required(ErrorMessage = "Oda numarası gereklidir.")]
         public string RoomNumber { get; set; }
 

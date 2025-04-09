@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "Oda Yönetimi";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    var selectedRoomTypeId = Context.Request.Query["roomTypeId"].ToString();
+    var selectedRoomStatus = Context.Request.Query["roomStatus"].ToString();
+    var selectedPageSize = Context.Request.Query["pageSize"].ToString();
 }
 
 <h2>🏨 Oda Yönetimi</h2>
@@ -14,26 +18,41 @@
         <div class="col-md-2">
             <select name="roomTypeId" class="form-control" asp-items="ViewBag.RoomTypes">
                 <option value="">Oda Türü Seç</option>
+                @if (!string.IsNullOrEmpty(selectedRoomTypeId))
+                {
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            document.querySelector('[name="roomTypeId"]').value = '@selectedRoomTypeId';
+                        });
+                    </script>
+                }
             </select>
         </div>
         <div class="col-md-2">
-            <select name="roomStatus" class="form-control">
-                <option value="">Oda Durumunu Seç</option>
-                <option value="Empty">Boş</option>
-                <option value="Occupied">Dolu</option>
-                <option value="Maintenance">Bakımda</option>
+            <select name="roomStatus" class="form-control" asp-items="ViewBag.Statuses">
+                <option value="">Oda Durumu Seç</option>
+                @if (!string.IsNullOrEmpty(selectedRoomStatus))
+                {
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            document.querySelector('[name="roomStatus"]').value = '@selectedRoomStatus';
+                        });
+                    </script>
+                }
             </select>
         </div>
-
-
         <div class="col-md-2">
             <select name="pageSize" class="form-control">
-                <option value="10" selected>10 Oda</option>
-                <option value="30">30 Oda</option>
-                <option value="50">50 Oda</option>
-                <option value="70">70 Oda</option>
-                <option value="90">90 Oda</option>
+                @{
+                    var pageSizeOptions = new[] { 10, 30, 50, 70, 90 };
+                    foreach (var size in pageSizeOptions)
+                    {
+                        var isSelected = selectedPageSize == size.ToString() ? "selected=\"selected\"" : "";
+                @:<option value="@size" @Html.Raw(isSelected)>@size Oda</option>
+                    }
+                }
             </select>
+
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrele</button>
@@ -42,13 +61,13 @@
 </form>
 
 <div>
-
     <!-- 🆕 Yeni Oda Ekle -->
     <a asp-area="Admin" asp-controller="Room" asp-action="Create" class="btn btn-success mt-3">
         <i class="fas fa-plus"></i> Yeni Oda Ekle
     </a>
-</div><br /> <br/>
-
+</div>
+<br />
+<br />
 
 <!-- 📋 Oda Listesi -->
 <table class="table table-bordered table-hover">
@@ -67,8 +86,8 @@
     <tbody>
         @if (Model.Rooms != null && Model.Rooms.Any())
         {
-            int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1; // ✅ Sayfalama desteği eklendi.
-            @foreach (var room in Model.Rooms)
+            int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
+            foreach (var room in Model.Rooms)
             {
                 <tr>
                     <td>@count</td>
@@ -109,9 +128,8 @@
                             <i class="fas fa-sync"></i> Durum Güncelle
                         </a>
                     </td>
-
                 </tr>
-                count++; // ✅ Sayı her satırda artacak.
+                count++;
             }
         }
         else
@@ -123,7 +141,6 @@
     </tbody>
 </table>
 
-
 <!-- 🔄 Sayfalama -->
 @if (Model.TotalPages > 1)
 {
@@ -132,11 +149,18 @@
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = Model.PageSize })">@i</a>
+                    <a class="page-link" href="@Url.Action("Index", new {
+                        page = i,
+                        pageSize = Model.PageSize,
+                        roomTypeId = Context.Request.Query["roomTypeId"],
+                        roomStatus = Context.Request.Query["roomStatus"],
+                        floor = Context.Request.Query["floor"],
+                        minPrice = Context.Request.Query["minPrice"],
+                        maxPrice = Context.Request.Query["maxPrice"],
+                        hasReservation = Context.Request.Query["hasReservation"]
+                    })">@i</a>
                 </li>
             }
         </ul>
     </nav>
 }
-
-

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project.Bll.DtoClasses;
 using Project.Bll.Managers.Abstracts;
 using Project.Dal.Repositories.Abstracts;
@@ -17,6 +18,12 @@ namespace Project.Bll.Managers.Concretes
         public RoomTypeManager(IRoomTypeRepository repository, IMapper mapper) : base(repository, mapper)
         {
             _repository = repository;
+        }
+
+        public async Task<int?> GetRoomTypeIdByNameAsync(string name)
+        {
+            var type = await _repository.Where(rt => rt.Name == name).FirstOrDefaultAsync();
+            return type?.Id;
         }
     }
 }

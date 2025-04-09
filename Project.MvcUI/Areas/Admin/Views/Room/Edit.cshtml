@@ -1,25 +1,29 @@
 ﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms.RoomUpdateRequestModel
+@using Project.Entities.Enums
 
 @{
     ViewData["Title"] = "Oda Güncelle";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
-    var roomTypes = ViewBag.RoomTypes as List<SelectListItem>; // ✅ ViewBag verisini listeye çeviriyoruz
+    var roomTypes = ViewBag.RoomTypes as List<SelectListItem>;
 }
 
 <h2>📝 Oda Güncelle</h2>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="RoomId" />
+    <input type="hidden" asp-for="RoomStatus" />
 
     <div class="mb-3">
         <label asp-for="RoomNumber" class="form-label">Oda Numarası</label>
-        <input asp-for="RoomNumber" class="form-control" readonly="@Model.RoomStatus == RoomStatus.Occupied" />
+        <input asp-for="RoomNumber" class="form-control" disabled="@(Model.RoomStatus == RoomStatus.Occupied)" />
+        <input type="hidden" asp-for="RoomNumber" />
         <span asp-validation-for="RoomNumber" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Floor" class="form-label">Kat Numarası</label>
-        <input asp-for="Floor" type="number" class="form-control" readonly="@Model.RoomStatus == RoomStatus.Occupied" />
+        <input asp-for="Floor" type="number" class="form-control" disabled="@(Model.RoomStatus == RoomStatus.Occupied)" />
+        <input type="hidden" asp-for="Floor" />
         <span asp-validation-for="Floor" class="text-danger"></span>
     </div>
 
@@ -31,7 +35,6 @@
 
     <div class="mb-3">
         <label asp-for="RoomTypeId" class="form-label">Oda Tipi</label>
-
         @if (Model.RoomStatus == RoomStatus.Occupied)
         {
             <select class="form-control" disabled>
@@ -45,7 +48,6 @@
                 <option value="">Lütfen oda tipi seçin</option>
             </select>
         }
-
         <span asp-validation-for="RoomTypeId" class="text-danger"></span>
     </div>
 

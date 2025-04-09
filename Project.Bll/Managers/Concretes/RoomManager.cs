@@ -238,7 +238,48 @@ namespace Project.Bll.Managers.Concretes
             return (totalRooms, occupiedRooms, emptyRooms, maintenanceRooms, occupiedPercentage, monthlyOccupiedPercentage, uniqueOccupiedRoomsThisMonth, monthlyOccupiedRoomsPercentage);
         }
 
+        public async Task<List<RoomDto>> GetFilteredRoomsAsync(RoomDto filter)
+        {
+            var query = _repository
+                .Where(r => r.Status != DataStatus.Deleted)
+                .Include(r => r.RoomType)
+                .Include(r => r.Reservations)
+                .AsQueryable();
 
+            if (filter.RoomTypeId != 0)
+                query = query.Where(r => r.RoomTypeId == filter.RoomTypeId);
+
+            if (filter.FilterRoomStatus.HasValue)
+                query = query.Where(r => r.RoomStatus == filter.FilterRoomStatus.Value);
+
+            if (filter.Floor != 0)
+                query = query.Where(r => r.Floor == filter.Floor);
+
+            if (filter.PricePerNight > 0)
+                query = query.Where(r => r.PricePerNight >= filter.PricePerNight);
+
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(r => r.PricePerNight <= filter.MaxPrice.Value);
+
+            if (filter.FilterIsReserved.HasValue)
+            {
+                query = query.Where(r =>
+                    r.Reservations.Any(res =>
+                        res.Status != DataStatus.Deleted &&
+                        res.ReservationStatus != ReservationStatus.Canceled) == filter.FilterIsReserved.Value);
+            }
+
+            // 🔢 Toplam kayıt sayısı hesapla ve DTO'ya aktar
+            filter.TotalRooms = await query.CountAsync();
+
+            // ✅ Sayfalama uygula
+            var pagedRooms = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+
+            return _mapper.Map<List<RoomDto>>(pagedRooms);
+        }
 
 
 

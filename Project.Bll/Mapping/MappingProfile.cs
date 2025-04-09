@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Project.Bll.DtoClasses;
+using Project.Entities.Enums;
 using Project.Entities.Models;
 
 namespace Project.Bll.Mapping
@@ -16,7 +17,13 @@ namespace Project.Bll.Mapping
             CreateMap<Employee, EmployeeDto>().ReverseMap();
 
             // Oda ve Özellikleri
-            CreateMap<Room, RoomDto>().ReverseMap();
+            CreateMap<Room, RoomDto>()
+                .ForMember(dest => dest.RoomTypeName, opt => opt.MapFrom(src => src.RoomType.Name))
+                .ForMember(dest => dest.IsReserved, opt => opt.MapFrom(src =>
+                    src.Reservations.Any(r =>
+                        r.Status != DataStatus.Deleted &&
+                        r.ReservationStatus != ReservationStatus.Canceled)));
+
             CreateMap<RoomType, RoomTypeDto>().ReverseMap();
 
             // Rezervasyon, Ödeme ve Paketler

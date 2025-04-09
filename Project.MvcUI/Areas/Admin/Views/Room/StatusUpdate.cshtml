@@ -8,6 +8,27 @@
 <h2>🔄 Oda Durumu Güncelle</h2>
 <p>Bu sayfadan odanın durumunu güncelleyebilirsiniz.</p>
 
+@* ✅ TempData mesajları *@
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-times-circle"></i> @TempData["ErrorMessage"]
+    </div>
+}
+@if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> @TempData["WarningMessage"]
+    </div>
+}
+
+
 <form asp-action="StatusUpdate" method="post">
     <input type="hidden" asp-for="RoomId" />
 

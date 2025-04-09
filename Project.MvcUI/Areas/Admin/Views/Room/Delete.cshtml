@@ -17,7 +17,7 @@
 @if (Model.HasActiveReservations)
 {
     <div class="alert alert-danger">
-        <p>Bu oda aktif rezervasyonlara sahip olduğu için <strong>silinemez</strong>. Ancak bakım moduna alınacaktır.</p>
+        <p>Bu oda aktif rezervasyonlara sahip olduğu için <strong>silinemez.</strong></p>
     </div>
 }
 else
@@ -27,12 +27,17 @@ else
     </div>
 }
 
-<form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" name="id" value="@Model.RoomId" />
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="RoomId" />
+    <input type="hidden" asp-for="RoomNumber" />
+    <input type="hidden" asp-for="Floor" />
+    <input type="hidden" asp-for="PricePerNight" />
+    <input type="hidden" asp-for="RoomTypeName" />
+    <input type="hidden" asp-for="RoomStatus" />
+    <input type="hidden" asp-for="HasActiveReservations" />
 
     <p>Bu odayı silmek istediğinizden emin misiniz?</p>
 
     <button type="submit" class="btn btn-danger">Sil</button>
     <a asp-action="Index" class="btn btn-secondary">İptal</a>
 </form>
-

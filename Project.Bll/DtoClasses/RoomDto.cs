@@ -22,5 +22,16 @@ namespace Project.Bll.DtoClasses
         public bool HasHairDryer { get; set; } // Odanın saç kurutma makinesi var mı?
         public bool HasWifi { get; set; } // Odanın kablosuz internet erişimi var mı?
         public bool IsReserved { get; set; } // Oda şu an rezerve edilmiş mi?
+
+        //Yeni eklendi
+        public RoomStatus? FilterRoomStatus { get; set; } // Filtreleme için
+        public decimal? MaxPrice { get; set; } // Filtreleme için
+        public bool? FilterIsReserved { get; set; } // Filtreleme için
+
+        //Filtreleme
+        public int Page { get; set; } // sayfa numarası (Controller'dan gelecek)
+        public int PageSize { get; set; } // sayfa boyutu
+        public int TotalRooms { get; set; } // toplam kayıt sayısı (BLL dolduracak)
+
     }
 }

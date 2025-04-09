@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Project.Bll.DtoClasses;
@@ -11,80 +12,58 @@ using Project.MvcUI.Areas.Admin.Models.ResponseModels.Rooms;
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // 🔐 Sadece Admin yetkisi olanlar erişebilir
+    [Authorize(Roles = "Admin")] 
     public class RoomController : Controller
     {
         private readonly IRoomManager _roomManager;
         private readonly IRoomTypeManager _roomTypeManager;
         private readonly IReservationManager _reservationManager;
+        private readonly IMapper _mapper;
 
-        public RoomController(IRoomManager roomManager, IReservationManager reservationManager, IRoomTypeManager roomTypeManager)
+        public RoomController(IRoomManager roomManager, IReservationManager reservationManager, IRoomTypeManager roomTypeManager, IMapper mapper)
         {
             _roomManager = roomManager;
             _reservationManager = reservationManager;
             _roomTypeManager = roomTypeManager;
+            _mapper = mapper;
         }
 
+        #region RoomIndexAction
+
+        // Oda listeleme ve filtreleme sayfası
         public async Task<IActionResult> Index(int? roomTypeId, string roomStatus, int? floor, decimal? minPrice, decimal? maxPrice, bool? hasReservation, int page = 1, int pageSize = 10)
         {
-            var rooms = await _roomManager.GetAllAsync();
-            // ✅ Yalnızca silinmemiş odaları getiriyoruz
-            rooms = rooms.Where(r => r.Status != DataStatus.Deleted).ToList();
-            var roomTypes = await _roomTypeManager.GetAllAsync(); // ✅ RoomType verisi çekildi
+            Enum.TryParse(roomStatus, out RoomStatus parsedStatus); // RoomStatus string'ini enum'a çevir
 
-            // ✅ Odanın rezervasyon durumunu belirleyelim (Boş, Dolu, Bakımda)
-            foreach (var room in rooms)
+            // Filtre kriterlerine göre DTO oluştur
+            RoomDto filterDto = new()
             {
-                // **Odaya ait rezervasyonu kontrol et**
-                var reservation = await _reservationManager.GetByIdAsync(room.Id);
+                RoomTypeId = roomTypeId ?? 0,
+                FilterRoomStatus = !string.IsNullOrEmpty(roomStatus) ? parsedStatus : null,
+                Floor = floor ?? 0,
+                PricePerNight = minPrice ?? 0,
+                MaxPrice = maxPrice,
+                FilterIsReserved = hasReservation,
+                Page = page,
+                PageSize = pageSize
+            };
 
-                // Eğer oda doluysa, durumu "Occupied" olarak güncelle
-                //if (reservation != null && reservation.ReservationStatus != ReservationStatus.Canceled)
-                if (room.RoomStatus == RoomStatus.Occupied)
+            List<RoomDto> rooms = await _roomManager.GetFilteredRoomsAsync(filterDto);
+            int totalPages = (int)Math.Ceiling((double)filterDto.TotalRooms / pageSize);
 
-                {
-                    room.RoomStatus = RoomStatus.Occupied; // ✅ Oda artık dolu
-                }
-
-                else if (room.RoomStatus == RoomStatus.Maintenance)
-                {
-                    room.RoomStatus = RoomStatus.Maintenance; // ✅ Oda bakımda
-                }
-                else
-                {
-                    room.RoomStatus = RoomStatus.Empty; // ✅ Oda boş
-                }
-
-                // ✅ Odanın rezerve edilip edilmediğini kontrol et
-                room.IsReserved = room.RoomStatus == RoomStatus.Occupied;
-            }
-
-            // ✅ Filtreleme işlemleri
-            if (roomTypeId.HasValue) rooms = rooms.Where(r => r.RoomTypeId == roomTypeId.Value).ToList();
-            if (!string.IsNullOrEmpty(roomStatus) && Enum.TryParse(roomStatus, out RoomStatus parsedStatus)) rooms = rooms.Where(r => r.RoomStatus == parsedStatus).ToList();
-            if (floor.HasValue) rooms = rooms.Where(r => r.Floor == floor.Value).ToList();
-            if (minPrice.HasValue) rooms = rooms.Where(r => r.PricePerNight >= minPrice.Value).ToList();
-            if (maxPrice.HasValue) rooms = rooms.Where(r => r.PricePerNight <= maxPrice.Value).ToList();
-            if (hasReservation.HasValue) rooms = rooms.Where(r => r.IsReserved == hasReservation.Value).ToList();
-
-            // ✅ Sayfalama işlemi
-            int totalRooms = rooms.Count;
-            int totalPages = (int)Math.Ceiling((double)totalRooms / pageSize);
-            rooms = rooms.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-            // ✅ ViewBag için seçenekleri doldur
+            // ViewBag verilerini doldur
+            List<RoomTypeDto> roomTypes = await _roomTypeManager.GetAllAsync();
             ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
             ViewBag.Floors = new SelectList(rooms.Select(r => r.Floor).Distinct());
-            // ✅ RoomStatus enum'larını Türkçe gösterecek şekilde ViewBag'e atıyoruz
             ViewBag.Statuses = new SelectList(new List<SelectListItem>
             {
                 new SelectListItem { Value = RoomStatus.Empty.ToString(), Text = "Boş" },
                 new SelectListItem { Value = RoomStatus.Occupied.ToString(), Text = "Dolu" },
                 new SelectListItem { Value = RoomStatus.Maintenance.ToString(), Text = "Bakımda" }
-            }, "Value", "Text", roomStatus); 
+            }, "Value", "Text", roomStatus);
 
-            // ✅ Response Model'e taşıma
-            var model = new RoomListResponseModel
+            // ViewModel oluştur
+            RoomListResponseModel model = new()
             {
                 Rooms = rooms.Select(r => new RoomListItemResponseModel
                 {
@@ -110,12 +89,18 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             return View(model);
         }
 
+        #endregion
+
+        #region RoomCreateAction
+
+        // Oda oluşturma sayfası (GET)
         public async Task<IActionResult> Create()
         {
-            await LoadSelectListsAsync(); // Oda tipleri ve diğer seçenekleri doldur
+            await LoadSelectListsAsync(); // Oda tipi dropdown'u
             return View();
         }
 
+        // Oda oluşturma işlemi (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoomCreateRequestModel model)
@@ -126,8 +111,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // ✅ Aynı oda numarası var mı kontrol edelim
-            var existingRoom = await _roomManager.GetByRoomNumberAsync(model.RoomNumber);
+            RoomDto existingRoom = await _roomManager.GetByRoomNumberAsync(model.RoomNumber);
             if (existingRoom != null)
             {
                 ModelState.AddModelError("RoomNumber", "Bu oda numarası zaten kayıtlı.");
@@ -135,33 +119,20 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // **📌 Kat bilgisine göre özellikleri belirle**
-            if (model.Floor == 1) model.HasBalcony = false; // 1. katta balkon yok
-            if (model.Floor == 3 || model.Floor == 4) model.HasBalcony = true; // 3. ve 4. katta balkon var
+            // Özel kurallar
+            if (model.Floor == 1) model.HasBalcony = false;
+            if (model.Floor == 3 || model.Floor == 4) model.HasBalcony = true;
 
-            // **📌 Tek kişilik odalarda minibar yok**
-            if (model.RoomTypeId == GetSingleRoomTypeId()) model.HasMinibar = false;
+            int? singleRoomTypeId = await _roomTypeManager.GetRoomTypeIdByNameAsync("Tek Kişilik");
+            if (singleRoomTypeId.HasValue && model.RoomTypeId == singleRoomTypeId.Value)
+                model.HasMinibar = false;
 
-            // **📌 Tüm odalarda WiFi var (Default olarak true)**
             model.HasWifi = true;
 
-            // ✅ Oda DTO oluşturma
-            var roomDto = new RoomDto
-            {
-                RoomNumber = model.RoomNumber,
-                Floor = model.Floor,
-                PricePerNight = model.PricePerNight,
-                RoomStatus = RoomStatus.Empty,
-                RoomTypeId = model.RoomTypeId,
-                HasBalcony = model.HasBalcony,
-                HasMinibar = model.HasMinibar,
-                HasAirConditioner = model.HasAirConditioner,
-                HasTV = model.HasTV,
-                HasHairDryer = model.HasHairDryer,
-                HasWifi = model.HasWifi,
-                Status = DataStatus.Inserted,
-                CreatedDate = DateTime.Now
-            };
+            RoomDto roomDto = _mapper.Map<RoomDto>(model);
+            roomDto.RoomStatus = RoomStatus.Empty;
+            roomDto.Status = DataStatus.Inserted;
+            roomDto.CreatedDate = DateTime.Now;
 
             await _roomManager.CreateAsync(roomDto);
 
@@ -169,52 +140,26 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// **Tek kişilik oda tipinin ID'sini getirir**
-        /// (Bunu veritabanından almak için bir metot yazılabilir)
-        /// </summary>
-        private int GetSingleRoomTypeId()
-        {
-            // Varsayılan olarak Tek Kişilik oda tipinin ID'si 1 olarak kabul ediliyor.
-            return 1;
-        }
+        #endregion
 
-        // ✅ SelectList'leri dolduran metot
-        private async Task LoadSelectListsAsync()
-        {
-            var roomTypes = await _roomTypeManager.GetAllAsync();
-            ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-        }
+        #region RoomEditAction
 
+        // Oda düzenleme sayfası (GET)
         public async Task<IActionResult> Edit(int id)
         {
-            var room = await _roomManager.GetByIdAsync(id);
+            RoomDto room = await _roomManager.GetByIdAsync(id);
             if (room == null)
             {
                 TempData["ErrorMessage"] = "Oda bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            var model = new RoomUpdateRequestModel
-            {
-                RoomId = room.Id,
-                RoomNumber = room.RoomNumber,
-                Floor = room.Floor,
-                PricePerNight = room.PricePerNight,
-                RoomTypeId = room.RoomTypeId,
-                RoomStatus = room.RoomStatus,
-                HasBalcony = room.HasBalcony,
-                HasMinibar = room.HasMinibar,
-                HasAirConditioner = room.HasAirConditioner,
-                HasTV = room.HasTV,
-                HasHairDryer = room.HasHairDryer,
-                HasWifi = room.HasWifi
-            };
-
+            RoomUpdateRequestModel model = _mapper.Map<RoomUpdateRequestModel>(room);
             await LoadSelectListsAsync(model.RoomTypeId);
             return View(model);
         }
 
+        // Oda düzenleme işlemi (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(RoomUpdateRequestModel model)
@@ -225,15 +170,14 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var existingRoom = await _roomManager.GetByIdAsync(model.RoomId);
+            RoomDto existingRoom = await _roomManager.GetByIdAsync(model.RoomId);
             if (existingRoom == null)
             {
                 TempData["ErrorMessage"] = "Oda bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            // ✅ RoomType kontrolü (Geçerli bir oda tipi mi?)
-            var roomTypeExists = await _roomTypeManager.GetByIdAsync(model.RoomTypeId);
+            RoomTypeDto roomTypeExists = await _roomTypeManager.GetByIdAsync(model.RoomTypeId);
             if (roomTypeExists == null)
             {
                 ModelState.AddModelError("RoomTypeId", "Geçersiz oda tipi seçildi.");
@@ -241,7 +185,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // ✅ Eğer oda doluysa, belirli alanlar değiştirilemez
+            // Dolu oda ise bazı alanlar değiştirilemez
             if (existingRoom.RoomStatus == RoomStatus.Occupied)
             {
                 model.RoomNumber = existingRoom.RoomNumber;
@@ -249,52 +193,35 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 model.Floor = existingRoom.Floor;
             }
 
-            var roomDto = new RoomDto
-            {
-                Id = model.RoomId,
-                RoomNumber = model.RoomNumber,
-                Floor = model.Floor,
-                PricePerNight = model.PricePerNight,
-                RoomTypeId = model.RoomTypeId,
-                RoomStatus = existingRoom.RoomStatus,
-                HasBalcony = model.HasBalcony,
-                HasMinibar = model.HasMinibar,
-                HasAirConditioner = model.HasAirConditioner,
-                HasTV = model.HasTV,
-                HasHairDryer = model.HasHairDryer,
-                HasWifi = model.HasWifi,
-                Status = DataStatus.Updated,
-                ModifiedDate = DateTime.Now
-            };
+            RoomDto roomDto = _mapper.Map<RoomDto>(model);
+            roomDto.Id = model.RoomId;
+            roomDto.RoomStatus = existingRoom.RoomStatus;
+            roomDto.Status = DataStatus.Updated;
+            roomDto.ModifiedDate = DateTime.Now;
 
             await _roomManager.UpdateAsync(roomDto);
+
             TempData["SuccessMessage"] = "Oda başarıyla güncellendi.";
             return RedirectToAction("Index");
         }
 
-        // ✅ SelectList'leri dolduran metot
-        private async Task LoadSelectListsAsync(int? selectedRoomTypeId = null)
-        {
-            var roomTypes = await _roomTypeManager.GetAllAsync();
+        #endregion
 
-            // ✅ Sadece aktif oda tiplerini getiriyoruz
-            var activeRoomTypes = roomTypes.Where(rt => rt.Status != DataStatus.Deleted).ToList();
+        #region RoomDeleteAction
 
-            ViewBag.RoomTypes = new SelectList(activeRoomTypes, "Id", "Name", selectedRoomTypeId);
-        }
-
+        // Oda silme onay ekranı (GET)
         public async Task<IActionResult> Delete(int id)
         {
-            var room = await _roomManager.GetByIdAsync(id);
+            RoomDto room = await _roomManager.GetByIdAsync(id);
             if (room == null)
             {
                 TempData["ErrorMessage"] = "Oda bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            var canDelete = await _roomManager.CanDeleteRoomAsync(id);
+            bool canDelete = await _roomManager.CanDeleteRoomAsync(id);
 
-            var model = new RoomDeleteRequestModel
+            RoomDeleteRequestModel model = new()
             {
                 RoomId = room.Id,
                 RoomNumber = room.RoomNumber,
@@ -302,52 +229,59 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 PricePerNight = room.PricePerNight,
                 RoomTypeName = room.RoomTypeName,
                 RoomStatus = room.RoomStatus,
-                HasActiveReservations = !canDelete // Eğer silinemiyorsa, rezervasyon var demektir.
+                HasActiveReservations = !canDelete
             };
 
             return View(model);
         }
 
+        // Oda silme işlemi (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(RoomDeleteRequestModel model)
         {
-            var room = await _roomManager.GetByIdAsync(id);
+            RoomDto room = await _roomManager.GetByIdAsync(model.RoomId);
             if (room == null)
             {
                 TempData["ErrorMessage"] = "Oda bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            var canDelete = await _roomManager.CanDeleteRoomAsync(id);
+            bool canDelete = await _roomManager.CanDeleteRoomAsync(model.RoomId);
 
             if (canDelete)
             {
-                await _roomManager.MakePassiveAsync(room); // ✅ Odayı pasife çek
-                TempData["SuccessMessage"] = "Oda başarıyla silindi.";
+                await _roomManager.MakePassiveAsync(room);
+                TempData["SuccessMessage"] = $"Oda '{model.RoomNumber}' başarıyla silindi.";
             }
             else
             {
-                // ✅ Oda silinemiyorsa, bakım moduna al
                 room.RoomStatus = RoomStatus.Maintenance;
-                await _roomManager.UpdateAsync(room); // ✅ Güncelleme metodunu kullanarak değişiklikleri kaydet
+                room.Status = DataStatus.Updated;
+                room.ModifiedDate = DateTime.Now;
+                await _roomManager.UpdateAsync(room);
 
-                TempData["WarningMessage"] = "Oda silinemedi, ancak bakım moduna alındı.";
+                TempData["WarningMessage"] = $"Oda '{model.RoomNumber}' silinemedi, ancak bakım moduna alındı.";
             }
 
             return RedirectToAction("Index");
         }
 
+        #endregion
+
+        #region RoomStatusUpdateAction
+
+        // Oda durum güncelleme sayfası (GET)
         public async Task<IActionResult> StatusUpdate(int id)
         {
-            var room = await _roomManager.GetByIdAsync(id);
+            RoomDto room = await _roomManager.GetByIdAsync(id);
             if (room == null)
             {
                 TempData["ErrorMessage"] = "Oda bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            var model = new RoomStatusUpdateRequestModel
+            RoomStatusUpdateRequestModel model = new()
             {
                 RoomId = room.Id,
                 RoomNumber = room.RoomNumber,
@@ -355,10 +289,10 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             };
 
             ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(RoomStatus)).Cast<RoomStatus>());
-
             return View(model);
         }
 
+        // Oda durum güncelleme işlemi (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> StatusUpdate(RoomStatusUpdateRequestModel model)
@@ -376,5 +310,18 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        #endregion
+
+        #region ControllerPrivateMethods
+
+        // Oda tipi dropdown'u yükleyen yardımcı metot
+        private async Task LoadSelectListsAsync(int? selectedRoomTypeId = null)
+        {
+            List<RoomTypeDto> roomTypes = await _roomTypeManager.GetAllAsync();
+            List<RoomTypeDto> activeRoomTypes = roomTypes.Where(rt => rt.Status != DataStatus.Deleted).ToList();
+            ViewBag.RoomTypes = new SelectList(activeRoomTypes, "Id", "Name", selectedRoomTypeId);
+        }
+
+        #endregion
     }
 }
