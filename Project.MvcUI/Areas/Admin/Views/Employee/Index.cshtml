@@ -5,16 +5,82 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
 <h2>👨‍💼 Çalışan Yönetimi</h2>
+
+<form method="get" class="mb-4">
+    <div class="row">
+        <!-- Ad Soyad -->
+        <div class="col-md-4">
+            <label>Ad veya Soyad</label>
+            <input name="search" class="form-control" value="@Context.Request.Query["search"]" placeholder="Örn: Ahmet Yılmaz" />
+        </div>
+
+        <!-- Pozisyon -->
+        <div class="col-md-4">
+            <label>Pozisyon</label>
+            <select name="position" class="form-control" asp-items="ViewBag.Positions">
+                <option value="">Tümü</option>
+            </select>
+        </div>
+
+        <!-- Durum -->
+        <div class="col-md-4">
+            <label>Durum</label>
+            <select name="status" class="form-control" asp-items="ViewBag.Statuses">
+                <option value="">Tümü</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Sayfa Boyutu -->
+        <div class="col-md-2">
+            <label>Sayfa Boyutu</label>
+            <select name="pageSize" class="form-control">
+                @{
+                    var sizes = new[] { 10, 20, 50 };
+                    var selectedSize = Context.Request.Query["pageSize"].ToString();
+                    foreach (var size in sizes)
+                    {
+                        <option value="@size" selected="@(selectedSize == size.ToString() ? "selected" : null)">
+                            @size kayıt
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Filtre Butonu -->
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-filter"></i> Filtrele
+            </button>
+        </div>
+    </div>
+</form>
+
+
+<!-- 🔄 Sayfalama -->
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new {
+                        page = i,
+                        pageSize = Model.PageSize,
+                        position = Context.Request.Query["position"],
+                        status = Context.Request.Query["status"],
+                        search = Context.Request.Query["search"]
+                    })">@i</a>
+
+                </li>
+            }
+        </ul>
+    </nav>
+}
 
 <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-success mb-3">
     <i class="fas fa-plus"></i> Yeni Çalışan Ekle
@@ -34,7 +100,7 @@
     <tbody>
         @if (Model != null)
         {
-            int count = 1;
+            int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
             @foreach (var emp in Model.Employees)
             {
                 <tr>
@@ -49,7 +115,7 @@
                         }
                         else if (emp.Status == "Updated")
                         {
-                            <span class="badge bg-warning text-dark">Güncellendi</span>
+                            <span class="badge bg-warning text-dark">Güncellenmiş</span>
                         }
                         else
                         {
@@ -60,7 +126,8 @@
                         <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Düzenle
                         </a>
-                        <a asp-area="Admin" asp-controller="Employee"  asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-danger btn-sm" title="Silme onayı ekranına git"> <i class="fas fa-trash-alt"></i> Sil
+                        <a asp-area="Admin" asp-controller="Employee" asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-danger btn-sm" title="Silme onayı ekranına git">
+                            <i class="fas fa-trash-alt"></i> Sil
                         </a>
                     </td>
                 </tr>

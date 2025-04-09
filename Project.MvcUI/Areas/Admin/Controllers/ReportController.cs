@@ -7,6 +7,11 @@ using Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports;
 
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// Admin panelinde raporlama işlemlerini yöneten controller'dır.
+    /// Rezervasyon, gelir, oda kullanımı ve müşteri istatistikleri gibi çeşitli raporları sunar.
+    /// </summary>
+
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class ReportController : Controller
@@ -79,16 +84,13 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             RevenueReportResponseModel model = new()
             {
                 TotalRevenue = report.TotalRevenue, // Genel toplam gelir
-                MonthlyRevenueReports = report.MonthlyReports
-                    .Select(x => new MonthlyRevenueReportResponseModel
-                    {
-                        Year = x.Year, // Aylık rapor için yıl
-                        Month = x.Month, // Aylık rapor için ay
-                        TotalRevenue = x.TotalRevenue // Aylık toplam gelir
-                    })
-                    .ToList()
+                MonthlyRevenueReports = report.MonthlyReports.Select(x => new MonthlyRevenueReportResponseModel
+                {
+                    Year = x.Year, // Aylık rapor için yıl
+                    Month = x.Month, // Aylık rapor için ay
+                    TotalRevenue = x.TotalRevenue // Aylık toplam gelir
+                }).ToList()
             };
-
             return View(model); // Model view'e gönderilir
         }
 
@@ -116,7 +118,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 MonthlyOccupiedRoomsPercentage = report.MonthlyOccupiedRoomsPercentage, // Bu ay rezervasyon yapılan odaların yüzdesi
                 MonthlyOccupiedRooms = report.MonthlyOccupiedRooms // Bu ay rezervasyon yapılan oda sayısı
             };
-
             return View(model); // Model view'e gönderilir
         }
 
@@ -137,6 +138,8 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             int totalCustomers = reportData.TotalCustomers;
             int customersWithReservations = reportData.CustomersWithReservations;
             int customersWithoutReservations = reportData.CustomersWithoutReservations;
+
+            // Müşteri bilgileri, profil bilgileri ve rezervasyon bilgileri listeleri
             List<AppUserDto> members = reportData.Members;
             List<AppUserProfileDto> profiles = reportData.Profiles;
             List<ReservationDto> reservations = reportData.Reservations;
@@ -163,7 +166,6 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 CustomersWithoutReservations = customersWithoutReservations, // Rezervasyon yapmayan müşteri sayısı
                 Customers = customerList // Müşteri detayları listesi
             };
-
             return View(model); // Model view'e gönderilir
         }
 

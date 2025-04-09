@@ -65,9 +65,19 @@
     </div>
 
     <div class="mb-3 form-check">
-        <input asp-for="ReactivateReservation" class="form-check-input" />
-        <label asp-for="ReactivateReservation" class="form-check-label"></label>
+        @if (Model.ReservationStatus == Project.Entities.Enums.ReservationStatus.Canceled)
+        {
+            <input asp-for="ReactivateReservation" class="form-check-input" />
+        }
+        else
+        {
+            <input asp-for="ReactivateReservation" class="form-check-input" checked disabled />
+        }
+
+        <label asp-for="ReactivateReservation" class="form-check-label">Rezervasyonu tekrar aktif yap</label>
     </div>
+
+
 
 
     <button type="submit" class="btn btn-primary">Güncelle</button>

@@ -468,7 +468,7 @@ namespace Project.Bll.Managers.Concretes
         /// <param name="search">Müşteri adı veya e-posta metni.</param>
         /// <param name="isPaid">Ödeme durumu (true: ödeme yapılmış / Confirmed, false: ödeme bekleniyor / PendingPayment).</param>
         /// <returns>Filtrelenmiş ve eksik bilgileri tamamlanmış ReservationDto listesini döndürür.</returns>
-        public async Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid)
+        public async Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid, ReservationStatus? status)
         {
             // 1) Tüm rezervasyon DTO'larını al
             var reservations = await GetAllAsync();
@@ -501,13 +501,10 @@ namespace Project.Bll.Managers.Concretes
 
                 // Oda bilgisi
                 var room = await _roomManager.GetByIdAsync(reservation.RoomId);
-                reservation.RoomNumber = (room != null)
-                    ? room.RoomNumber.ToString()
-                    : "Bilinmeyen Oda";
+                reservation.RoomNumber = room != null ? room.RoomNumber.ToString() : "Bilinmeyen Oda";
             }
 
-            // 3) Filtreleme
-            // a) Arama: (Müşteri Adı + Soyadı) veya e-posta
+            // Arama filtresi
             if (!string.IsNullOrEmpty(search))
             {
                 reservations = reservations
@@ -518,7 +515,7 @@ namespace Project.Bll.Managers.Concretes
                     .ToList();
             }
 
-            // b) Ödeme durumu: (Confirmed / PendingPayment)
+            // Ödeme durumu filtresi
             if (isPaid.HasValue)
             {
                 reservations = reservations.Where(r =>
@@ -528,8 +525,15 @@ namespace Project.Bll.Managers.Concretes
                 ).ToList();
             }
 
+            // ⛳️ Yeni: Status filtresi (örn: Canceled sadece)
+            if (status.HasValue)
+            {
+                reservations = reservations.Where(r => r.ReservationStatus == status.Value).ToList();
+            }
+
             return reservations;
         }
+
 
 
 

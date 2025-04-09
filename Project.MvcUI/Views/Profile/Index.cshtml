@@ -1,14 +1,5 @@
 ﻿@model UserProfilePageVm
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
 <div class="container mt-5">
     <h2 class="text-center">@Model.PageTitle</h2>
     <div class="card shadow p-4">

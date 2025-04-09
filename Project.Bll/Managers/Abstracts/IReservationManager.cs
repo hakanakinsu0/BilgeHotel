@@ -159,8 +159,10 @@ namespace Project.Bll.Managers.Abstracts
         /// </summary>
         /// <param name="search">Müşteri adı veya e-posta araması.</param>
         /// <param name="isPaid">Ödeme durumu filtresi (true: ödenmiş, false: bekliyor).</param>
+        /// <param name="status">Opsiyonel rezervasyon durumu (Confirmed, PendingPayment, Canceled vb.).</param>
         /// <returns>Filtrelenmiş rezervasyon DTO'larının listesini döndürür.</returns>
-        Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid);
+        Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid, ReservationStatus? status);
+
 
 
         /// <summary>

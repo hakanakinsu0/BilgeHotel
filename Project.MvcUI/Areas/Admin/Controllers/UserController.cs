@@ -14,12 +14,18 @@ using Project.MvcUI.Areas.Admin.Models.ResponseModels.AppUsers;
 
 namespace Project.MvcUI.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// Admin panelinde kullanıcı (AppUser) yönetimini sağlar.
+    /// Kullanıcı oluşturma, düzenleme, silme, şifre değiştirme ve rol atama işlemlerini içerir.
+    /// Sadece Admin rolüne sahip kullanıcılar erişebilir.
+    /// </summary>
+
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // 🔐 Sadece Admin yetkisi olanlar erişebilir
+    [Authorize(Roles = "Admin")] 
     public class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager; // 🔥 Burada IdentityRole<int> olmalı!
+        private readonly RoleManager<IdentityRole<int>> _roleManager; 
         private readonly IAppUserManager _appUserManager;
         private readonly IAppUserProfileManager _appUserProfileManager;
         private readonly IMapper _mapper;
@@ -27,7 +33,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         public UserController(UserManager<AppUser> userManager, RoleManager<IdentityRole<int>> roleManager, IAppUserProfileManager appUserProfileManager, IAppUserManager appUserManager, IMapper mapper)
         {
             _userManager = userManager;
-            _roleManager = roleManager; // 🔥 IdentityRole<int> olarak düzeltildi!
+            _roleManager = roleManager; 
             _appUserProfileManager = appUserProfileManager;
             _appUserManager = appUserManager;
             _mapper = mapper;
@@ -35,22 +41,28 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         #region UserIndexAction
 
+        /// <summary>
+        /// GET: Kullanıcı listesini filtreleme kriterlerine göre getirir.
+        /// Arama, rol ve durum parametrelerine göre kullanıcılar BLL'den alınır ve UI modeline dönüştürülür.
+        /// </summary>
+        /// <param name="request">Arama metni, kullanıcı rolü ve durum bilgilerini içeren filtreleme modeli</param>
+        /// <returns>Filtrelenmiş kullanıcıların listelendiği view</returns>
         public async Task<IActionResult> Index(UserIndexRequestModel request)
         {
-            // BLL'den, filtre parametrelerine göre detayları tamamlanmış kullanıcı listesini alıyoruz
+            // BLL'den kullanıcılar filtreleme kriterlerine göre detaylı olarak alınır
             List<AppUserDto> userDtos = await _appUserManager.GetUsersWithDetailsAsync(
-                request.Search,
-                request.Role,
-                request.Status
+                request.Search,   // Ad, soyad veya e-posta gibi metinlerle arama
+                request.Role,     // Kullanıcı rolüne göre filtreleme
+                request.Status    // Kullanıcının aktif/pasif durumuna göre filtreleme
             );
 
-            // DTO'ları UI modeline dönüştürüyoruz
+            // Alınan DTO'lar view model'e dönüştürülür
             UserListViewResponseModel model = new()
             {
                 Users = userDtos.Select(u => new UserViewResponseModel
                 {
                     Id = u.Id,
-                    FullName = $"{u.FirstName} {u.LastName}",
+                    FullName = $"{u.FirstName} {u.LastName}",     // Ad ve soyad birleştirilir
                     Email = u.Email,
                     Role = u.Role,
                     Address = u.Address,
@@ -61,6 +73,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 }).ToList()
             };
 
+            // View'e kullanıcı listesi gönderilir
             return View(model);
         }
 
@@ -68,29 +81,46 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         #region UserCreateAction
 
+        /// <summary>
+        /// GET: Yeni kullanıcı oluşturma formunu hazırlar.
+        /// Kullanılabilir roller dropdown olarak ViewBag üzerinden View'e aktarılır.
+        /// Varsayılan rol "Member" olarak atanır.
+        /// </summary>
         public async Task<IActionResult> Create()
         {
             // Mevcut rollerin listesini çekiyoruz
-            var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
-            // Varsayılan rol "Member" olarak ayarlanıyor
-            var model = new CreateUserRequestModel { Role = "Member" };
+            List<string?> roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+
+            // Varsayılan olarak "Member" rolü atanmış boş model hazırlanır
+            CreateUserRequestModel model = new() { Role = "Member" };
+
+            // Roller dropdown olarak ViewBag'e aktarılır
             ViewBag.Roles = new SelectList(roles);
+
+            // Form View'e gönderilir
             return View(model);
         }
 
+        /// <summary>
+        /// POST: Yeni kullanıcı oluşturma işlemini gerçekleştirir.
+        /// Gelen form verileri doğrulanır, kullanıcı daha önce kayıtlı mı kontrol edilir,
+        /// BLL üzerinden kullanıcı oluşturma işlemi gerçekleştirilir.
+        /// </summary>
+        /// <param name="model">Kullanıcı oluşturma formundan gelen model</param>
+        /// <returns>İşlem sonucu: Başarılıysa Index sayfasına yönlendirme, aksi halde form tekrar gösterilir</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUserRequestModel model)
         {
+            // Form doğrulaması başarısızsa form geri gösterilir
             if (!ModelState.IsValid)
             {
-                // Model geçerli değilse, roller listesini tekrar yükleyip view'e geri dönüyoruz
                 ViewBag.Roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
                 return View(model);
             }
 
-            // Aynı e-posta adresine sahip kullanıcı kontrolü
-            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            // Aynı e-posta adresi ile daha önce kullanıcı oluşturulmuş mu kontrol edilir
+            AppUser? existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
                 ModelState.AddModelError("Email", "Bu e-posta adresi zaten kullanımda.");
@@ -100,20 +130,22 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
             try
             {
-                // CreateUserRequestModel'den AppUserDto'ya mapping yapıyoruz
-                var userDto = _mapper.Map<AppUserDto>(model);
-                // Rol boş ise varsayılan olarak "Member" atanıyor
+                // Form modeli → DTO dönüşümü yapılır
+                AppUserDto userDto = _mapper.Map<AppUserDto>(model);
+
+                // Rol boşsa varsayılan "Member" atanır
                 string role = string.IsNullOrWhiteSpace(model.Role) ? "Member" : model.Role;
 
-                // BLL'deki merkezi metodu kullanarak kullanıcı oluşturma, rol atama ve profil oluşturma işlemleri gerçekleştiriliyor
-                var createdUser = await _appUserManager.CreateUserWithProfileAsync(userDto, model.Password, role);
+                // BLL katmanındaki CreateUserWithProfileAsync metodu çağrılır
+                AppUserDto createdUser = await _appUserManager.CreateUserWithProfileAsync(userDto, model.Password, role);
 
+                // Başarı mesajı gösterilir
                 TempData["SuccessMessage"] = "Kullanıcı başarıyla eklendi.";
                 return RedirectToAction("Index");
             }
             catch (System.Exception ex)
             {
-                // Hata durumunda ModelState'e hata mesajı eklenip roller yeniden yükleniyor
+                // Hata oluşursa mesaj gösterilir ve form tekrar döndürülür
                 ModelState.AddModelError("", ex.Message);
                 ViewBag.Roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
                 return View(model);
@@ -126,28 +158,39 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         /// <summary>
         /// GET: Kullanıcı düzenleme formunu hazırlar.
-        /// BLL'deki GetUserEditDataAsync metodu kullanılarak, kullanıcı, profil ve rol bilgilerini içeren AppUserDto elde edilir.
-        /// Bu DTO, AutoMapper aracılığıyla UpdateUserRequestModel'e dönüştürülür ve form view'üne gönderilir.
+        /// BLL'deki GetUserEditDataAsync metodu ile hem kullanıcı hem profil bilgileri çekilir.
+        /// DTO, AutoMapper ile UpdateUserRequestModel'e dönüştürülür ve View'e gönderilir.
         /// </summary>
         /// <param name="id">Düzenlenecek kullanıcının ID'si</param>
-        /// <returns>UpdateUserRequestModel içeren düzenleme formu view'i</returns>
+        /// <returns>Düzenleme formu view'i</returns>
         public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                // BLL'deki merkezi metot ile kullanıcı verilerini alıyoruz
+                // Kullanıcı ve profil bilgileri DTO olarak alınır
                 AppUserDto userDto = await _appUserManager.GetUserEditDataAsync(id);
+                UpdateUserRequestModel model = _mapper.Map<UpdateUserRequestModel>(userDto);
 
-                // Eğer DTO ile ViewModel arasında farklılık varsa, AutoMapper kullanarak dönüştürüyoruz
-                var model = _mapper.Map<UpdateUserRequestModel>(userDto);
+                // Kullanıcının aktif/pasif durumu belirlenir
+                model.IsActive = userDto.DeletedDate == null;
 
-                // Tüm rolleri çekip, mevcut rolün seçili olduğu SelectList oluşturuluyor
-                var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
-                ViewBag.Roles = new SelectList(roles, model.Role);
+                // Kullanıcının rolü alınır
+                List<string?> roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+                AppUser? currentUser = await _userManager.FindByIdAsync(userDto.Id.ToString());
+                IList<string> currentRoles = await _userManager.GetRolesAsync(currentUser);
+                model.Role = currentRoles.FirstOrDefault(); // Kullanıcının mevcut rolü
+
+                // Tüm roller dropdown için hazırlanır
+                ViewBag.Roles = roles.Select(r => new SelectListItem
+                {
+                    Value = r,
+                    Text = r,
+                    Selected = (r == model.Role)
+                }).ToList();
 
                 return View(model);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
@@ -155,15 +198,17 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Kullanıcı güncelleme işlemini gerçekleştirir.
-        /// BLL'deki UpdateUserWithProfileAsync metodu kullanılarak, gelen AppUserDto bilgileri ile kullanıcı ve profil güncellenir.
+        /// POST: Kullanıcı düzenleme formu gönderildiğinde bilgileri günceller.
+        /// Kullanıcı, profil ve rol bilgileri ayrı ayrı güncellenir.
+        /// Ayrıca aktiflik durumu kontrol edilerek DeletedDate alanı yönetilir.
         /// </summary>
-        /// <param name="model">Kullanıcı güncelleme formundan gelen verileri içeren UpdateUserRequestModel</param>
-        /// <returns>Güncelleme başarılı ise Index'e yönlendirir, aksi halde form view'ünü yeniden render eder.</returns>
+        /// <param name="model">Formdan gelen kullanıcı güncelleme modeli</param>
+        /// <returns>Başarılıysa Index'e, değilse form view'ine döner</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateUserRequestModel model)
         {
+            // Form verisi geçerli değilse form yeniden gösterilir
             if (!ModelState.IsValid)
             {
                 ViewBag.Roles = _roleManager.Roles.Select(r => new SelectListItem
@@ -175,30 +220,30 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // 🔍 Güncellenecek kullanıcıyı bul
-            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            // Güncellenecek kullanıcıyı bul
+            AppUser? user = await _userManager.FindByIdAsync(model.Id.ToString());
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            // ✅ Kullanıcı Bilgilerini Güncelle
+            // Kullanıcı bilgileri güncellenir
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
-            user.UserName = model.Email; // Kullanıcı adı e-posta ile aynı olacak
+            user.UserName = model.Email;
             user.ModifiedDate = DateTime.Now;
             user.Status = model.IsActive ? DataStatus.Inserted : DataStatus.Updated;
 
-            var updateResult = await _userManager.UpdateAsync(user);
+            IdentityResult updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
                 ModelState.AddModelError("", "Kullanıcı bilgileri güncellenirken bir hata oluştu.");
                 return View(model);
             }
 
-            // ✅ Kullanıcı Profilini Güncelle
-            var userProfile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
+            // Kullanıcı profil bilgileri güncellenir
+            AppUserProfileDto userProfile = await _appUserProfileManager.GetByAppUserIdAsync(user.Id);
             if (userProfile != null)
             {
                 userProfile.FirstName = model.FirstName;
@@ -213,17 +258,18 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 await _appUserProfileManager.UpdateAsync(userProfile);
             }
 
-            // ✅ Rolü Güncelle
-            var currentRoles = await _userManager.GetRolesAsync(user);
+            // Kullanıcının rolü değişmişse güncellenir
+            IList<string>? currentRoles = await _userManager.GetRolesAsync(user);
             if (!currentRoles.Contains(model.Role))
             {
-                await _userManager.RemoveFromRolesAsync(user, currentRoles); // Eski rolleri kaldır
-                await _userManager.AddToRoleAsync(user, model.Role); // Yeni rolü ata
+                await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                await _userManager.AddToRoleAsync(user, model.Role);
             }
-            // 🔥 **Kullanıcıyı Aktif / Pasif Yap**
+
+            // Aktif/Pasif durumuna göre DeletedDate yönetilir
             if (model.IsActive)
             {
-                user.DeletedDate = null; // Kullanıcıyı aktif yap
+                user.DeletedDate = null;
                 user.Status = DataStatus.Updated;
 
                 if (userProfile != null)
@@ -235,7 +281,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             }
             else
             {
-                user.DeletedDate = DateTime.Now; // Kullanıcıyı pasif yap
+                user.DeletedDate = DateTime.Now;
                 user.Status = DataStatus.Deleted;
 
                 if (userProfile != null)
@@ -245,7 +291,9 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                     await _appUserProfileManager.MakePassiveAsync(userProfile);
                 }
             }
-            await _userManager.UpdateAsync(user); // Son değişiklikleri kaydet
+
+            // Değişiklikler kaydedilir
+            await _userManager.UpdateAsync(user);
             TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
             return RedirectToAction("Index");
         }
@@ -254,9 +302,15 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         #region UserDelete
 
+        /// <summary>
+        /// GET: Kullanıcı silme onay ekranını gösterir.
+        /// Kullanıcıyı Identity üzerinden bulur, kendi hesabı olup olmadığını kontrol eder ve silme onayı view'ine kullanıcı bilgilerini taşır.
+        /// </summary>
+        /// <param name="id">Silinmek istenen kullanıcının ID'si</param>
+        /// <returns>Silme onayı formunu içeren view</returns>
         public async Task<IActionResult> Delete(int id)
         {
-            // Kullanıcıyı Identity üzerinden çekiyoruz.
+            // Kullanıcı bilgisi Identity üzerinden alınır
             AppUser user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
@@ -264,44 +318,50 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Admin, kendi hesabını silemez!
+            // Oturum açan kullanıcı kendi hesabını silemez
             if (user.UserName == User.Identity.Name)
             {
                 TempData["ErrorMessage"] = "Kendi hesabınızı silemezsiniz.";
                 return RedirectToAction("Index");
             }
 
-            // Kullanıcının rollerini alıyoruz.
-            var roles = await _userManager.GetRolesAsync(user);
-            var role = roles.Any() ? string.Join(", ", roles) : "Üye";
+            // Kullanıcının rol bilgisi alınır (birden fazla rol varsa birleştirilir)
+            IList<string>? roles = await _userManager.GetRolesAsync(user);
+            string role = roles.Any() ? string.Join(", ", roles) : "Üye";
 
-            // Kullanıcı bilgilerini DeleteUserResponseModel'e taşıyoruz.
-            var model = new DeleteUserResponseModel
+            // Kullanıcı bilgileri silme ekranı için modele aktarılır
+            DeleteUserResponseModel model = new() 
             {
                 Id = user.Id,
                 FullName = $"{user.AppUserProfile?.FirstName} {user.AppUserProfile?.LastName}",
                 Email = user.Email,
                 Role = role
             };
-
             return View(model);
         }
 
+        /// <summary>
+        /// POST: Kullanıcı silme işlemini gerçekleştirir.
+        /// Kullanıcı kendi değilse ve sistemde mevcutsa, BLL aracılığıyla soft delete işlemi uygulanır.
+        /// </summary>
+        /// <param name="id">Silinmek istenen kullanıcının ID'si</param>
+        /// <returns>Index'e yönlendirme yapılır</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Oturum açan kullanıcının ID'sini alıyoruz.
+            // Oturum açan kullanıcının ID'si alınır (kendi silmesini engellemek için kullanılabilir)
             int currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
             try
             {
-                // BLL'deki merkezi metodu çağırarak kullanıcıyı ve profilini pasif hale getiriyoruz.
+                // BLL üzerinden kullanıcı ve profil pasif hale getirilir (soft delete)
                 await _appUserManager.DeactivateUserAsync(id, currentUserId);
                 TempData["SuccessMessage"] = "Kullanıcı başarıyla pasif duruma getirildi.";
             }
             catch (System.Exception ex)
             {
+                // Hata oluşursa kullanıcıya mesaj gösterilir
                 TempData["ErrorMessage"] = ex.Message;
             }
 
@@ -312,19 +372,23 @@ namespace Project.MvcUI.Areas.Admin.Controllers
 
         #region UserChangePassword
 
-        // GET: ChangePassword
+        /// <summary>
+        /// GET: Kullanıcıya ait şifre değiştirme formunu hazırlar.
+        /// </summary>
+        /// <param name="id">Şifresi değiştirilecek kullanıcının ID'si</param>
+        /// <returns>Şifre değiştirme formu view'i</returns>
         public async Task<IActionResult> ChangePassword(int id)
         {
-            // Kullanıcı mevcut mi diye kontrol ediyorsanız:
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            // ID ile kullanıcıyı veritabanından bul
+            AppUser? user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
                 return RedirectToAction("Index");
             }
 
-            // Formda sadece Id yeterli olabilir
-            var model = new ChangePasswordRequestModel
+            // Sadece ID'yi taşıyan model ile formu başlat
+            ChangePasswordRequestModel model = new() 
             {
                 Id = user.Id
             };
@@ -332,28 +396,44 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// POST: Kullanıcının şifresini günceller.
+        /// Mevcut şifre kontrolü yapılmaz, doğrudan reset işlemi uygulanır.
+        /// </summary>
+        /// <param name="model">Şifre değiştirme form modelidir</param>
+        /// <returns>Başarılıysa listeye döner, aksi halde form tekrar gösterilir</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequestModel model)
         {
+            // Model doğrulaması yapılır
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // BLL katmanındaki şifre değiştirme metodunu çağırıyoruz
-            bool isChanged = await _appUserManager.ChangeUserPasswordAsync(
-                model.Id,
-                model.CurrentPassword,
-                model.NewPassword
-            );
-
-            if (!isChanged)
+            // Kullanıcı tekrar veritabanından alınır
+            AppUser? user = await _userManager.FindByIdAsync(model.Id.ToString());
+            if (user == null)
             {
-                ModelState.AddModelError("", "Şifre değiştirilirken bir hata oluştu veya eski şifre hatalı.");
+                TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Index");
+            }
+
+            // Mevcut şifre kontrolü yapılmaksızın sıfırlama token'ı üretilir
+            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Yeni şifre atanır
+            IdentityResult result = await _userManager.ResetPasswordAsync(user, resetToken, model.NewPassword);
+
+            // Hatalı durumlar kullanıcıya bildirilir
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Şifre güncellenemedi.");
                 return View(model);
             }
 
+            // Başarılı mesajı ve yönlendirme
             TempData["SuccessMessage"] = "Kullanıcının şifresi başarıyla güncellendi.";
             return RedirectToAction("Index");
         }

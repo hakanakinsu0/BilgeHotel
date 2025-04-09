@@ -5,19 +5,7 @@
     ViewData["Title"] = Model.PageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-info text-center">
-        <h4>@TempData["ErrorMessage"]</h4>
-    </div>
-}
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success text-center">
-        <h4>@TempData["SuccessMessage"]</h4>
-    </div>
-}
 <!-- Hata mesajı varsa gösteriliyor -->
 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
 {

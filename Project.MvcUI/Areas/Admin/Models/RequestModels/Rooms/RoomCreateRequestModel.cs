@@ -5,12 +5,12 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.Rooms
     public class RoomCreateRequestModel
     {
         [Required(ErrorMessage = "Oda numarası gereklidir.")]
-        [RegularExpression(@"^\d{1,10}$", ErrorMessage = "Oda numarası yalnızca rakamlardan oluşmalıdır.")]
+        [RegularExpression(@"^\d{3}$", ErrorMessage = "Oda numarası 3 basamaklı ve yalnızca rakamlardan oluşmalıdır.")]
         public string RoomNumber { get; set; }
 
 
         [Required(ErrorMessage = "Kat numarası gereklidir.")]
-        [Range(1, 100, ErrorMessage = "Kat numarası 1 ile 100 arasında olmalıdır.")]
+        [Range(1, 4, ErrorMessage = "Kat numarası 1 ile 4 arasında olmalıdır.")]
         public int Floor { get; set; }
 
         [Required(ErrorMessage = "Oda fiyatı gereklidir.")]

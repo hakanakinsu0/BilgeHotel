@@ -3,16 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger text-center">@TempData["ErrorMessage"]</div>
-}
-
-
 <div class="container mt-4">
     <h1 class="mb-4">Ödeme İşlemleri</h1>
     <p>Aşağıdaki seçeneklerden ödeme işlemleriyle ilgili aksiyonlara ulaşabilirsiniz:</p>

@@ -4,16 +4,6 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
-
 <h4>Hoş geldiniz, buradan sistemdeki genel istatistikleri görebilirsiniz. <br /> <br />  </h4>
 
 <div class="row">

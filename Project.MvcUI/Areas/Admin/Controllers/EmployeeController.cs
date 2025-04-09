@@ -13,6 +13,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
     /// Admin paneli için çalışan (employee) işlemlerini yöneten controller'dır.
     /// Listeleme, oluşturma, güncelleme ve silme işlemlerini içerir.
     /// </summary>
+
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class EmployeeController : Controller
@@ -27,30 +28,71 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region EmployeeIndexAction
 
         /// <summary>
-        /// Tüm çalışanları (silinmiş olanlar dahil) getirir ve listeleme ekranında gösterilmek üzere view'e gönderir.
+        /// Tüm çalışanları getirir ve filtreleme, arama, sayfalama işlemlerini yaparak View'e gönderir.
         /// </summary>
-        public async Task<IActionResult> Index()
+        /// <param name="position">Filtrelenecek pozisyon adı</param>
+        /// <param name="status">Filtrelenecek çalışan durumu (Inserted, Updated, Deleted)</param>
+        /// <param name="search">Ad veya soyad arama terimi</param>
+        /// <param name="page">Mevcut sayfa numarası</param>
+        /// <param name="pageSize">Sayfa başına gösterilecek çalışan sayısı</param>
+        public async Task<IActionResult> Index(string position, string status, string search, int page = 1, int pageSize = 10)
         {
-            // Veritabanından tüm çalışan verileri çekilir (Status filtrelemesi yapılmaz)
+            // Tüm çalışanlar veritabanından çekilir
             List<EmployeeDto> employees = await _employeeManager.GetAllAsync();
 
-            // DTO'lar, response model listesine dönüştürülür
+            // Pozisyona göre filtreleme
+            if (!string.IsNullOrEmpty(position))
+                employees = employees.Where(e => e.Position == position).ToList();
+
+            // Durum (DataStatus) enum'una göre filtreleme (Aktif, Güncellenmiş, Silinmiş)
+            if (!string.IsNullOrEmpty(status) && Enum.TryParse<DataStatus>(status, out var parsedStatus))
+                employees = employees.Where(e => e.Status == parsedStatus).ToList();
+
+            // İsim veya soyisim aramasına göre filtreleme (case-insensitive)
+            if (!string.IsNullOrEmpty(search))
+            {
+                string lower = search.ToLower();
+                employees = employees.Where(e =>
+                    (!string.IsNullOrEmpty(e.FirstName) && e.FirstName.ToLower().Contains(lower)) ||
+                    (!string.IsNullOrEmpty(e.LastName) && e.LastName.ToLower().Contains(lower))
+                ).ToList();
+            }
+
+            // Sayfalama işlemi
+            int totalEmployees = employees.Count;
+            int totalPages = (int)Math.Ceiling((double)totalEmployees / pageSize);
+            employees = employees.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // ViewBag: Pozisyon ve Durum dropdown'ları için veriler hazırlanır
+            List<string> allPositions = await _employeeManager.GetDistinctPositionsAsync();
+            ViewBag.Positions = new SelectList(allPositions, position);
+            ViewBag.Statuses = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Aktif", Value = DataStatus.Inserted.ToString(), Selected = status == DataStatus.Inserted.ToString() },
+                new SelectListItem { Text = "Güncellendi", Value = DataStatus.Updated.ToString(), Selected = status == DataStatus.Updated.ToString() },
+                new SelectListItem { Text = "Silinmiş", Value = DataStatus.Deleted.ToString(), Selected = status == DataStatus.Deleted.ToString() }
+            };
+
+            // View'e gönderilecek model oluşturuluyor
             EmployeeListResponseModel model = new()
             {
                 Employees = employees.Select(e => new EmployeeListItemResponseModel
                 {
-                    Id = e.Id,                                      // Çalışan ID
-                    FirstName = e.FirstName,                        // Ad
-                    LastName = e.LastName,                          // Soyad
-                    Position = e.Position,                          // Pozisyon
-                    PhoneNumber = e.PhoneNumber,                    // Telefon
-                    Status = e.Status.ToString()                    // Durum enum → string
-                }).ToList()
+                    Id = e.Id,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    Position = e.Position,
+                    PhoneNumber = e.PhoneNumber,
+                    Status = e.Status.ToString()
+                }).ToList(),
+                TotalPages = totalPages,
+                CurrentPage = page,
+                PageSize = pageSize
             };
 
-            // Listeleme ekranına response model gönderilir
             return View(model);
         }
+
 
         #endregion
 
@@ -62,13 +104,11 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// </summary>
         public async Task<IActionResult> Create()
         {
-            // Pozisyonlar: veritabanındaki tüm pozisyonlar DISTINCT olarak alınır
+            // View'da dropdown için pozisyon listesi veritabanından alınır
             List<string> positions = await _employeeManager.GetDistinctPositionsAsync();
-
-            // ViewBag ile view tarafına aktarılır (dropdown için)
             ViewBag.Positions = new SelectList(positions);
 
-            // Boş form gösterilir
+            // Boş form view'e gönderilir
             return View();
         }
 
@@ -80,46 +120,43 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EmployeeCreateRequestModel model)
         {
-            // ModelState doğrulaması yapılır
+            // Model doğrulama başarısızsa form yeniden gösterilir
             if (!ModelState.IsValid)
             {
-                // Sayfa tekrar yükleneceği için pozisyonlar yeniden set edilir
                 List<string> positions = await _employeeManager.GetDistinctPositionsAsync();
                 ViewBag.Positions = new SelectList(positions);
-
-                // Hatalı form tekrar kullanıcıya gösterilir
                 return View(model);
             }
 
-            // Telefon numarası +90 formatına çevrilir (örnek: 0555... → +90555...)
+            // Telefon numarası +90 formatına çevrilir
             string formattedPhone = _employeeManager.FormatPhoneNumber(model.PhoneNumber);
 
-            // Rastgele vardiya seçimi yapılır (ShiftType enum'undan)
+            // Vardiya tipi rastgele atanır
             ShiftType randomShift = _employeeManager.GetRandomShift();
 
             // RequestModel → DTO dönüşümü yapılır
             EmployeeDto dto = new()
             {
-                FirstName = model.FirstName,        // Ad
-                LastName = model.LastName,          // Soyad
-                Position = model.Position,          // Pozisyon
-                PhoneNumber = formattedPhone,       // Telefon numarası
-                Address = model.Address,            // Adres
-                BirthDate = model.BirthDate,        // Doğum tarihi
-                Salary = model.Salary,              // Maaş
-                Shift = randomShift,                // Rastgele seçilen vardiya
-                HireDate = DateTime.Now,            // İşe giriş tarihi (şu an)
-                CreatedDate = DateTime.Now,         // Oluşturulma zamanı
-                Status = DataStatus.Inserted        // Varsayılan durum: Inserted
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Position = model.Position,
+                PhoneNumber = formattedPhone,
+                Address = model.Address,
+                BirthDate = model.BirthDate,
+                Salary = model.Salary,
+                Shift = randomShift,
+                HireDate = DateTime.Now,        // Şu an işe alınmış gibi set edilir
+                CreatedDate = DateTime.Now,     // Oluşturulma zamanı
+                Status = DataStatus.Inserted    // Varsayılan durum
             };
 
             // Veritabanına kayıt işlemi yapılır
             await _employeeManager.CreateAsync(dto);
 
-            // Kullanıcıya başarı mesajı gösterilmek üzere TempData’ya yazılır
+            // Başarı mesajı TempData ile taşınır
             TempData["SuccessMessage"] = "Çalışan başarıyla eklendi.";
 
-            // Listeleme ekranına yönlendirme yapılır
+            // Listeleme ekranına yönlendirilir
             return RedirectToAction("Index");
         }
 
@@ -133,73 +170,78 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// <param name="id">Düzenlenecek çalışanın ID değeri.</param>
         public async Task<IActionResult> Edit(int id)
         {
-            // İlgili çalışan veritabanından alınır
+            // Çalışan bilgisi veritabanından alınır
             EmployeeDto employee = await _employeeManager.GetByIdAsync(id);
-            if (employee == null) return NotFound(); // Çalışan bulunamazsa 404 döndürülür
+            if (employee == null) return NotFound(); // Çalışan yoksa 404 döndür
 
-            // Pozisyonlar dropdown için veritabanından DISTINCT olarak alınır
+            // Pozisyon dropdown verisi ViewBag üzerinden gönderilir
             List<string> positions = await _employeeManager.GetDistinctPositionsAsync();
             ViewBag.Positions = new SelectList(positions);
 
-            // DTO → RequestModel dönüşümü yapılır (formu doldurmak için)
+            // DTO → RequestModel dönüşümü (formu doldurmak için)
             EmployeeUpdateRequestModel model = new()
             {
-                Id = employee.Id,                                      // ID
-                FirstName = employee.FirstName,                        // Ad
-                LastName = employee.LastName,                          // Soyad
-                Position = employee.Position,                          // Pozisyon
-                PhoneNumber = employee.PhoneNumber.Replace("+90", "0"), // +90 → 0 formatına çevrilir
-                Salary = employee.Salary,                              // Maaş
-                Address = employee.Address                             // Adres
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                Position = employee.Position,
+                PhoneNumber = employee.PhoneNumber.Replace("+90", "0"), // Kullanıcıya 0'lı gösterim
+                Salary = employee.Salary,
+                Address = employee.Address
             };
 
-            // Güncelleme formu kullanıcıya gösterilir
-            return View(model);
+            return View(model); // Form gönderilir
         }
 
         /// <summary>
         /// Çalışan bilgilerini günceller. Formdan gelen veriler doğrulanır ve DTO’ya dönüştürülerek kaydedilir.
         /// </summary>
-        /// <param name="model">Kullanıcıdan gelen güncellenmiş çalışan verileri.</param>
+        /// <param name="model">Güncellenmiş çalışan form verisi</param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EmployeeUpdateRequestModel model)
         {
-            // Model doğrulaması yapılır
+            // Model geçersizse, tekrar form gösterilir
             if (!ModelState.IsValid)
             {
-                // Sayfa tekrar yükleneceği için pozisyonlar yeniden getirilir
                 List<string> positions = await _employeeManager.GetDistinctPositionsAsync();
                 ViewBag.Positions = new SelectList(positions);
-
-                // Hatalı form tekrar gösterilir
                 return View(model);
             }
 
-            // Telefon numarası +90 formatına çevrilir (örnek: 0555... → +90555...)
+            // Mevcut çalışanı veritabanından al
+            EmployeeDto existingEmployee = await _employeeManager.GetByIdAsync(model.Id);
+            if (existingEmployee == null)
+            {
+                TempData["ErrorMessage"] = "Çalışan bulunamadı.";
+                return RedirectToAction("Index");
+            }
+
+            // Telefon formatı normalize edilir
             string formattedPhone = _employeeManager.FormatPhoneNumber(model.PhoneNumber);
 
-            // RequestModel → DTO dönüşümü yapılır
+            // Güncellenecek DTO hazırlanır, sadece değişen alanlar güncellenir
             EmployeeDto dto = new()
             {
-                Id = model.Id,                          // ID
-                FirstName = model.FirstName,            // Ad
-                LastName = model.LastName,              // Soyad
-                Position = model.Position,              // Pozisyon
-                PhoneNumber = formattedPhone,           // Telefon numarası
-                Salary = model.Salary,                  // Maaş
-                Address = model.Address,                // Adres
-                ModifiedDate = DateTime.Now,            // Güncellenme zamanı
-                Status = DataStatus.Updated             // Durum: Updated
+                Id = model.Id,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Position = model.Position,
+                PhoneNumber = formattedPhone,
+                Salary = model.Salary,
+                Address = model.Address,
+                HireDate = existingEmployee.HireDate,
+                BirthDate = existingEmployee.BirthDate,
+                Shift = existingEmployee.Shift,
+                CreatedDate = existingEmployee.CreatedDate,
+                ModifiedDate = DateTime.Now,
+                Status = DataStatus.Updated
             };
 
-            // Veritabanında güncelleme işlemi yapılır
+            // Güncelleme işlemi yapılır
             await _employeeManager.UpdateAsync(dto);
 
-            // Başarı mesajı kullanıcıya gösterilmek üzere gönderilir
             TempData["SuccessMessage"] = "Çalışan bilgileri güncellendi.";
-
-            // Listeleme ekranına yönlendirilir
             return RedirectToAction("Index");
         }
 
@@ -213,22 +255,21 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         /// <param name="id">Silinecek çalışanın ID'si.</param>
         public async Task<IActionResult> Delete(int id)
         {
-            // İlgili çalışan bilgisi veritabanından alınır
+            // Silinmek istenen çalışan veritabanından alınır
             EmployeeDto employee = await _employeeManager.GetByIdAsync(id);
-            if (employee == null) return NotFound(); // Çalışan bulunamazsa 404 döner
+            if (employee == null) return NotFound(); // Çalışan yoksa 404 döndürülür
 
-            // Silme ekranına gönderilecek response modeli oluşturulur
+            // View'e gönderilecek model hazırlanır
             EmployeeDeleteResponseModel model = new()
             {
-                Id = employee.Id,                      // ID
-                FirstName = employee.FirstName,        // Ad
-                LastName = employee.LastName,          // Soyad
-                Position = employee.Position,          // Pozisyon
-                PhoneNumber = employee.PhoneNumber     // Telefon numarası
-                                                       // Email istenirse buraya eklenebilir
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                Position = employee.Position,
+                PhoneNumber = employee.PhoneNumber
             };
 
-            // Silme onay ekranı gösterilir (Delete.cshtml)
+            // Silme onay ekranı açılır
             return View(model);
         }
 
@@ -240,25 +281,25 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Silinecek çalışan yeniden alınır (veri tutarlılığı için)
+            // Silinecek çalışan tekrar alınır (veri tutarlılığı sağlamak için)
             EmployeeDto employee = await _employeeManager.GetByIdAsync(id);
-            if (employee == null) return NotFound(); // Kayıt yoksa hata döner
+            if (employee == null) return NotFound(); // Kayıt bulunamazsa hata döner
 
-            // Soft delete için gerekli DTO hazırlanır
+            // Soft delete için DTO hazırlanır
             EmployeeDto dto = new()
             {
-                Id = employee.Id,                      // ID
-                Status = DataStatus.Deleted,           // Durum: Deleted
-                DeletedDate = DateTime.Now             // Silinme zamanı
+                Id = employee.Id,
+                Status = DataStatus.Deleted,
+                DeletedDate = DateTime.Now
             };
 
-            // Silme işlemi yapılır (MakePassiveAsync → Status = Deleted, DeletedDate set edilir)
+            // Veritabanında soft delete işlemi yapılır
             await _employeeManager.MakePassiveAsync(dto);
 
-            // Kullanıcıya bilgi mesajı gönderilir
+            // Bilgilendirme mesajı
             TempData["SuccessMessage"] = "Çalışan silindi.";
 
-            // Listeleme sayfasına yönlendirme yapılır
+            // Listeleme sayfasına yönlendirilir
             return RedirectToAction("Index");
         }
 

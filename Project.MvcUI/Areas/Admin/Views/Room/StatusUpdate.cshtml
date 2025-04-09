@@ -8,27 +8,6 @@
 <h2>🔄 Oda Durumu Güncelle</h2>
 <p>Bu sayfadan odanın durumunu güncelleyebilirsiniz.</p>
 
-@* ✅ TempData mesajları *@
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        <i class="fas fa-times-circle"></i> @TempData["ErrorMessage"]
-    </div>
-}
-@if (TempData["WarningMessage"] != null)
-{
-    <div class="alert alert-warning">
-        <i class="fas fa-exclamation-triangle"></i> @TempData["WarningMessage"]
-    </div>
-}
-
-
 <form asp-action="StatusUpdate" method="post">
     <input type="hidden" asp-for="RoomId" />
 
@@ -39,14 +18,7 @@
 
     <div class="mb-3">
         <label asp-for="NewStatus" class="form-label">Yeni Durum</label>
-        <select asp-for="NewStatus" class="form-control">
-            @foreach (var status in Enum.GetValues(typeof(Project.Entities.Enums.RoomStatus)))
-            {
-                <option value="@status" selected="@(status.Equals(Model.CurrentStatus) ? "selected" : null)">
-                    @status
-                </option>
-            }
-        </select>
+        <select asp-for="NewStatus" asp-items="ViewBag.Statuses" class="form-control"></select>
         <span asp-validation-for="NewStatus" class="text-danger"></span>
     </div>
 

@@ -4,23 +4,28 @@
     ViewData["Title"] = "Yeni Oda Ekle";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
-    var singleRoomTypeId = ViewBag.SingleRoomTypeId as int? ?? 1; // fallback 1
+    var singleRoomTypeId = ViewBag.SingleRoomTypeId as int? ?? 1;
 }
 
 <h2>🆕 Yeni Oda Ekle</h2>
 <p>Yeni bir oda eklemek için aşağıdaki bilgileri doldurun.</p>
 
 <form asp-action="Create" method="post">
+    <input type="hidden" asp-for="HasAirConditioner" value="true" />
+    <input type="hidden" asp-for="HasTV" value="true" />
+    <input type="hidden" asp-for="HasHairDryer" value="true" />
+    <input type="hidden" asp-for="HasWifi" value="true" />
+
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="mb-3">
-        <label asp-for="RoomNumber" class="form-label"></label>
+        <label for="RoomNumber" class="form-label">Oda Numarası</label>
         <input asp-for="RoomNumber" class="form-control" />
         <span asp-validation-for="RoomNumber" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Floor" class="form-label"></label>
+        <label for="Floor" class="form-label">Kat</label>
         <select asp-for="Floor" class="form-control" id="floorSelect">
             <option value="">Lütfen bir kat seçin</option>
             @for (int i = 1; i <= 4; i++)
@@ -32,13 +37,13 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="PricePerNight" class="form-label"></label>
+        <label for="PricePerNight" class="form-label">Gecelik Fiyat (₺)</label>
         <input asp-for="PricePerNight" type="number" step="0.01" class="form-control" />
         <span asp-validation-for="PricePerNight" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="RoomTypeId" class="form-label"></label>
+        <label for="RoomTypeId" class="form-label">Oda Tipi</label>
         <select asp-for="RoomTypeId" asp-items="ViewBag.RoomTypes" class="form-control" id="roomTypeSelect" data-single-roomtype-id="@singleRoomTypeId">
             <option value="">Lütfen oda tipi seçin</option>
         </select>
@@ -49,27 +54,27 @@
         <label class="form-label">Oda Özellikleri</label>
         <div class="form-check">
             <input type="checkbox" asp-for="HasBalcony" class="form-check-input" id="hasBalcony" />
-            <label asp-for="HasBalcony" class="form-check-label"></label>
+            <label for="hasBalcony" class="form-check-label">Balkon</label>
         </div>
         <div class="form-check">
             <input type="checkbox" asp-for="HasMinibar" class="form-check-input" id="hasMinibar" />
-            <label asp-for="HasMinibar" class="form-check-label"></label>
+            <label for="hasMinibar" class="form-check-label">Minibar</label>
         </div>
         <div class="form-check">
             <input type="checkbox" asp-for="HasAirConditioner" class="form-check-input" id="hasAirConditioner" checked disabled />
-            <label asp-for="HasAirConditioner" class="form-check-label"></label>
+            <label for="hasAirConditioner" class="form-check-label">Klima</label>
         </div>
         <div class="form-check">
             <input type="checkbox" asp-for="HasTV" class="form-check-input" id="hasTV" checked disabled />
-            <label asp-for="HasTV" class="form-check-label"></label>
+            <label for="hasTV" class="form-check-label">TV</label>
         </div>
         <div class="form-check">
             <input type="checkbox" asp-for="HasHairDryer" class="form-check-input" id="hasHairDryer" checked disabled />
-            <label asp-for="HasHairDryer" class="form-check-label"></label>
+            <label for="hasHairDryer" class="form-check-label">Saç Kurutma Makinesi</label>
         </div>
         <div class="form-check">
             <input type="checkbox" asp-for="HasWifi" class="form-check-input" id="hasWifi" checked disabled />
-            <label asp-for="HasWifi" class="form-check-label"></label>
+            <label for="hasWifi" class="form-check-label">Wi-Fi</label>
         </div>
     </div>
 
@@ -80,7 +85,6 @@
 <script>
     document.getElementById("floorSelect").addEventListener("change", function () {
         let floor = parseInt(this.value);
-
         if (floor === 1 || floor === 2) {
             document.getElementById("hasBalcony").checked = false;
             document.getElementById("hasBalcony").disabled = true;

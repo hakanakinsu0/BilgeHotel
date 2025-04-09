@@ -5,43 +5,36 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-@if (TempData["WarningMessage"] != null)
-{
-    <div class="alert alert-warning">@TempData["WarningMessage"]</div>
-}
-
 <h2>📅 Rezervasyon Yönetimi</h2>
 <p>Buradan sistemdeki rezervasyonları yönetebilirsiniz.</p>
 
-<!-- 🔎 Arama & Filtreleme (strongly-typed) -->
+<!-- 🔎 Arama & Filtreleme -->
 <form method="get" asp-action="Index" class="mb-4">
-    <div class="row">
-        <div class="col-md-6">
-            <label asp-for="Search" class="form-label"></label>
-            <input asp-for="Search" class="form-control"
-                   placeholder="Müşteri adı veya e-posta" />
+    <div class="row align-items-end">
+        <!-- Arama -->
+        <div class="col-md-4">
+            <label asp-for="Search" class="form-label">Ad, Soyad veya E-Posta</label>
+            <input asp-for="Search" class="form-control" placeholder="Örn: Ahmet Yılmaz veya ahmet@mail.com" />
         </div>
 
-        <div class="col-md-6">
-            <label asp-for="IsPaid" class="form-label">Ödeme</label>
-            <select asp-for="IsPaid" class="form-control">
-                <option value="">Tüm Ödemeler</option>
-                <option value="true">Ödenmiş</option>
-                <option value="false">Bekliyor</option>
+        <!-- Rezervasyon Durumu -->
+        <div class="col-md-3">
+            <label asp-for="Status" class="form-label">Ödeme Durumu</label>
+            <select asp-for="Status" class="form-control" asp-items="ViewBag.Statuses">
+                <option value="">Tüm Rezervasyonlar</option>
             </select>
         </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary mt-3 w-100">Filtrele</button>
+        <!-- Filtre Butonu -->
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filtrele
+            </button>
+        </div>
+    </div>
 </form>
+
+
 
 <!-- 📋 Rezervasyon Listesi -->
 <table class="table table-bordered table-hover">
@@ -74,21 +67,20 @@
                     <td>@reservation.TotalPrice.ToString("C")</td>
 
                     <td>
-                        @if (reservation.ReservationStatus == "Completed")
+                        @switch (reservation.ReservationStatus)
                         {
-                            <span class="badge bg-secondary">Tamamlandı</span>
-                        }
-                        else if (reservation.ReservationStatus == "PendingPayment")
-                        {
-                            <span class="badge bg-warning text-dark">Ödeme Bekleniyor</span>
-                        }
-                        else if (reservation.ReservationStatus == "Canceled")
-                        {
-                            <span class="badge bg-danger">İptal Edildi</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-primary">@reservation.ReservationStatus</span>
+                            case "PendingPayment":
+                                <span class="badge bg-warning text-dark">Ödeme Bekleniyor</span>
+                                break;
+                            case "Canceled":
+                                <span class="badge bg-danger">İptal Edildi</span>
+                                break;
+                            case "Confirmed":
+                                <span class="badge bg-success">Onaylandı</span>
+                                break;
+                            default:
+                                <span class="badge bg-primary">@reservation.ReservationStatus</span>
+                                break;
                         }
                     </td>
                     <td>

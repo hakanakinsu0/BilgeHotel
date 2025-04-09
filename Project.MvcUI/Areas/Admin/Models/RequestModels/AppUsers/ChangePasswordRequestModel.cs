@@ -7,11 +7,6 @@ namespace Project.MvcUI.Areas.Admin.Models.RequestModels.AppUsers
         [Display(Name = "Kullanıcı ID")]
         public int Id { get; set; }
 
-        [Display(Name = "Mevcut Şifre")]
-        [Required(ErrorMessage = "{0} zorunludur.")]
-        [MinLength(6, ErrorMessage = "{0} en az {1} karakter olmalıdır.")]
-        public string CurrentPassword { get; set; }
-
         [Display(Name = "Yeni Şifre")]
         [Required(ErrorMessage = "{0} zorunludur.")]
         [MinLength(6, ErrorMessage = "{0} en az {1} karakter olmalıdır.")]

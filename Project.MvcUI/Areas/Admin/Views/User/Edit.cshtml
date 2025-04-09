@@ -91,18 +91,21 @@
         <div class="col-sm-12 col-md-6">
             <div class="mb-3">
                 <label asp-for="Role" class="form-label"></label>
-                <select asp-for="Role" class="form-control" asp-items="ViewBag.Roles">
+                <select asp-for="Role" asp-items="ViewBag.Roles" class="form-control">
                     <option value="">Rol Seçiniz</option>
                 </select>
                 <span asp-validation-for="Role" class="text-danger"></span>
             </div>
         </div>
 
-        <!-- Kullanıcıyı Aktif Yap (Checkbox) -->
+        <!-- Kullanıcı Durumu (Aktif / Pasif) -->
         <div class="col-sm-12 col-md-6">
-            <div class="mb-3 form-check">
-                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
-                <label asp-for="IsActive" class="form-check-label"></label>
+            <div class="mb-3">
+                <label asp-for="IsActive" class="form-label"></label>
+                <select asp-for="IsActive" class="form-control">
+                    <option value="true" selected="@Model.IsActive">Aktif</option>
+                    <option value="false" selected="@(!Model.IsActive)">Pasif</option>
+                </select>
                 <span asp-validation-for="IsActive" class="text-danger"></span>
             </div>
         </div>
