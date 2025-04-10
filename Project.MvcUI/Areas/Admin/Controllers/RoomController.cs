@@ -36,48 +36,85 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
-        #region ReservationIndex
+        #region RoomIndexAction
 
         /// <summary>
-        /// Rezervasyon listesini filtreleme seçenekleriyle birlikte getirir.
-        /// Arama (müşteri adı veya e-posta), ödeme durumu ve rezervasyon durumu gibi filtrelerle BLL'den veriler alınır.
-        /// Veriler UI'a uygun response modele dönüştürülerek view'e gönderilir.
+        /// Oda listeleme sayfasını getirir.
+        /// Kullanıcının filtreleme parametrelerine göre BLL'den filtrelenmiş oda listesini alır,
+        /// bu verileri UI'da görüntülenecek response modele dönüştürür.
         /// </summary>
-        /// <param name="model">Kullanıcının arama ve filtreleme seçimlerini içeren view modeli.</param>
-        /// <returns>Filtrelenmiş rezervasyon listesi view'i</returns>
-        public async Task<IActionResult> Index(ReservationIndexPageView model)
+        /// <param name="roomTypeId">Oda türü filtre değeri</param>
+        /// <param name="roomStatus">Oda durumu filtre değeri (string olarak gelir, Enum'a dönüştürülür)</param>
+        /// <param name="floor">Kat numarası filtre değeri</param>
+        /// <param name="minPrice">Minimum fiyat filtre değeri</param>
+        /// <param name="maxPrice">Maksimum fiyat filtre değeri</param>
+        /// <param name="hasReservation">Oda rezerve edilmiş mi (true/false)?</param>
+        /// <param name="page">Sayfa numarası (sayfalama)</param>
+        /// <param name="pageSize">Sayfa başına gösterilecek kayıt sayısı</param>
+        public async Task<IActionResult> Index(int? roomTypeId, string roomStatus, int? floor, decimal? minPrice, decimal? maxPrice, bool? hasReservation, int page = 1, int pageSize = 10)
         {
-            // Arama ve filtre parametreleri
-            string search = model.Search;
-            bool? isPaid = model.IsPaid;
-            ReservationStatus? status = model.Status;
+            // RoomStatus enum'una parse edilmeye çalışılır
+            Enum.TryParse(roomStatus, out RoomStatus parsedStatus);
 
-            // BLL'den filtrelenmiş rezervasyon verileri alınır
-            List<ReservationDto> reservationDtos = await _reservationManager
-                .GetFilteredReservationReportsAsync(search, isPaid, status);
-
-            // DTO'lar view model'e dönüştürülür
-            model.Reservations = reservationDtos.Select(r => new ReservationListRequestModel
+            // DTO filtre objesi oluşturulur
+            RoomDto filterDto = new()
             {
-                Id = r.Id,
-                CustomerName = r.CustomerName,
-                CustomerEmail = r.CustomerEmail,
-                RoomNumber = r.RoomNumber,
-                StartDate = r.StartDate,
-                EndDate = r.EndDate,
-                TotalPrice = r.TotalPrice,
-                IsPaid = (r.ReservationStatus == ReservationStatus.Confirmed),
-                ReservationStatus = r.ReservationStatus.ToString()
-            }).ToList();
-
-            // Rezervasyon durumu dropdown'u için ViewBag verileri
-            ViewBag.Statuses = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Onaylandı", Value = ReservationStatus.Confirmed.ToString(), Selected = model.Status == ReservationStatus.Confirmed },
-                new SelectListItem { Text = "Ödeme Bekleniyor", Value = ReservationStatus.PendingPayment.ToString(), Selected = model.Status == ReservationStatus.PendingPayment },
-                new SelectListItem { Text = "İptal Edildi", Value = ReservationStatus.Canceled.ToString(), Selected = model.Status == ReservationStatus.Canceled },
+                RoomTypeId = roomTypeId ?? 0, // null ise 0 atanır
+                FilterRoomStatus = !string.IsNullOrEmpty(roomStatus) ? parsedStatus : null,
+                Floor = floor ?? 0,
+                PricePerNight = minPrice ?? 0,
+                MaxPrice = maxPrice,
+                FilterIsReserved = hasReservation,
+                Page = page,
+                PageSize = pageSize
             };
-            return View(model); // View'e response modeli gönderilir
+
+            // Filtrelenmiş oda listesi alınır
+            List<RoomDto> rooms = await _roomManager.GetFilteredRoomsAsync(filterDto);
+
+            // Sayfa sayısı hesaplanır
+            int totalPages = (int)Math.Ceiling((double)filterDto.TotalRooms / pageSize);
+
+            // ViewBag dropdown verileri
+            List<RoomTypeDto> roomTypes = await _roomTypeManager.GetAllAsync();
+            ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name"); // Oda türü dropdown'u
+
+            ViewBag.Floors = new SelectList(rooms.Select(r => r.Floor).Distinct()); // Kat filtre dropdown'u
+
+            ViewBag.Statuses = new SelectList(
+                new List<SelectListItem>
+                {
+            new SelectListItem { Value = RoomStatus.Empty.ToString(), Text = "Boş" },
+            new SelectListItem { Value = RoomStatus.Occupied.ToString(), Text = "Dolu" },
+            new SelectListItem { Value = RoomStatus.Maintenance.ToString(), Text = "Bakımda" }
+                }, "Value", "Text", roomStatus); // Oda durumu dropdown'u
+
+            // UI'da görüntülenecek view modeli oluşturulur
+            RoomListResponseModel model = new()
+            {
+                Rooms = rooms.Select(r => new RoomListItemResponseModel
+                {
+                    Id = r.Id,
+                    RoomNumber = r.RoomNumber,
+                    RoomType = r.RoomTypeName,
+                    Floor = r.Floor,
+                    PricePerNight = r.PricePerNight,
+                    RoomStatus = r.RoomStatus.ToString(),
+                    IsReserved = r.IsReserved,
+                    HasBalcony = r.HasBalcony,
+                    HasMinibar = r.HasMinibar,
+                    HasAirConditioner = r.HasAirConditioner,
+                    HasTV = r.HasTV,
+                    HasHairDryer = r.HasHairDryer,
+                    HasWifi = r.HasWifi
+                }).ToList(),
+                TotalPages = totalPages,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+
+            // View'e response modeli gönderilir
+            return View(model);
         }
 
         #endregion

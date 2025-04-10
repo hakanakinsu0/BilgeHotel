@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Reservations.ReservationUpdateRequestModel
+﻿@model ReservationUpdateRequestModel
 
 @{
     ViewData["Title"] = "Rezervasyon İptali";
@@ -42,9 +42,7 @@
 
     <div class="mb-3">
         <label asp-for="PackageId" class="form-label">Paket</label>
-        <select asp-for="PackageId" asp-items="ViewBag.Packages" class="form-control">
-            <option value="">Paket Seç</option>
-        </select>
+        <select asp-for="PackageId" asp-items="ViewBag.Packages" class="form-control"></select>
         <span asp-validation-for="PackageId" class="text-danger"></span>
     </div>
 

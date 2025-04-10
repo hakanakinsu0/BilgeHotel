@@ -1,15 +1,15 @@
 ﻿namespace Project.MvcUI.Areas.Admin.Models.ResponseModels.Reports
 {
     /// <summary>
-    /// Müşteri raporlarında kullanılacak müşteri detay modelidir.
-    /// Her bir müşteri için ad-soyad, e-posta, kimlik numarası ve rezervasyon sayısı bilgilerini içerir.
+    /// Müşteri raporlarında her bir müşteriye ait bilgileri temsil eden modeldir.
+    /// Ad-soyad, e-posta, kimlik numarası ve yaptığı rezervasyon sayısı gibi detayları içerir.
     /// </summary>
     public class CustomerReportResponseModel
     {
-        public int Id { get; set; }                 // Müşterinin benzersiz kimlik numarası
-        public string FullName { get; set; }        // Müşterinin tam adı (ad + soyad)
-        public string Email { get; set; }           // Müşterinin e-posta adresi
-        public string IdentityNumber { get; set; }  // Müşterinin kimlik numarası
-        public int ReservationCount { get; set; }   // Müşterinin yaptığı rezervasyon sayısı
+        public int Id { get; set; } // Müşteri ID'si
+        public string FullName { get; set; } // Ad Soyad bilgisi
+        public string Email { get; set; } // E-posta adresi
+        public string IdentityNumber { get; set; } // TC Kimlik No veya Pasaport No
+        public int ReservationCount { get; set; } // Toplam rezervasyon sayısı
     }
 }

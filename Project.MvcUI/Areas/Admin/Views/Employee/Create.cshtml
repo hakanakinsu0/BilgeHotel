@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Employees.EmployeeCreateRequestModel
+﻿@model EmployeeCreateRequestModel
 
 @{
     ViewData["Title"] = "Yeni Çalışan Ekle";
@@ -8,6 +8,7 @@
 <h2>👨‍🔧 Yeni Çalışan Ekle</h2>
 
 <form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="mb-3">
         <label asp-for="FirstName" class="form-label">Ad</label>
         <input asp-for="FirstName" class="form-control" />

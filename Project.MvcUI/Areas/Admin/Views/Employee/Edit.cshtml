@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.RequestModels.Employees.EmployeeUpdateRequestModel
+﻿@model EmployeeUpdateRequestModel
 
 @{
     ViewData["Title"] = "Çalışanı Güncelle";
@@ -8,6 +8,7 @@
 <h2>✏️ Çalışanı Güncelle</h2>
 
 <form asp-action="Edit" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">

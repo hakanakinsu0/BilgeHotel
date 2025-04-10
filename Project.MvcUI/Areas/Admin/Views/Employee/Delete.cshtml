@@ -1,4 +1,4 @@
-﻿@model Project.MvcUI.Areas.Admin.Models.ResponseModels.Employees.EmployeeDeleteResponseModel
+﻿@model EmployeeDeleteResponseModel
 
 @{
     ViewData["Title"] = "Çalışan Sil";
@@ -27,7 +27,14 @@
 </div>
 
 <form asp-action="DeleteConfirmed" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Evet, Sil</button>
-    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+    <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Evet, Sil
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-times"></i> İptal
+        </a>
+    </div>
 </form>

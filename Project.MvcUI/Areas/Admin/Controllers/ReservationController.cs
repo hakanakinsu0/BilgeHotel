@@ -99,7 +99,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region ReservationEdit
 
         /// <summary>
-        /// GET: Rezervasyon düzenleme formunu hazırlar.
+        /// Rezervasyon düzenleme formunu hazırlar.
         /// Belirtilen rezervasyonun bilgilerini BLL'den alır ve kullanıcı, ekstra hizmet gibi eksik bilgileri tamamlayarak
         /// ReservationUpdateRequestModel'e dönüştürür.
         /// </summary>
@@ -146,7 +146,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Rezervasyon güncelleme işlemini gerçekleştirir.
+        /// Rezervasyon güncelleme işlemini gerçekleştirir.
         /// Model doğrulaması geçerse, BLL'deki UpdateReservationWithDetailsAsync metodu çağrılarak güncelleme yapılır.
         /// </summary>
         /// <param name="model">Rezervasyon güncelleme formu modeli</param>
@@ -191,7 +191,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region ReservationPaymentUpdate
 
         /// <summary>
-        /// GET: Rezervasyonun ödeme durumunu güncelleme formunu hazırlar.
+        /// Rezervasyonun ödeme durumunu güncelleme formunu hazırlar.
         /// Rezervasyon, müşteri ve oda bilgileri alınarak form modeline atanır.
         /// </summary>
         /// <param name="id">Ödeme durumu güncellenecek rezervasyonun ID'si</param>
@@ -243,7 +243,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Rezervasyonun ödeme durumunu günceller.
+        /// Rezervasyonun ödeme durumunu günceller.
         /// Seçilen yeni ödeme durumu BLL üzerinden güncellenerek veritabanına işlenir.
         /// </summary>
         /// <param name="model">Formdan gelen ödeme durumu bilgilerini içeren model</param>

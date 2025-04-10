@@ -375,7 +375,7 @@ namespace Project.MvcUI.Controllers
         #region EditReservation
 
         /// <summary>
-        /// GET: Rezervasyon güncelleme sayfasını yükler.
+        /// Rezervasyon güncelleme sayfasını yükler.
         /// Belirtilen rezervasyon ID'sine göre rezervasyon detayları, seçili oda bilgileri ve ilgili ekstra hizmetler (Status'u Deleted olmayan) çekilir.
         /// Daha sonra ReservationUpdateRequestModel oluşturulur, inline olarak select listeler hazırlanır ve bu bilgiler ReservationUpdatePageVm modeline eklenerek view'e gönderilir.
         /// </summary>
@@ -477,7 +477,7 @@ namespace Project.MvcUI.Controllers
         }
 
         /// <summary>
-        /// POST: Rezervasyon güncelleme işlemini gerçekleştirir.
+        /// Rezervasyon güncelleme işlemini gerçekleştirir.
         /// Girilen tarih, oda, paket ve ekstra hizmet bilgilerine göre mevcut rezervasyon güncellenir.
         /// Eğer güncelleme başarılı olursa, ekstra hizmet güncelleme, fiyat güncelleme ve oda durumları da güncellenir.
         /// Hata durumunda, uygun hata mesajı eklenip kullanıcı yönlendirilir.

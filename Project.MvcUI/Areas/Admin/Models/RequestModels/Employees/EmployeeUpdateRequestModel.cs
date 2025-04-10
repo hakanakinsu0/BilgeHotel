@@ -2,8 +2,13 @@
 
 namespace Project.MvcUI.Areas.Admin.Models.RequestModels.Employees
 {
+    /// <summary>
+    /// Var olan bir çalışanın bilgilerini güncellemek için kullanılan request modelidir.
+    /// Güncelleme formundan gelen verileri taşır ve doğrulama kurallarını içerir.
+    /// </summary>
     public class EmployeeUpdateRequestModel
     {
+        /// <summary>Güncellenmek istenen çalışanın ID'si.</summary>
         public int Id { get; set; }
 
         [Required(ErrorMessage = "{0} alanı zorunludur.")]

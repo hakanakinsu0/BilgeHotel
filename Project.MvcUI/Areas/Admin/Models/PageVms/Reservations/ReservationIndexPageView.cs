@@ -5,21 +5,36 @@ using Project.MvcUI.Areas.Admin.Models.ResponseModels;
 namespace Project.MvcUI.Areas.Admin.Models.PageVms.Reservations
 {
     /// <summary>
-    /// Rezervasyon listeleme sayfasında hem filtre parametrelerini,
-    /// hem de listelenen rezervasyon verilerini tutan birleşik model.
+    /// Rezervasyon listeleme sayfasında kullanılan ViewModel'dir.
+    /// Hem filtreleme kriterlerini hem de listelenecek rezervasyonları içerir.
     /// </summary>
     public class ReservationIndexPageView
     {
         public ReservationIndexPageView()
         {
+            // Listeyi null referans hatalarına karşı başlatıyoruz
             Reservations = new List<ReservationListRequestModel>();
-
         }
-        public string Search { get; set; }   // Müşteri adı veya e-posta araması
-        public bool? IsPaid { get; set; }    // Ödeme durumu (true: ödenmiş, false: bekliyor)
-        public ReservationStatus? Status { get; set; }
-        public List<ReservationListRequestModel> Reservations { get; set; }
-        
-    }
 
+        /// <summary>
+        /// Müşteri adı, soyadı veya e-posta adresine göre yapılan arama metni.
+        /// </summary>
+        public string Search { get; set; }
+
+        /// <summary>
+        /// Ödeme durumu filtresi.
+        /// null: tümü, true: ödenmiş, false: ödeme bekliyor.
+        /// </summary>
+        public bool? IsPaid { get; set; }
+
+        /// <summary>
+        /// Rezervasyonun genel durumu (onaylı, bekliyor, iptal).
+        /// </summary>
+        public ReservationStatus? Status { get; set; }
+
+        /// <summary>
+        /// Ekranda listelenecek rezervasyonların tutulduğu koleksiyon.
+        /// </summary>
+        public List<ReservationListRequestModel> Reservations { get; set; }
+    }
 }

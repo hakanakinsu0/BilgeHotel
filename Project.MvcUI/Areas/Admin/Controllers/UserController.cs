@@ -42,7 +42,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region UserIndexAction
 
         /// <summary>
-        /// GET: Kullanıcı listesini filtreleme kriterlerine göre getirir.
+        /// Kullanıcı listesini filtreleme kriterlerine göre getirir.
         /// Arama, rol ve durum parametrelerine göre kullanıcılar BLL'den alınır ve UI modeline dönüştürülür.
         /// </summary>
         /// <param name="request">Arama metni, kullanıcı rolü ve durum bilgilerini içeren filtreleme modeli</param>
@@ -82,7 +82,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region UserCreateAction
 
         /// <summary>
-        /// GET: Yeni kullanıcı oluşturma formunu hazırlar.
+        /// Yeni kullanıcı oluşturma formunu hazırlar.
         /// Kullanılabilir roller dropdown olarak ViewBag üzerinden View'e aktarılır.
         /// Varsayılan rol "Member" olarak atanır.
         /// </summary>
@@ -102,7 +102,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Yeni kullanıcı oluşturma işlemini gerçekleştirir.
+        /// Yeni kullanıcı oluşturma işlemini gerçekleştirir.
         /// Gelen form verileri doğrulanır, kullanıcı daha önce kayıtlı mı kontrol edilir,
         /// BLL üzerinden kullanıcı oluşturma işlemi gerçekleştirilir.
         /// </summary>
@@ -157,7 +157,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region UserEdit
 
         /// <summary>
-        /// GET: Kullanıcı düzenleme formunu hazırlar.
+        /// Kullanıcı düzenleme formunu hazırlar.
         /// BLL'deki GetUserEditDataAsync metodu ile hem kullanıcı hem profil bilgileri çekilir.
         /// DTO, AutoMapper ile UpdateUserRequestModel'e dönüştürülür ve View'e gönderilir.
         /// </summary>
@@ -198,7 +198,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Kullanıcı düzenleme formu gönderildiğinde bilgileri günceller.
+        /// Kullanıcı düzenleme formu gönderildiğinde bilgileri günceller.
         /// Kullanıcı, profil ve rol bilgileri ayrı ayrı güncellenir.
         /// Ayrıca aktiflik durumu kontrol edilerek DeletedDate alanı yönetilir.
         /// </summary>
@@ -303,7 +303,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region UserDelete
 
         /// <summary>
-        /// GET: Kullanıcı silme onay ekranını gösterir.
+        /// Kullanıcı silme onay ekranını gösterir.
         /// Kullanıcıyı Identity üzerinden bulur, kendi hesabı olup olmadığını kontrol eder ve silme onayı view'ine kullanıcı bilgilerini taşır.
         /// </summary>
         /// <param name="id">Silinmek istenen kullanıcının ID'si</param>
@@ -341,7 +341,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Kullanıcı silme işlemini gerçekleştirir.
+        /// Kullanıcı silme işlemini gerçekleştirir.
         /// Kullanıcı kendi değilse ve sistemde mevcutsa, BLL aracılığıyla soft delete işlemi uygulanır.
         /// </summary>
         /// <param name="id">Silinmek istenen kullanıcının ID'si</param>
@@ -373,7 +373,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         #region UserChangePassword
 
         /// <summary>
-        /// GET: Kullanıcıya ait şifre değiştirme formunu hazırlar.
+        /// Kullanıcıya ait şifre değiştirme formunu hazırlar.
         /// </summary>
         /// <param name="id">Şifresi değiştirilecek kullanıcının ID'si</param>
         /// <returns>Şifre değiştirme formu view'i</returns>
@@ -397,7 +397,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// POST: Kullanıcının şifresini günceller.
+        /// Kullanıcının şifresini günceller.
         /// Mevcut şifre kontrolü yapılmaz, doğrudan reset işlemi uygulanır.
         /// </summary>
         /// <param name="model">Şifre değiştirme form modelidir</param>
