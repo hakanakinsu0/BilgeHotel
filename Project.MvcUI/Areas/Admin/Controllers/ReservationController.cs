@@ -124,7 +124,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                 .ToList();
 
             // ReservationDto → ReservationUpdateRequestModel dönüşümü yapılır
-            var model = new ReservationUpdateRequestModel
+            ReservationUpdateRequestModel model = new() 
             {
                 ReservationId = reservation.Id,
                 CustomerName = reservation.CustomerName,

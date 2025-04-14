@@ -55,7 +55,7 @@
         @if (Model.Reservations != null && Model.Reservations.Any())
         {
             int count = 1;
-            foreach (var reservation in Model.Reservations)
+            foreach (ReservationListRequestModel reservation in Model.Reservations)
             {
                 <tr>
                     <td>@count</td>

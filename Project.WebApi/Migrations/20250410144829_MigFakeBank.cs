@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Project.WebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class Mig4 : Migration
+    public partial class MigFakeBank : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,9 +41,9 @@ namespace Project.WebApi.Migrations
                 columns: new[] { "Id", "Balance", "CVV", "CardLimit", "CardNumber", "CardUserName", "CreatedDate", "DeletedDate", "ExpiryMonth", "ExpiryYear", "ModifiedDate", "Status" },
                 values: new object[,]
                 {
-                    { 1, 50000m, "123", 50000m, "1111 1111 1111 1111", "Hakan Akinsu", new DateTime(2025, 3, 12, 21, 48, 42, 647, DateTimeKind.Local).AddTicks(7396), null, 12, 2026, null, 1 },
-                    { 2, 75000m, "456", 75000m, "2222 2222 2222 2222", "Mehmet Kaya", new DateTime(2025, 3, 12, 21, 48, 42, 647, DateTimeKind.Local).AddTicks(7417), null, 6, 2025, null, 1 },
-                    { 3, 100000m, "789", 100000m, "3333 3333 3333 3333", "Zeynep Demir", new DateTime(2025, 3, 12, 21, 48, 42, 647, DateTimeKind.Local).AddTicks(7420), null, 9, 2027, null, 1 }
+                    { 1, 50000m, "123", 50000m, "1111 1111 1111 1111", "Hakan Akinsu", new DateTime(2025, 4, 10, 17, 48, 29, 238, DateTimeKind.Local).AddTicks(2937), null, 12, 2026, null, 1 },
+                    { 2, 75000m, "456", 75000m, "2222 2222 2222 2222", "Test Member", new DateTime(2025, 4, 10, 17, 48, 29, 238, DateTimeKind.Local).AddTicks(2950), null, 6, 2025, null, 1 },
+                    { 3, 100000m, "789", 100000m, "3333 3333 3333 3333", "Zeynep Demir", new DateTime(2025, 4, 10, 17, 48, 29, 238, DateTimeKind.Local).AddTicks(2952), null, 9, 2027, null, 1 }
                 });
         }
 

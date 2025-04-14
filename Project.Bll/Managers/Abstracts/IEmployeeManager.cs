@@ -13,24 +13,32 @@ namespace Project.Bll.Managers.Abstracts
     public interface IEmployeeManager : IManager<EmployeeDto, Employee>
     {
         /// <summary>
-        /// "Resepsiyonist" pozisyonundaki çalışanlar arasından rastgele bir çalışan ID'si döndürür.
-        /// Eğer böyle bir çalışan bulunamazsa null döner.
+        /// "Resepsiyonist" pozisyonunda bulunan çalışanlar arasından rastgele bir çalışanın ID'sini getirir.
+        /// Eğer uygun çalışan bulunamazsa null döner.
         /// </summary>
-        /// <returns>"Resepsiyonist" pozisyonundaki çalışan ID'si veya bulunamazsa null.</returns>
+        /// <returns>Rastgele bir resepsiyonistin ID'si veya null</returns>
         Task<int> GetRandomReceptionistEmployeeIdAsync();
+
+        /// <summary>
+        /// Veritabanındaki tüm aktif çalışanlar içerisinden tekrarsız pozisyonları listeler.
+        /// UI tarafında filtreleme ve dropdown için kullanılabilir.
+        /// </summary>
+        /// <returns>Distinct pozisyon isimlerini içeren liste</returns>
         Task<List<string>> GetDistinctPositionsAsync();
 
         /// <summary>
-        /// Telefon numarasını veritabanına uygun şekilde formatlar. (örn: 0555... → +90555...)
+        /// Verilen telefon numarasını sistemin beklediği formatta standart hale getirir.
+        /// Örn: "05551112233" → "+905551112233"
         /// </summary>
-        /// <param name="rawPhone">Ham telefon numarası</param>
-        /// <returns>Formatlanmış telefon numarası</returns>
+        /// <param name="rawPhone">Formatlanmamış ham telefon numarası</param>
+        /// <returns>Formatlanmış (örneğin uluslararası standartta) telefon numarası</returns>
         string FormatPhoneNumber(string rawPhone);
 
         /// <summary>
-        /// Rastgele bir ShiftType (vardiya türü) döner.
+        /// Rastgele bir vardiya türü (ShiftType) döndürür.
+        /// Genellikle test amaçlı çalışan üretimi veya otomatik atamalarda kullanılır.
         /// </summary>
-        /// <returns>ShiftType enum'undan rastgele değer</returns>
+        /// <returns>ShiftType enum'undan rastgele bir değer</returns>
         ShiftType GetRandomShift();
     }
 }

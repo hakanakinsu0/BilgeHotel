@@ -49,6 +49,7 @@ namespace Project.Bll.Managers.Abstracts
         /// </summary>
         /// <returns>Güncellenmiş DTO listesini döndürür.</returns>
         List<T> GetModifieds();
+
         #endregion
 
         #region Komut İşlemleri (Commands - CRUD)
@@ -96,6 +97,7 @@ namespace Project.Bll.Managers.Abstracts
         /// <param name="dtoList">Silinecek DTO nesnelerinin listesi.</param>
         /// <returns>Silme işleminin sonucunu açıklayan mesaj.</returns>
         Task<string> RemoveRangeAsync(List<T> dtoList);
+
         #endregion
 
         #region Aggregate İşlemleri
@@ -114,6 +116,7 @@ namespace Project.Bll.Managers.Abstracts
         /// <param name="predicate">Toplama işlemi için kullanılacak koşul ifadesi (opsiyonel).</param>
         /// <returns>Toplam değer.</returns>
         Task<decimal> SumAsync(Expression<Func<U, decimal>> selector, Expression<Func<U, bool>> predicate = null);
+
         #endregion
     }
 }

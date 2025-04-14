@@ -1,4 +1,5 @@
-﻿@model ReservationListPageVm
+﻿@using Project.Bll.DtoClasses
+@model ReservationListPageVm
 
 @{
     ViewData["Title"] = Model.PageTitle;
@@ -32,7 +33,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var reservation in Model.Reservations)
+            @foreach (ReservationDto reservation in Model.Reservations)
             {
                 <tr>
                     <td>@reservation.RoomNumber</td>

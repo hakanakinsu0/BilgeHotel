@@ -68,11 +68,11 @@ namespace Project.Bll.Managers.Abstracts
         Task<List<RoomDto>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate);
 
         /// <summary>
-        /// Rezervasyon değişikliği sırasında, eski oda ile yeni oda durumlarını günceller.
+        /// Rezervasyon değişikliği durumunda, eski odanın durumunu boş ve yeni odanın durumunu dolu olarak günceller.
         /// </summary>
-        /// <param name="oldRoomId">Eski oda ID'si.</param>
-        /// <param name="newRoomId">Yeni oda ID'si.</param>
-        /// <returns>Asenkron işlem tamamlandığında görev döner.</returns>
+        /// <param name="oldRoomId">Rezervasyonun daha önce atandığı oda ID'si.</param>
+        /// <param name="newRoomId">Rezervasyonun atanacağı yeni oda ID'si.</param>
+        /// <returns>Asenkron görev tamamlandığında işlem tamamlanmış olur.</returns>
         Task UpdateRoomStatusOnReservationChangeAsync(int oldRoomId, int newRoomId);
 
         /// <summary>
@@ -93,8 +93,12 @@ namespace Project.Bll.Managers.Abstracts
         /// </returns>
         Task<(int TotalRooms, int OccupiedRooms, int EmptyRooms, int MaintenanceRooms, double OccupiedPercentage, double MonthlyOccupiedPercentage, int MonthlyOccupiedRooms, double MonthlyOccupiedRoomsPercentage)> GetRoomUsageReportAsync();
 
+        /// <summary>
+        /// Belirli bir filtre kriterine göre odaları getirir.
+        /// Filtre; oda numarası, kat, durum, oda tipi gibi bilgileri içerebilir.
+        /// </summary>
+        /// <param name="filter">Filtreleme kriterlerini içeren RoomDto nesnesi.</param>
+        /// <returns>Filtrelenmiş oda DTO listesini döndürür.</returns>
         Task<List<RoomDto>> GetFilteredRoomsAsync(RoomDto filter);
-
-
     }
 }

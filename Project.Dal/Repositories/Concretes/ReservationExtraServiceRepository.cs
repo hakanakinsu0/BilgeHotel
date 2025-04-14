@@ -28,7 +28,7 @@ namespace Project.Dal.Repositories.Concretes
         public async Task CreateRangeAsync(List<ReservationExtraService> entities)
         {
             await _dbSet.AddRangeAsync(entities);                                  // DbSet üzerinden çoklu veri ekleme işlemi.
-            await _context.SaveChangesAsync();                                      // Değişiklikleri veritabanına kaydeder.
+            await _context.SaveChangesAsync();                                     // Değişiklikleri veritabanına kaydeder.
         }
     }
 }

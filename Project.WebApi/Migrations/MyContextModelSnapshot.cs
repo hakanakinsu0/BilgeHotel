@@ -79,7 +79,7 @@ namespace Project.WebApi.Migrations
                             CardLimit = 50000m,
                             CardNumber = "1111 1111 1111 1111",
                             CardUserName = "Hakan Akinsu",
-                            CreatedDate = new DateTime(2025, 4, 4, 0, 55, 31, 434, DateTimeKind.Local).AddTicks(3242),
+                            CreatedDate = new DateTime(2025, 4, 10, 17, 48, 29, 238, DateTimeKind.Local).AddTicks(2937),
                             ExpiryMonth = 12,
                             ExpiryYear = 2026,
                             Status = 1
@@ -91,8 +91,8 @@ namespace Project.WebApi.Migrations
                             CVV = "456",
                             CardLimit = 75000m,
                             CardNumber = "2222 2222 2222 2222",
-                            CardUserName = "Mehmet Kaya",
-                            CreatedDate = new DateTime(2025, 4, 4, 0, 55, 31, 434, DateTimeKind.Local).AddTicks(3255),
+                            CardUserName = "Test Member",
+                            CreatedDate = new DateTime(2025, 4, 10, 17, 48, 29, 238, DateTimeKind.Local).AddTicks(2950),
                             ExpiryMonth = 6,
                             ExpiryYear = 2025,
                             Status = 1
@@ -105,7 +105,7 @@ namespace Project.WebApi.Migrations
                             CardLimit = 100000m,
                             CardNumber = "3333 3333 3333 3333",
                             CardUserName = "Zeynep Demir",
-                            CreatedDate = new DateTime(2025, 4, 4, 0, 55, 31, 434, DateTimeKind.Local).AddTicks(3257),
+                            CreatedDate = new DateTime(2025, 4, 10, 17, 48, 29, 238, DateTimeKind.Local).AddTicks(2952),
                             ExpiryMonth = 9,
                             ExpiryYear = 2027,
                             Status = 1

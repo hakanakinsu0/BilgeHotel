@@ -16,7 +16,7 @@ namespace Project.MvcUI.VmMapping
     {
         public VmMappingProfile()
         {
-            // ✅ Kullanıcı Profili Mapping
+            // Kullanıcı Profili Mapping
             CreateMap<AppUser, UserProfileUpdateRequestModel>().ReverseMap();
             CreateMap<UserProfileUpdateRequestModel, AppUserDto>().ReverseMap();
             CreateMap<UserProfileResponseModel, AppUserDto>().ReverseMap();
@@ -27,13 +27,13 @@ namespace Project.MvcUI.VmMapping
             CreateMap<Reservation, ReservationDto>();
 
 
-            // ✅ Admin Paneli Kullanıcı Yönetimi
+            // Admin Paneli Kullanıcı Yönetimi
             CreateMap<UserViewResponseModel, AppUserDto>().ReverseMap();
             CreateMap<CreateUserRequestModel, AppUserDto>().ReverseMap();
             CreateMap<UpdateUserRequestModel, AppUserDto>().ReverseMap();
             CreateMap<UserListResponseModel, AppUserDto>().ReverseMap();
 
-            // ✅ Admin Paneli Rezervasyon Yönetimi
+            // Admin Paneli Rezervasyon Yönetimi
             CreateMap<ReservationDto, ReservationListRequestModel>().ReverseMap();
             CreateMap<ReservationListResponseModel, ReservationDto>().ReverseMap();
 

@@ -39,9 +39,9 @@
             <label>Sayfa Boyutu</label>
             <select name="pageSize" class="form-control">
                 @{
-                    var sizes = new[] { 10, 20, 50 };
-                    var selectedSize = Context.Request.Query["pageSize"].ToString();
-                    foreach (var size in sizes)
+                    int[] sizes = new[] { 10, 20, 50 };
+                    string selectedSize = Context.Request.Query["pageSize"].ToString();
+                    foreach (int size in sizes)
                     {
                         <option value="@size" selected="@(selectedSize == size.ToString() ? "selected" : null)">
                             @size kayıt
@@ -102,7 +102,7 @@
         @if (Model != null)
         {
             int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
-            @foreach (var emp in Model.Employees)
+            @foreach (EmployeeListItemResponseModel emp in Model.Employees)
             {
                 <tr>
                     <td>@count</td>

@@ -29,6 +29,7 @@ namespace Project.Dal.Repositories.Concretes
         /// <returns>Belirtilen numaraya sahip oda bilgisi.</returns>
         public async Task<Room> GetByRoomNumberAsync(string roomNumber)
         {
+            // BaseRepository içindeki Where metodu kullanılıyor, ardından FirstOrDefaultAsync ile sonuç alınıyor.
             return await Where(r => r.RoomNumber == roomNumber).FirstOrDefaultAsync();
         }
     }

@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 
 namespace Project.Bll.Managers.Concretes
 {
+    /// <summary>
+    /// Oda türlerine ilişkin iş kurallarını yöneten manager sınıfıdır.
+    /// Temel CRUD işlemleri BaseManager üzerinden devralınmıştır.
+    /// </summary>
     public class RoomTypeManager : BaseManager<RoomTypeDto, RoomType>, IRoomTypeManager
     {
         readonly IRoomTypeRepository _repository;
@@ -20,9 +24,18 @@ namespace Project.Bll.Managers.Concretes
             _repository = repository;
         }
 
+        /// <summary>
+        /// Verilen oda tipi adına karşılık gelen ID'yi döner.
+        /// Eşleşme yoksa null döner.
+        /// </summary>
+        /// <param name="name">Oda türü adı (ör: "Kral Dairesi")</param>
+        /// <returns>Oda türü ID'si veya null</returns>
         public async Task<int?> GetRoomTypeIdByNameAsync(string name)
         {
-            var type = await _repository.Where(rt => rt.Name == name).FirstOrDefaultAsync();
+            // İsme göre oda tipi sorgulanır
+            RoomType type = await _repository.Where(rt => rt.Name == name).FirstOrDefaultAsync();
+
+            // Oda tipi varsa ID döner, yoksa null
             return type?.Id;
         }
     }

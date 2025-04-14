@@ -39,7 +39,7 @@
 </head>
 <body>
 
-    <!-- ✅ Sidebar (Yan Menü) 🛠️  -->
+    <!-- Sidebar (Yan Menü) -->
     <div class="sidebar">
         <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i> Ana Sayfa</a>
         <hr>
@@ -48,13 +48,12 @@
         <a asp-area="Admin" asp-controller="Employee" asp-action="Index"><i class="fas fa-portrait"></i> Çalışan Yönetimi</a>
         <a asp-area="Admin" asp-controller="Reservation" asp-action="Index"><i class="fas fa-calendar-check"></i> Rezervasyon ve Ödeme Yönetimi</a>
         <a asp-area="Admin" asp-controller="Room" asp-action="Index"><i class="fas fa-bed"></i> Oda Yönetimi</a>
-        @* <a asp-area="Admin" asp-controller="Payment" asp-action="Index"><i class="fas fa-credit-card"></i> Ödeme Yönetimi</a> *@
         <a asp-area="Admin" asp-controller="Report" asp-action="Index"><i class="fas fa-file-alt"></i> Raporlama</a>
         <hr>
         <a asp-area="" asp-controller="Auth" asp-action="Logout" class="text-danger"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
     </div>
 
-    <!-- ✅ İçerik Alanı -->
+    <!-- İçerik Alanı -->
     <div class="content">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
@@ -80,7 +79,7 @@
         </nav>
 
         <div class="container mt-4">
-            <!-- ✅ TempData Bildirimleri (Global) -->
+            <!-- TempData Bildirimleri (Global) -->
             @if (TempData["SuccessMessage"] != null)
             {
                 <div class="alert alert-success">

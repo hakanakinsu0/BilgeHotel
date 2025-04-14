@@ -83,7 +83,7 @@ namespace Project.Bll.Managers.Concretes
             else
             {
                 // Eğer ödeme kaydı yoksa, yeni bir kayıt oluşturuluyor.
-                var paymentDto = new PaymentDto
+                PaymentDto paymentDto = new() 
                 {
                     ReservationId = reservationId,                       // İlişkili rezervasyon
                     PaymentAmount = amount,                              // Tutar

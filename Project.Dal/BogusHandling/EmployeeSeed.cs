@@ -22,7 +22,7 @@ namespace Project.Dal.BogusHandling
             int employeeId = 1; // Çalışan ID başlangıç değeri
 
             // Pozisyonlara göre çalışanların eklenmesi
-            var positions = new Dictionary<string, (int count, decimal minRate, decimal maxRate, bool hasNightShift)>
+            Dictionary<string, (int count, decimal minRate, decimal maxRate, bool hasNightShift)> positions = new() 
             {
                 { "Resepsiyonist", (7, 40000, 60000, true) },
                 { "Temizlik Görevlisi", (11, 25000, 35000, false) },

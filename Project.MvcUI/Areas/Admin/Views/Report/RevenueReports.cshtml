@@ -27,7 +27,7 @@
     <tbody>
         @if (Model.MonthlyRevenueReports != null && Model.MonthlyRevenueReports.Any())
         {
-            @foreach (var report in Model.MonthlyRevenueReports)
+            @foreach (MonthlyRevenueReportResponseModel report in Model.MonthlyRevenueReports)
             {
                 <tr>
                     <td>@report.Year</td>
@@ -35,8 +35,8 @@
                     <!-- Aşağıda 'MMMM' formatı + culture kullanarak Türkçe ay ismi elde ediyoruz -->
                     <td>
                         @{
-                            var dateValue = new DateTime(report.Year, report.Month, 1);
-                            var monthName = dateValue.ToString("MMMM", culture); // "Mart", "Nisan" vb.
+                            DateTime dateValue = new DateTime(report.Year, report.Month, 1);
+                            string monthName = dateValue.ToString("MMMM", culture); // "Mart", "Nisan" vb.
                         }
                         @monthName
                     </td>

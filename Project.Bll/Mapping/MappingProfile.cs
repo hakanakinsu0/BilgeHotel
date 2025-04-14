@@ -5,35 +5,39 @@ using Project.Entities.Models;
 
 namespace Project.Bll.Mapping
 {
+    /// <summary>
+    /// AutoMapper konfigürasyonlarının tanımlandığı sınıftır.
+    /// Entity sınıfları ile DTO sınıfları arasındaki dönüşümleri tanımlar.
+    /// </summary>
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            // Kullanıcı ve Profil Ayrımı Yapıldı
-            CreateMap<AppUser, AppUserDto>().ReverseMap();
-            CreateMap<AppUserProfile, AppUserProfileDto>().ReverseMap();
+            // Kullanıcı ve Kullanıcı Profili Maplemeleri
+            CreateMap<AppUser, AppUserDto>().ReverseMap();                  // AppUser AppUserDto
+            CreateMap<AppUserProfile, AppUserProfileDto>().ReverseMap();    // AppUserProfile AppUserProfileDto
 
-            // Çalışanlar
-            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            // Çalışan (Employee) Maplemesi
+            CreateMap<Employee, EmployeeDto>().ReverseMap();                // Employee EmployeeDto
 
-            // Oda ve Özellikleri
+            // Oda (Room) Maplemesi
             CreateMap<Room, RoomDto>()
-                .ForMember(dest => dest.RoomTypeName, opt => opt.MapFrom(src => src.RoomType.Name))
-                .ForMember(dest => dest.IsReserved, opt => opt.MapFrom(src =>
-                    src.Reservations.Any(r =>
-                        r.Status != DataStatus.Deleted &&
-                        r.ReservationStatus != ReservationStatus.Canceled)));
+                
+                .ForMember(dest => dest.RoomTypeName, opt => opt.MapFrom(src => src.RoomType.Name)) // RoomType nesnesi üzerinden gelen Name property'sini RoomTypeName alanına mapler
+                .ForMember(dest => dest.IsReserved, opt => opt.MapFrom(src => src.Reservations.Any(r => r.Status != DataStatus.Deleted && r.ReservationStatus != ReservationStatus.Canceled))) // Aktif rezervasyon varsa (Deleted değil ve Canceled değilse) IsReserved true olur
+                .ReverseMap(); // RoomDto Room dönüşümünü de aktif eder
 
-            CreateMap<RoomType, RoomTypeDto>().ReverseMap();
+            // Oda Türü (RoomType) Maplemesi
+            CreateMap<RoomType, RoomTypeDto>().ReverseMap();        // RoomType RoomTypeDto
 
-            // Rezervasyon, Ödeme ve Paketler
-            CreateMap<Reservation, ReservationDto>().ReverseMap();
-            CreateMap<Payment, PaymentDto>().ReverseMap();
-            CreateMap<Package, PackageDto>().ReverseMap();
+            // Rezervasyon, Ödeme ve Paket Maplemeleri
+            CreateMap<Reservation, ReservationDto>().ReverseMap();  // Reservation ReservationDto
+            CreateMap<Payment, PaymentDto>().ReverseMap();          // Payment PaymentDto
+            CreateMap<Package, PackageDto>().ReverseMap();          // Package PackageDto
 
-            // Yeni Eklenenler
-            CreateMap<ExtraService, ExtraServiceDto>().ReverseMap();
-            CreateMap<ReservationExtraService, ReservationExtraServiceDto>().ReverseMap();
+            // Yeni Eklenen Varlıklar
+            CreateMap<ExtraService, ExtraServiceDto>().ReverseMap();// ExtraService ExtraServiceDto
+            CreateMap<ReservationExtraService, ReservationExtraServiceDto>().ReverseMap(); // ReservationExtraService ReservationExtraServiceDto
         }
     }
 }

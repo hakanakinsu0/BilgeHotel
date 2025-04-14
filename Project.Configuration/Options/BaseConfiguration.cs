@@ -11,7 +11,7 @@ namespace Project.Configuration.Options
 {
     /// <summary>
     /// BaseConfiguration<T>, veritabanı tablolarını yapılandırmak için kullanılan bir soyut (abstract) sınıftır.  
-    /// Generic yapısı sayesinde yalnızca **IEntity** arayüzünü uygulayan sınıfların yapılandırılmasını sağlar.  
+    /// Generic yapısı sayesinde yalnızca IEntity arayüzünü uygulayan sınıfların yapılandırılmasını sağlar.  
     /// Diğer yapılandırma sınıfları bu sınıftan türeyerek, ortak ayarları miras alabilir ve kendi özel konfigürasyonlarını ekleyebilir.  
     /// </summary>
     public abstract class BaseConfiguration<T> : IEntityTypeConfiguration<T> where T : class, IEntity

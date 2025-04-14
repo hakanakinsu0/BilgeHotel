@@ -29,43 +29,52 @@ namespace Project.Bll.Managers.Concretes
         /// Sistemdeki "Resepsiyonist" pozisyonundaki çalışanlar arasından rastgele birinin ID’sini döner.
         /// Eğer hiç resepsiyonist yoksa -1 döner.
         /// </summary>
-        /// <returns>Rastgele seçilen resepsiyonistin ID'si ya da -1.</returns>
         public async Task<int> GetRandomReceptionistEmployeeIdAsync()
         {
-            List<EmployeeDto> employees = await GetAllAsync(); // Tüm çalışanları getiriyoruz.
-            
-            List<EmployeeDto> receptionists = employees.Where(e => e.Position.Equals("Resepsiyonist")).ToList(); // Sadece "Resepsiyonist" pozisyonunda olanları filtreliyoruz.
+            List<EmployeeDto> employees = await GetAllAsync(); // Tüm çalışanları DTO olarak al
 
-            // Eğer resepsiyonist varsa rastgele bir ID döndür.
+            List<EmployeeDto> receptionists = employees
+                .Where(e => e.Position.Equals("Resepsiyonist")) // Pozisyonu "Resepsiyonist" olanları filtrele
+                .ToList();
+
             if (receptionists.Any())
             {
                 Random random = new();
                 EmployeeDto randomEmployee = receptionists[random.Next(receptionists.Count)];
                 return randomEmployee.Id;
             }
-            return -1; // Resepsiyonist bulunamadıysa -1 döndür.
+
+            return -1; // Uygun resepsiyonist yoksa
         }
 
+        /// <summary>
+        /// Veritabanındaki tüm çalışanlar arasında benzersiz pozisyonları getirir.
+        /// </summary>
         public async Task<List<string>> GetDistinctPositionsAsync()
         {
-            return await _repository.GetDistinctPositionsAsync();
+            return await _repository.GetDistinctPositionsAsync(); // Doğrudan repository'den çekiliyor
         }
 
+        /// <summary>
+        /// Verilen telefon numarasını sistemin beklediği formata çevirir. (ör: +90555...)
+        /// </summary>
         public string FormatPhoneNumber(string rawPhone)
         {
             if (string.IsNullOrWhiteSpace(rawPhone))
                 return null;
 
-            return "+9" + rawPhone.Trim(); // 05554443322 → +905554443322
+            return "+9" + rawPhone.Trim(); // "05554443322" gibi bir numarayı "+905554443322" yapar
         }
 
+        /// <summary>
+        /// Rastgele bir vardiya tipi döner (Sabah, Akşam, Gece)
+        /// </summary>
         public ShiftType GetRandomShift()
         {
             return Enum.GetValues<ShiftType>()
                        .Cast<ShiftType>()
-                       .OrderBy(x => Guid.NewGuid())
-                       .First();
+                       .OrderBy(x => Guid.NewGuid()) // Rastgele sıralama
+                       .First(); // İlkini döndür (rastgele seçilmiş olur)
         }
-
     }
 }

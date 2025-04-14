@@ -43,7 +43,7 @@ namespace Project.MvcUI.Helpers
                 emailBody.Append("<tr><th style='border: 1px solid #ddd; padding: 8px;'>Hizmet Adı</th>");
                 emailBody.Append("<th style='border: 1px solid #ddd; padding: 8px;'>Fiyat</th></tr>");
 
-                foreach (var service in extraServices)
+                foreach (ExtraServiceDto service in extraServices)
                 {
                     emailBody.Append("<tr>");
                     emailBody.Append($"<td style='border: 1px solid #ddd; padding: 8px;'>{service.Name}</td>");

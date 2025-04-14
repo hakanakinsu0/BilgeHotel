@@ -34,9 +34,7 @@ namespace Project.Bll.DependencyResolvers
             // DbContext'i DI Konteynerine Ekleme
             // Burada MyContext sınıfı, UseSqlServer ile SQL Server bağlantısı kullanılarak DI sistemine ekleniyor.
             // Ayrıca UseLazyLoadingProxies() kullanılarak Lazy Loading aktif hale getiriliyor.
-            services.AddDbContext<MyContext>(x =>
-                x.UseSqlServer(configuration.GetConnectionString("MyConnection"))
-                 .UseLazyLoadingProxies());
+            services.AddDbContext<MyContext>(x => x.UseSqlServer(configuration.GetConnectionString("MyConnection")).UseLazyLoadingProxies());
         }
     }
 }

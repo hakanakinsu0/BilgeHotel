@@ -24,7 +24,7 @@
         @if (Model != null && Model.Any())
         {
             int count = 1;
-            @foreach (var reservation in Model)
+            @foreach (ReservationReportResponseModel reservation in Model)
             {
                 <tr>
                     <td>@count</td>

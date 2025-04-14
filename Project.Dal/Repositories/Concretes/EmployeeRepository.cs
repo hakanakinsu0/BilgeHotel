@@ -23,13 +23,18 @@ namespace Project.Dal.Repositories.Concretes
         /// <param name="context">Veritabanı bağlantısını sağlayan MyContext nesnesi.</param>
         public EmployeeRepository(MyContext context) : base(context) { }
 
+        /// <summary>
+        /// Veritabanındaki aktif (silinmemiş) çalışanların benzersiz pozisyonlarını getirir.
+        /// Bu metot, pozisyonlara göre filtreleme işlemleri için kullanılabilir.
+        /// </summary>
+        /// <returns>Distinct (tekrarsız) pozisyonları içeren string listesi.</returns>
         public async Task<List<string>> GetDistinctPositionsAsync()
         {
             return await _context.Employees
-                      .Where(e => e.Status != DataStatus.Deleted)
-                      .Select(e => e.Position)
-                      .Distinct()
-                      .ToListAsync();
+                      .Where(e => e.Status != DataStatus.Deleted) // Soft delete yapılmış çalışanlar hariç
+                      .Select(e => e.Position)                    // Pozisyonları al
+                      .Distinct()                                 // Benzersiz olanları filtrele
+                      .ToListAsync();                             // Listeye dönüştür
         }
     }
 }

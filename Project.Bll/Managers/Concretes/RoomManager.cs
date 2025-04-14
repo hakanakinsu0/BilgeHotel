@@ -24,47 +24,66 @@ namespace Project.Bll.Managers.Concretes
             _reservationRepository = reservationRepository;
         }
 
-
-        //
-
+        /// <summary>
+        /// Sistem genelindeki toplam oda sayısını getirir.
+        /// </summary>
+        /// <returns>Toplam oda sayısı</returns>
         public async Task<int> GetTotalRoomCountAsync()
         {
-            return await CountAsync();
+            return await CountAsync(); // Tüm kayıtlar sayılır
         }
 
+        /// <summary>
+        /// Durumu "Empty" olan (boş) oda sayısını getirir.
+        /// </summary>
+        /// <returns>Boş odaların sayısı</returns>
         public async Task<int> GetEmptyRoomCountAsync()
         {
             return await CountAsync(r => r.RoomStatus == RoomStatus.Empty);
         }
 
+        /// <summary>
+        /// Durumu "Occupied" olan (dolu) oda sayısını getirir.
+        /// </summary>
+        /// <returns>Dolu odaların sayısı</returns>
         public async Task<int> GetOccupiedRoomCountAsync()
         {
             return await CountAsync(r => r.RoomStatus == RoomStatus.Occupied);
         }
 
+        /// <summary>
+        /// Durumu "Maintenance" olan (bakımda) oda sayısını getirir.
+        /// </summary>
+        /// <returns>Bakımda olan odaların sayısı</returns>
         public async Task<int> GetMaintenanceRoomCountAsync()
         {
             return await CountAsync(r => r.RoomStatus == RoomStatus.Maintenance);
         }
 
+        /// <summary>
+        /// Oda numarasına göre ilgili odayı getirir.
+        /// </summary>
+        /// <param name="roomNumber">Oda numarası</param>
+        /// <returns>RoomDto nesnesi veya null</returns>
         public async Task<RoomDto> GetByRoomNumberAsync(string roomNumber)
         {
-            var roomEntity = await _repository.GetByRoomNumberAsync(roomNumber);
+            Room roomEntity = await _repository.GetByRoomNumberAsync(roomNumber);
             return roomEntity != null ? _mapper.Map<RoomDto>(roomEntity) : null;
         }
 
-
-        //
-
+        /// <summary>
+        /// Yeni bir oda oluşturur ve veritabanına kaydeder.
+        /// </summary>
+        /// <param name="roomDto">Oluşturulacak oda bilgilerini içeren DTO</param>
         public async Task CreateAsync(RoomDto roomDto)
         {
-            var roomEntity = new Room
+            Room roomEntity = new() 
             {
                 RoomNumber = roomDto.RoomNumber,
                 Floor = roomDto.Floor,
                 PricePerNight = roomDto.PricePerNight,
                 RoomStatus = roomDto.RoomStatus,
-                RoomTypeId = roomDto.RoomTypeId, // ✅ Sadece RoomTypeId kullanılıyor
+                RoomTypeId = roomDto.RoomTypeId,         
                 HasBalcony = roomDto.HasBalcony,
                 HasMinibar = roomDto.HasMinibar,
                 HasAirConditioner = roomDto.HasAirConditioner,
@@ -75,18 +94,26 @@ namespace Project.Bll.Managers.Concretes
                 CreatedDate = DateTime.Now
             };
 
-            await _repository.CreateAsync(roomEntity); // ✅ RoomType eklenmeden kaydedilecek
+            await _repository.CreateAsync(roomEntity); // Oda kaydediliyor
         }
 
+        /// <summary>
+        /// Mevcut bir odanın bilgilerini günceller.
+        /// Oda doluysa RoomNumber ve RoomTypeId değiştirilemez.
+        /// </summary>
+        /// <param name="roomDto">Güncellenecek oda bilgilerini içeren DTO</param>
         public async Task UpdateAsync(RoomDto roomDto)
         {
-            var roomEntity = await _repository.GetByIdAsync(roomDto.Id);
-            if (roomEntity == null) throw new Exception("Oda bulunamadı.");
+            Room roomEntity = await _repository.GetByIdAsync(roomDto.Id);
+            if (roomEntity == null)
+                throw new Exception("Oda bulunamadı.");
 
-            // ✅ Geçerli bir RoomTypeId olup olmadığını kontrol et
-            var roomTypeExists = await _repository.GetByIdAsync(roomDto.RoomTypeId);
-            if (roomTypeExists == null) throw new Exception("Geçersiz oda tipi seçildi.");
+            // Oda tipinin gerçekten mevcut olup olmadığı kontrol edilir
+            Room roomTypeExists = await _repository.GetByIdAsync(roomDto.RoomTypeId);
+            if (roomTypeExists == null)
+                throw new Exception("Geçersiz oda tipi seçildi.");
 
+            // Güncellenebilecek alanlar set edilir
             roomEntity.Floor = roomDto.Floor;
             roomEntity.PricePerNight = roomDto.PricePerNight;
             roomEntity.HasBalcony = roomDto.HasBalcony;
@@ -98,41 +125,54 @@ namespace Project.Bll.Managers.Concretes
             roomEntity.Status = DataStatus.Updated;
             roomEntity.ModifiedDate = DateTime.Now;
 
-            // ✅ Eğer oda doluysa, RoomNumber ve RoomTypeId değiştirilemez!
+            // Oda doluysa RoomNumber ve RoomTypeId değiştirilmez
             if (roomEntity.RoomStatus != RoomStatus.Occupied)
             {
                 roomEntity.RoomNumber = roomDto.RoomNumber;
                 roomEntity.RoomTypeId = roomDto.RoomTypeId;
             }
 
-
-            await _repository.UpdateAsync(roomEntity, roomEntity);
+            await _repository.UpdateAsync(roomEntity, roomEntity); // Güncelleme işlemi yapılır
         }
 
-
+        /// <summary>
+        /// Belirtilen odanın silinip silinemeyeceğini kontrol eder.
+        /// Eğer odaya ait aktif (Confirmed) rezervasyon varsa silinemez.
+        /// </summary>
+        /// <param name="roomId">Silinmek istenen oda ID'si</param>
+        /// <returns>Silinmeye uygun ise true, değilse false</returns>
         public async Task<bool> CanDeleteRoomAsync(int roomId)
         {
-            var room = await _repository.Where(r => r.Id == roomId)
-                                        .Include(r => r.Reservations) // ❗️ Rezervasyon ilişkisini yüklüyoruz
+            Room? room = await _repository.Where(r => r.Id == roomId)
+                                        .Include(r => r.Reservations) // Odaya ait rezervasyonlar yüklenir
                                         .FirstOrDefaultAsync();
 
             if (room == null)
-                return false; // Oda bulunamadıysa silinemez
+                return false;
 
+            // Confirmed rezervasyon varsa silinemez
             return !room.Reservations.Any(r => r.ReservationStatus == ReservationStatus.Confirmed);
         }
 
+        /// <summary>
+        /// Belirtilen odanın durumunu günceller.
+        /// Aynı statüye tekrar güncelleme yapılmaz.
+        /// </summary>
+        /// <param name="roomId">Oda ID'si</param>
+        /// <param name="newStatus">Yeni atanacak RoomStatus</param>
+        /// <returns>İşlem başarılıysa true</returns>
         public async Task<bool> UpdateRoomStatusAsync(int roomId, RoomStatus newStatus)
         {
-            var roomEntity = await _repository.GetByIdAsync(roomId);
+            Room roomEntity = await _repository.GetByIdAsync(roomId);
             if (roomEntity == null) throw new Exception("Oda bulunamadı.");
 
-            // 🔍 Eğer oda zaten istenen statüdeyse, gereksiz güncelleme yapma
+            // Eğer durum zaten aynıysa, işlem yapılmaz
             if (roomEntity.RoomStatus == newStatus)
             {
                 Console.WriteLine($"⚠ Oda zaten bu statüde: ID={roomEntity.Id}, Durum={roomEntity.RoomStatus}");
                 return true;
             }
+
             roomEntity.RoomStatus = newStatus;
             roomEntity.Status = DataStatus.Updated;
             roomEntity.ModifiedDate = DateTime.Now;
@@ -140,38 +180,39 @@ namespace Project.Bll.Managers.Concretes
             Console.WriteLine($"RoomStatus Güncelleniyor: ID={roomEntity.Id}, Yeni Durum={roomEntity.RoomStatus}");
 
             await _repository.UpdateAsync(roomEntity, roomEntity);
-
             return true;
         }
 
+        /// <summary>
+        /// Verilen tarih aralığında müsait (çakışmayan) odaları getirir.
+        /// </summary>
+        /// <param name="startDate">Rezervasyon başlangıç tarihi</param>
+        /// <param name="endDate">Rezervasyon bitiş tarihi</param>
+        /// <returns>Uygun RoomDto listesi</returns>
         public async Task<List<RoomDto>> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate)
         {
-            // Oda rezervasyon ilişkisini dahil ederek, çakışan rezervasyonu olmayan odaları seçiyoruz.
-            var rooms = await _repository
+            List<Room> rooms = await _repository
                 .Where(room =>
                     !room.Reservations.Any(res =>
                         res.Status != DataStatus.Deleted &&
-                        startDate < res.EndDate && endDate > res.StartDate))
+                        startDate < res.EndDate && endDate > res.StartDate)) // Çakışan rezervasyon kontrolü
                 .Include(r => r.Reservations)
                 .ToListAsync();
 
             return _mapper.Map<List<RoomDto>>(rooms);
         }
 
-
         /// <summary>
-        /// Rezervasyon değişikliği sırasında oda durumlarını günceller.
-        /// Eski oda farklıysa, eski odanın durumunu "Empty" ve yeni odanın durumunu "Occupied" olarak ayarlar.
+        /// Rezervasyon değişikliğinde eski oda boşaltılır, yeni oda dolu yapılır.
+        /// Oda ID'leri farklıysa işlem yapılır.
         /// </summary>
-        /// <param name="oldRoomId">Eski oda ID'si</param>
-        /// <param name="newRoomId">Yeni oda ID'si</param>
-        /// <returns>Asenkron işlem için Task</returns>
+        /// <param name="oldRoomId">Eski oda ID</param>
+        /// <param name="newRoomId">Yeni oda ID</param>
         public async Task UpdateRoomStatusOnReservationChangeAsync(int oldRoomId, int newRoomId)
         {
             if (oldRoomId != newRoomId)
             {
-                // Eski oda durumunu güncelle: boş olarak ayarla.
-                var oldRoom = await _repository.GetByIdAsync(oldRoomId);
+                Room oldRoom = await _repository.GetByIdAsync(oldRoomId);
                 if (oldRoom != null)
                 {
                     oldRoom.RoomStatus = RoomStatus.Empty;
@@ -180,8 +221,7 @@ namespace Project.Bll.Managers.Concretes
                     await _repository.UpdateAsync(oldRoom, oldRoom);
                 }
 
-                // Yeni oda durumunu güncelle: dolu olarak ayarla.
-                var newRoom = await _repository.GetByIdAsync(newRoomId);
+                Room newRoom = await _repository.GetByIdAsync(newRoomId);
                 if (newRoom != null)
                 {
                     newRoom.RoomStatus = RoomStatus.Occupied;
@@ -192,11 +232,15 @@ namespace Project.Bll.Managers.Concretes
             }
         }
 
-
+        /// <summary>
+        /// Oda kullanımına dair detaylı istatistik raporu döner.
+        /// Hem genel hem de o ay için doluluk oranlarını içerir.
+        /// </summary>
+        /// <returns>Oda kullanımıyla ilgili çeşitli oran ve sayılar</returns>
         public async Task<(int TotalRooms, int OccupiedRooms, int EmptyRooms, int MaintenanceRooms, double OccupiedPercentage, double MonthlyOccupiedPercentage, int MonthlyOccupiedRooms, double MonthlyOccupiedRoomsPercentage)> GetRoomUsageReportAsync()
         {
-            var rooms = await GetAllAsync();
-            var reservations = await _reservationRepository.GetAllAsync();
+            List<RoomDto> rooms = await GetAllAsync();
+            List<Reservation> reservations = await _reservationRepository.GetAllAsync();
 
             int totalRooms = rooms.Count;
             int occupiedRooms = rooms.Count(r => r.RoomStatus == RoomStatus.Occupied);
@@ -205,20 +249,19 @@ namespace Project.Bll.Managers.Concretes
 
             double occupiedPercentage = totalRooms > 0 ? (double)occupiedRooms / totalRooms * 100 : 0;
 
-            var currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var currentMonthEnd = currentMonthStart.AddMonths(1).AddDays(-1);
+            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthEnd = currentMonthStart.AddMonths(1).AddDays(-1);
 
-            var reservationsThisMonth = await _reservationRepository.GetAllAsync();
-            reservationsThisMonth = reservationsThisMonth
+            List<Reservation> reservationsThisMonth = reservations
                 .Where(r => r.StartDate <= currentMonthEnd && r.EndDate >= currentMonthStart)
                 .ToList();
 
-            var roomOccupiedDays = new Dictionary<int, int>();
+            Dictionary<int, int> roomOccupiedDays = new();
 
-            foreach (var reservation in reservationsThisMonth)
+            foreach (Reservation reservation in reservationsThisMonth)
             {
-                var start = reservation.StartDate < currentMonthStart ? currentMonthStart : reservation.StartDate;
-                var end = reservation.EndDate > currentMonthEnd ? currentMonthEnd : reservation.EndDate;
+                DateTime start = reservation.StartDate < currentMonthStart ? currentMonthStart : reservation.StartDate;
+                DateTime end = reservation.EndDate > currentMonthEnd ? currentMonthEnd : reservation.EndDate;
                 int occupiedDays = (int)(end - start).TotalDays;
 
                 if (roomOccupiedDays.ContainsKey(reservation.RoomId))
@@ -231,16 +274,20 @@ namespace Project.Bll.Managers.Concretes
             int totalRoomDaysInMonth = totalRooms * DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
             int totalOccupiedDaysThisMonth = roomOccupiedDays.Values.Sum();
             double monthlyOccupiedPercentage = totalRoomDaysInMonth > 0 ? (double)totalOccupiedDaysThisMonth / totalRoomDaysInMonth * 100 : 0;
-
-            // Bu formülü, "bu ay rezervasyon yapılan odaların yüzdesi" olarak hesaplamak için ekliyoruz:
             double monthlyOccupiedRoomsPercentage = totalRooms > 0 ? (double)uniqueOccupiedRoomsThisMonth / totalRooms * 100 : 0;
 
             return (totalRooms, occupiedRooms, emptyRooms, maintenanceRooms, occupiedPercentage, monthlyOccupiedPercentage, uniqueOccupiedRoomsThisMonth, monthlyOccupiedRoomsPercentage);
         }
 
+        /// <summary>
+        /// Oda listeleme işlemi için filtre ve sayfalama uygular.
+        /// Fiyata, kata, oda durumuna, oda tipine ve doluluk durumuna göre filtreleme yapılabilir.
+        /// </summary>
+        /// <param name="filter">Filtreleme ve sayfalama bilgilerini içeren DTO</param>
+        /// <returns>Filtrelenmiş RoomDto listesi</returns>
         public async Task<List<RoomDto>> GetFilteredRoomsAsync(RoomDto filter)
         {
-            var query = _repository
+            IQueryable<Room> query = _repository
                 .Where(r => r.Status != DataStatus.Deleted)
                 .Include(r => r.RoomType)
                 .Include(r => r.Reservations)
@@ -269,20 +316,16 @@ namespace Project.Bll.Managers.Concretes
                         res.ReservationStatus != ReservationStatus.Canceled) == filter.FilterIsReserved.Value);
             }
 
-            // 🔢 Toplam kayıt sayısı hesapla ve DTO'ya aktar
+            // Toplam kayıt sayısı DTO'da tutulur
             filter.TotalRooms = await query.CountAsync();
 
-            // ✅ Sayfalama uygula
-            var pagedRooms = await query
+            // Sayfalama işlemi
+            List<Room> pagedRooms = await query
                 .Skip((filter.Page - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();
 
             return _mapper.Map<List<RoomDto>>(pagedRooms);
         }
-
-
-
-
     }
 }

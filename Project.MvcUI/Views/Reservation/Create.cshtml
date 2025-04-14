@@ -1,4 +1,5 @@
-﻿@model ReservationCreateRequestModel
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model ReservationCreateRequestModel
 
 @{
     ViewData["Title"] = "Yeni Rezervasyon Oluştur";
@@ -83,9 +84,9 @@
             {
                 <div class="alert alert-danger mt-4">
                     <ul>
-                        @foreach (var modelState in ViewData.ModelState.Values)
+                        @foreach (ModelStateEntry modelState in ViewData.ModelState.Values)
                         {
-                            foreach (var error in modelState.Errors)
+                            foreach (ModelError error in modelState.Errors)
                             {
                                 <li>@error.ErrorMessage</li>
                             }

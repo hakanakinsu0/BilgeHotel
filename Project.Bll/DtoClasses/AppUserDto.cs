@@ -19,14 +19,11 @@ namespace Project.Bll.DtoClasses
         public string NormalizedEmail { get; set; }      // Normalleştirilmiş e-posta adresi
         public string SecurityStamp { get; set; }        // Güvenlik damgası (Identity işlemleri için)
         public string Role { get; set; }                 // Kullanıcının rolü (örneğin, Admin veya Member)
-
-        // Aşağıdaki alanlar, kullanıcının profil bilgilerini temsil eder:
         public string FirstName { get; set; }            // Kullanıcının adı
         public string LastName { get; set; }             // Kullanıcının soyadı
         public string Address { get; set; }              // Kullanıcının adresi
         public string Nationality { get; set; }          // Kullanıcının uyruğu
         public Gender Gender { get; set; }               // Kullanıcının cinsiyeti
         public string IdentityNumber { get; set; }       // Kullanıcının kimlik (TC kimlik veya pasaport) numarası
-
     }
 }

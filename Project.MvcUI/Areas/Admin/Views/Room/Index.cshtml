@@ -4,9 +4,9 @@
     ViewData["Title"] = "Oda Yönetimi";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
-    var selectedRoomTypeId = Context.Request.Query["roomTypeId"].ToString();
-    var selectedRoomStatus = Context.Request.Query["roomStatus"].ToString();
-    var selectedPageSize = Context.Request.Query["pageSize"].ToString();
+    string selectedRoomTypeId = Context.Request.Query["roomTypeId"].ToString();
+    string selectedRoomStatus = Context.Request.Query["roomStatus"].ToString();
+    string selectedPageSize = Context.Request.Query["pageSize"].ToString();
 }
 
 <h2>🏨 Oda Yönetimi</h2>
@@ -44,10 +44,10 @@
         <div class="col-md-2">
             <select name="pageSize" class="form-control">
                 @{
-                    var pageSizeOptions = new[] { 10, 30, 50, 70, 90 };
-                    foreach (var size in pageSizeOptions)
+                    int[] pageSizeOptions = new[] { 10, 30, 50, 70, 90 };
+                    foreach (int size in pageSizeOptions)
                     {
-                        var isSelected = selectedPageSize == size.ToString() ? "selected=\"selected\"" : "";
+                        string isSelected = selectedPageSize == size.ToString() ? "selected=\"selected\"" : "";
                 @:<option value="@size" @Html.Raw(isSelected)>@size Oda</option>
                     }
                 }
@@ -87,7 +87,7 @@
         @if (Model.Rooms != null && Model.Rooms.Any())
         {
             int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
-            foreach (var room in Model.Rooms)
+            foreach (RoomListItemResponseModel room in Model.Rooms)
             {
                 <tr>
                     <td>@count</td>

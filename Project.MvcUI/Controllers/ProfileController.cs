@@ -49,7 +49,7 @@ namespace Project.MvcUI.Controllers
             profileResponse.Nationality = userDto.Nationality;
 
             // TempData'daki mesajlar PageVM'e aktarılıyor.
-            var pageVm = new UserProfilePageVm
+            UserProfilePageVm pageVm = new()
             {
                 UserProfile = profileResponse,
                 SuccessMessage = TempData["SuccessMessage"]?.ToString(),

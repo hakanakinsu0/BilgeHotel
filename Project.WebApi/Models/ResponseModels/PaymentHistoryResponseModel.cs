@@ -1,12 +1,26 @@
-﻿namespace Project.WebApi.Models.ResponseModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project.WebApi.Models.ResponseModels
 {
+    /// <summary>
+    /// Kullanıcının ödeme geçmişine ait bilgileri temsil eder.
+    /// Kart ve ödeme bilgilerini, hangi odaya ait olduğu bilgisini içerir.
+    /// </summary>
     public class PaymentHistoryResponseModel
     {
-        public string CVV { get; set; } = string.Empty;
+        [Display(Name = "CVV")]
+        public string CVV { get; set; }             // Kartın güvenlik kodu (gerçek sistemlerde gizlenmelidir)
 
-        public string CardUserName { get; set; } = string.Empty;
-        public string CardNumber { get; set; } = string.Empty;
-        public string RoomNumber { get; set; } = string.Empty;  // 🏨 **Ödeme yapılan oda numarası**
-        public decimal PaymentAmount { get; set; }  // 💰 **Ödeme tutarı**
+        [Display(Name = "Kart Sahibi")]
+        public string CardUserName { get; set; }    // Kart sahibinin adı
+
+        [Display(Name = "Kart Numarası")]
+        public string CardNumber { get; set; }      // Kart numarası (maskeleme önerilir)
+
+        [Display(Name = "Oda Numarası")]
+        public string RoomNumber { get; set; }      // 🏨 Ödeme yapılan oda numarası
+
+        [Display(Name = "Ödeme Tutarı")]
+        public decimal PaymentAmount { get; set; }  // 💰 Ödenen tutar
     }
 }

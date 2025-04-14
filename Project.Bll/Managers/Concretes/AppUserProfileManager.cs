@@ -37,8 +37,7 @@ namespace Project.Bll.Managers.Concretes
             AppUserProfile? profile = await _repository.Where(x => x.AppUserId == appUserId).FirstOrDefaultAsync();
 
             // Eğer profil bulunamazsa null döner.
-            if (profile == null)
-                return null;
+            if (profile == null) return null;
 
             // Profili DTO'ya mapleyerek geri döneriz.
             return _mapper.Map<AppUserProfileDto>(profile);

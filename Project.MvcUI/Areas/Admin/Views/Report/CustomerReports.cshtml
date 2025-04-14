@@ -57,7 +57,7 @@
         @if (Model.Customers != null && Model.Customers.Any())
         {
             int count = 1;
-            @foreach (var customer in Model.Customers)
+            @foreach (CustomerReportResponseModel customer in Model.Customers)
             {
                 <tr>
                     <td>@count</td>

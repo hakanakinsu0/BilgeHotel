@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Oda Güncelle";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
-    var roomTypes = ViewBag.RoomTypes as List<SelectListItem>;
+    List<SelectListItem>? roomTypes = ViewBag.RoomTypes as List<SelectListItem>;
 }
 
 <h2>📝 Oda Güncelle</h2>

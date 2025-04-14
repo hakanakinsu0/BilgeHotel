@@ -1,4 +1,5 @@
-﻿@model PaymentHistoryPageVm
+﻿@using Project.MvcUI.Models.PureVms.Payments.ResponseModels
+@model PaymentHistoryPageVm
 
 @{
     // Sayfa başlığı PageVM'den alınıyor
@@ -37,7 +38,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.PaymentHistoryList)
+            @foreach (PaymentHistoryResponseModel item in Model.PaymentHistoryList)
             {
                 <tr>
                     <td>@item.CardUserName</td>

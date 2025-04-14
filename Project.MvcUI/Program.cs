@@ -6,7 +6,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// **Dependency Resolvers Kullanımı**
+// Dependency Resolvers Kullanımı
 builder.Services.AddDbContextService();
 builder.Services.AddIdentityService();
 builder.Services.AddRepositoryService();
@@ -24,7 +24,7 @@ builder.Services.AddHttpClient("NoSSL", client =>
     };
 });
 
-// **Session Yapılandırması (5 Dakika)**
+// Session Yapılandırması (5 Dakika)
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(x =>
 {
@@ -33,7 +33,7 @@ builder.Services.AddSession(x =>
     x.Cookie.IsEssential = true;
 });
 
-// **Kimlik Doğrulama ve Yetkilendirme**
+// Kimlik Doğrulama ve Yetkilendirme
 builder.Services.ConfigureApplicationCookie(x =>
 {
     x.AccessDeniedPath = "/Home/Index";
@@ -42,7 +42,7 @@ builder.Services.ConfigureApplicationCookie(x =>
 
 WebApplication app = builder.Build();
 
-// **Hata Yönetimi (Sadece Yönlendirme)**
+// Hata Yönetimi (Sadece Yönlendirme)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

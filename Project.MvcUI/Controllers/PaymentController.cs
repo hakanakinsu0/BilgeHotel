@@ -531,9 +531,9 @@ namespace Project.MvcUI.Controllers
                 .ToList() ?? new List<ReservationExtraServiceDto>();
 
             List<ExtraServiceDto> extraServices = new();
-            foreach (var resExtra in activeExtraServices)
+            foreach (ReservationExtraServiceDto resExtra in activeExtraServices)
             {
-                var extraService = await _extraServiceManager.GetByIdAsync(resExtra.ExtraServiceId);
+                ExtraServiceDto extraService = await _extraServiceManager.GetByIdAsync(resExtra.ExtraServiceId);
                 if (extraService != null)
                     extraServices.Add(extraService);
             }

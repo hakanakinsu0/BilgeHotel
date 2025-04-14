@@ -163,8 +163,6 @@ namespace Project.Bll.Managers.Abstracts
         /// <returns>Filtrelenmiş rezervasyon DTO'larının listesini döndürür.</returns>
         Task<List<ReservationDto>> GetFilteredReservationReportsAsync(string search, bool? isPaid, ReservationStatus? status);
 
-
-
         /// <summary>
         /// Belirtilen rezervasyon bilgilerini, ekstra hizmetleri ve reaktivasyon durumunu dikkate alarak rezervasyonu günceller.
         /// Bu metot, oda değişikliği, tarih kontrolü, fiyat hesaplaması, rezervasyon güncellemesi, ekstra hizmet güncellemesi ve
@@ -187,7 +185,12 @@ namespace Project.Bll.Managers.Abstracts
         /// <returns>Güncelleme işleminin başarılı olup olmadığını belirten boolean değer.</returns>
         Task<bool> UpdateReservationPaymentStatusAsync(int reservationId, ReservationStatus newStatus);
 
+        /// <summary>
+        /// Belirtilen rezervasyon ID'sine ait detaylı rezervasyon bilgilerini getirir.
+        /// Bu bilgiler, ilişkili kullanıcı, oda, paket ve ekstra hizmetleri de kapsayabilir.
+        /// </summary>
+        /// <param name="id">Detayları alınacak rezervasyonun ID'si.</param>
+        /// <returns>Rezervasyonun tüm ilişkili detaylarını içeren DTO.</returns>
         Task<ReservationDto> GetDetailedReservationByIdAsync(int id);
-
     }
 }

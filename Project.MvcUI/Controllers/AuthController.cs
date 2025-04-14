@@ -143,7 +143,7 @@ namespace Project.MvcUI.Controllers
         /// </summary>
         public IActionResult Login()
         {
-            var viewModel = new LoginPageViewModel(); // Login Page VM oluştur
+            LoginPageViewModel viewModel = new(); // Login Page VM oluştur
 
             // TempData'da mesaj varsa, bunu view model'in ErrorMessage alanına aktar
             if (TempData["Message"] != null)
@@ -195,7 +195,7 @@ namespace Project.MvcUI.Controllers
                     return LocalRedirect(model.ReturnUrl); // LocalRedirect, verilen URL'nin yerel bir URL olduğunu kontrol eder. Eğer URL yerel değilse, yönlendirme yapılmaz ve güvenlik açısından hata fırlatır. Bu, açık yönlendirme saldırılarına karşı ekstra bir koruma sağlar.
 
                 // Kullanıcı profilinden IdentityNumber kontrolü
-                var userProfile = await _appUserManager.GetUserProfileAsync(user.Id); // Profil bilgilerini al 
+                AppUserDto userProfile = await _appUserManager.GetUserProfileAsync(user.Id); // Profil bilgilerini al 
 
                 if (string.IsNullOrEmpty(userProfile.IdentityNumber)) // Kimlik numarası boş ise
                     return RedirectToAction("Edit", "Profile"); // Profil düzenleme sayfasına yönlendir 
@@ -244,7 +244,7 @@ namespace Project.MvcUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordPageViewModel viewModel)
         {
-            var model = viewModel.ForgotPasswordRequest; // Pure model, Page VM içerisindeki ForgotPasswordRequest'ten elde ediliyor.
+            UserForgotPasswordRequestModel model = viewModel.ForgotPasswordRequest; // Pure model, Page VM içerisindeki ForgotPasswordRequest'ten elde ediliyor.
             UserForgotPasswordResponseModel response = new(); // Response model oluştur
 
             // Hata durumunda ProcessResponse çağrısı ile viewModel güncellenip view'e gönderilir.
@@ -273,7 +273,7 @@ namespace Project.MvcUI.Controllers
         /// <param name="email">Kullanıcının email adresi</param>
         public IActionResult ResetPassword(string token, string email)
         {
-            var viewModel = new ResetPasswordPageViewModel(); // Page VM oluştur
+            ResetPasswordPageViewModel viewModel = new(); // Page VM oluştur
             viewModel.ResetPasswordRequest.Token = token; // Token ata
             viewModel.ResetPasswordRequest.Email = email; // Email ata
 
@@ -295,7 +295,7 @@ namespace Project.MvcUI.Controllers
         public async Task<IActionResult> ResetPassword(ResetPasswordPageViewModel viewModel)
         {
             // Pure model, Page VM içerisindeki ResetPasswordRequest'ten elde ediliyor.
-            var model = viewModel.ResetPasswordRequest;
+            UserResetPasswordRequestModel model = viewModel.ResetPasswordRequest;
             UserResetPasswordResponseModel response = new(); // Response model oluştur
 
             // Model validasyonunu kontrol et

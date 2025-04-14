@@ -61,7 +61,7 @@
         @if (Model.Users != null && Model.Users.Any())
         {
             int count = 1;
-            @foreach (var user in Model.Users)
+            @foreach (UserViewResponseModel user in Model.Users)
             {
                 <tr>
                     <td>@count</td>

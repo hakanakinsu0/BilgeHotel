@@ -375,7 +375,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
             }
 
             // View'e gönderilecek form modeli hazırlanır
-            var model = new RoomStatusUpdateRequestModel
+            RoomStatusUpdateRequestModel model = new() 
             {
                 RoomId = room.Id,
                 RoomNumber = room.RoomNumber,
