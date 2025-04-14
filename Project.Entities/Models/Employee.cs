@@ -21,5 +21,7 @@ namespace Project.Entities.Models
 
         // Relational Properties
         public virtual ICollection<Reservation> ManagedReservations { get; set; } // 1 Employee N Reservation, 1 Reservation 1 Employee (Bir rezervasyon yonetiminde bir çalısan olur)
+        public virtual ICollection<InventoryItem> InventoryItems { get; set; } // 1 Employee N InventoryItem, 1 InventoryItem 1 Employee
+
     }
 }

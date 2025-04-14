@@ -40,13 +40,12 @@ namespace Project.Bll.Mapping
             CreateMap<ReservationExtraService, ReservationExtraServiceDto>().ReverseMap(); // ReservationExtraService ReservationExtraServiceDto
 
             // Database Yedekleme Log (DatabaseBackupLog) Maplemeleri
-            //CreateMap<DatabaseBackupLog, DatabaseBackupLogDto>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName)); // DatabaseBackupLog DatabaseBackupLogDto
+            CreateMap<DatabaseBackupLog, DatabaseBackupLogDto>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName)); // AppUser nesnesi üzerinden gelen UserName property'ini UserName alanına mapler
+            CreateMap<DatabaseBackupLogDto, DatabaseBackupLog>().ForMember(dest => dest.AppUser, opt => opt.Ignore()); // AppUser alanını yok sayar, çünkü DatabaseBackupLogDto'da AppUser nesnesi yoktur
 
-            CreateMap<DatabaseBackupLog, DatabaseBackupLogDto>()
-    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName));
-
-            CreateMap<DatabaseBackupLogDto, DatabaseBackupLog>()
-                .ForMember(dest => dest.AppUser, opt => opt.Ignore());
+            // Yedekleme Log (BackupLog) Maplemeleri
+            CreateMap<InventoryItem, InventoryItemDto>().ForMember(dest => dest.EmployeeFullName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName)); // Employee nesnesi üzerinden gelen FirstName ve LastName property'lerini EmployeeFullName alanına mapler
+            CreateMap<InventoryItemDto, InventoryItem>().ForMember(dest => dest.Employee, opt => opt.Ignore()); // Employee alanını yok sayar, çünkü InventoryItemDto'da Employee nesnesi yoktur
         }
     }
 }

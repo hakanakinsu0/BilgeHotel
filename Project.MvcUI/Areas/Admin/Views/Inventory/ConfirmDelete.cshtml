@@ -1,0 +1,22 @@
+﻿@model InventoryItemListItemResponseModel
+
+@{
+    ViewData["Title"] = "Donanım Silme Onayı";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="text-danger">Silme Onayı</h2>
+
+<div class="alert alert-warning">
+    <p><strong>Ad:</strong> @Model.Name</p>
+    <p><strong>Seri No:</strong> @Model.SerialNumber</p>
+    <p><strong>Konum:</strong> @Model.Location</p>
+    <p><strong>Kategori:</strong> @Model.Category</p>
+    <p><strong>Sorumlu:</strong> @Model.EmployeeFullName</p>
+    <p>Bu donanımı silmek istediğinize emin misiniz?</p>
+</div>
+
+<form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger">🗑 Evet, Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

@@ -48,7 +48,9 @@ namespace Project.Dal.ContextClasses
             builder.ApplyConfiguration(new RoomTypeConfiguration());                // Oda türleri ayarları
             builder.ApplyConfiguration(new ExtraServiceConfiguration());            // Ekstra hizmet ayarları
             builder.ApplyConfiguration(new ReservationExtraServiceConfiguration()); // Ekstra hizmet-rezervasyon ilişkisi
-            builder.ApplyConfiguration(new DatabaseBackupLogConfiguration());       // Database Log ayarlari
+            builder.ApplyConfiguration(new DatabaseBackupLogConfiguration());       // Database Log ayarları
+            builder.ApplyConfiguration(new InventoryItemConfiguration());           // Envanter ayarları
+
 
 
             // Seed (Başlangıç) Verileri Burada Çağrılır
@@ -58,6 +60,7 @@ namespace Project.Dal.ContextClasses
             UserAndRoleSeed.SeedUsersAndRoles(builder);
             PackageSeed.SeedPackages(builder);
             ExtraServiceSeed.SeedExtraServices(builder);
+            InventoryItemSeed.SeedInventoryItems(builder);
 
         }
 
@@ -73,6 +76,7 @@ namespace Project.Dal.ContextClasses
         public DbSet<Room> Rooms { get; set; }                     // Odalar
         public DbSet<RoomType> RoomTypes { get; set; }             // Oda Türleri
         public DbSet<DatabaseBackupLog> DatabaseBackupLogs { get; set; } // Veritabanı yedekleme logları
+        public DbSet<InventoryItem> InventoryItems { get; set; }   // Envanterler
 
     }
 }

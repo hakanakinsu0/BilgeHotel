@@ -41,6 +41,10 @@ namespace Project.Bll.DependencyResolvers
             // Database Yedekleme Log Yönetimi Repository Bağımlılıkları
             services.AddScoped<IDatabaseBackupLogRepository, DatabaseBackupLogRepository>(); // Database Loglama yönetimi
 
+            // Donanım Envanteri Yönetimi Repository Bağımlılıkları
+            services.AddScoped<IInventoryItemRepository, InventoryItemRepository>(); // Donanım envanteri yönetimi
+
+
         }
     }
 }
