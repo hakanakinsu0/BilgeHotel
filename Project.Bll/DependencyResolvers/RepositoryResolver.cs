@@ -37,6 +37,10 @@ namespace Project.Bll.DependencyResolvers
             // Ekstra Hizmetler ve Rezervasyon Hizmetleri Yönetimi
             services.AddScoped<IExtraServiceRepository, ExtraServiceRepository>();                          // Ekstra hizmetler yönetimi
             services.AddScoped<IReservationExtraServiceRepository, ReservationExtraServiceRepository>();    // Rezervasyon - Ekstra Hizmet yönetimi
+
+            // Database Yedekleme Log Yönetimi Repository Bağımlılıkları
+            services.AddScoped<IDatabaseBackupLogRepository, DatabaseBackupLogRepository>(); // Database Loglama yönetimi
+
         }
     }
 }

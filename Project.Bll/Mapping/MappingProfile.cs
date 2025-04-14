@@ -35,9 +35,18 @@ namespace Project.Bll.Mapping
             CreateMap<Payment, PaymentDto>().ReverseMap();          // Payment PaymentDto
             CreateMap<Package, PackageDto>().ReverseMap();          // Package PackageDto
 
-            // Yeni Eklenen Varlıklar
+            // Ekstra Hizmet (ExtraService) ve Rezervasyon Ekstra Hizmet (ReservationExtraService) Maplemeleri
             CreateMap<ExtraService, ExtraServiceDto>().ReverseMap();// ExtraService ExtraServiceDto
             CreateMap<ReservationExtraService, ReservationExtraServiceDto>().ReverseMap(); // ReservationExtraService ReservationExtraServiceDto
+
+            // Database Yedekleme Log (DatabaseBackupLog) Maplemeleri
+            //CreateMap<DatabaseBackupLog, DatabaseBackupLogDto>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName)); // DatabaseBackupLog DatabaseBackupLogDto
+
+            CreateMap<DatabaseBackupLog, DatabaseBackupLogDto>()
+    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName));
+
+            CreateMap<DatabaseBackupLogDto, DatabaseBackupLog>()
+                .ForMember(dest => dest.AppUser, opt => opt.Ignore());
         }
     }
 }

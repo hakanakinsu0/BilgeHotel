@@ -26,5 +26,7 @@ namespace Project.Entities.Models
         // Relational Properties
         public virtual AppUserProfile AppUserProfile { get; set; }          // 1 AppUser 1 AppUserProfile, 1 AppUserProfile 1 AppUser 
         public virtual ICollection<Reservation> Reservations { get; set; }  // 1 AppUser N Reservation, 1 Reservation 1 AppUser
+        public virtual ICollection<DatabaseBackupLog> DatabaseBackupLogs { get; set; } // 1 AppUser N DatabaseBackupLog, 1 DatabaseBackupLog 1 AppUser
+
     }
 }

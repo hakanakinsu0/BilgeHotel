@@ -48,6 +48,8 @@ namespace Project.Dal.ContextClasses
             builder.ApplyConfiguration(new RoomTypeConfiguration());                // Oda türleri ayarları
             builder.ApplyConfiguration(new ExtraServiceConfiguration());            // Ekstra hizmet ayarları
             builder.ApplyConfiguration(new ReservationExtraServiceConfiguration()); // Ekstra hizmet-rezervasyon ilişkisi
+            builder.ApplyConfiguration(new DatabaseBackupLogConfiguration());       // Database Log ayarlari
+
 
             // Seed (Başlangıç) Verileri Burada Çağrılır
             RoomTypeSeed.SeedRoomTypes(builder);
@@ -70,5 +72,7 @@ namespace Project.Dal.ContextClasses
         public DbSet<ReservationExtraService> ReservationExtraServices { get; set; } // Ekstra Hizmet - Rezervasyon Junction Tablosu
         public DbSet<Room> Rooms { get; set; }                     // Odalar
         public DbSet<RoomType> RoomTypes { get; set; }             // Oda Türleri
+        public DbSet<DatabaseBackupLog> DatabaseBackupLogs { get; set; } // Veritabanı yedekleme logları
+
     }
 }

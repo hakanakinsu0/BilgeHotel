@@ -29,6 +29,8 @@ namespace Project.Bll.DependencyResolvers
             services.AddScoped<IPackageManager, PackageManager>();                  // Paket yönetimi
             services.AddScoped<IExtraServiceManager, ExtraServiceManager>();        // Ekstra hizmetler yönetimi
             services.AddScoped<IReservationExtraServiceManager, ReservationExtraServiceManager>(); // Rezervasyon - Ekstra Hizmet yönetimi
+            services.AddScoped<IDatabaseBackupLogManager, DatabaseBackupLogManager>(); //Database Loglama yönetimi
+
         }
     }
 }
