@@ -17,8 +17,9 @@ namespace Project.Bll.DtoClasses
         public string Location { get; set; }       // Fiziksel konum
         public string Description { get; set; }    // Teknik açıklama
         public string Category { get; set; }       // Bilgisayar, Server vs.
-
         public int EmployeeId { get; set; }        // IT sorumlusunun ID'si
         public string EmployeeFullName { get; set; } // View tarafı için (örn: "Selahattin Karadibag")
+        public string EmployeePosition { get; set; } // View'de "Sorumlu Birim" olarak kullanılacak
+
     }
 }

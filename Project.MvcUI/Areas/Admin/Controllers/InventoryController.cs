@@ -43,6 +43,7 @@ namespace Project.MvcUI.Areas.Admin.Controllers
                     Category = x.Category,
                     Description = x.Description,
                     EmployeeFullName = x.EmployeeFullName,
+                    EmployeePosition = x.EmployeePosition,
                     Status = x.Status,
                     CreatedDate = x.CreatedDate
                 }).ToList()

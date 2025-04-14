@@ -44,7 +44,9 @@ namespace Project.Bll.Mapping
             CreateMap<DatabaseBackupLogDto, DatabaseBackupLog>().ForMember(dest => dest.AppUser, opt => opt.Ignore()); // AppUser alanını yok sayar, çünkü DatabaseBackupLogDto'da AppUser nesnesi yoktur
 
             // Yedekleme Log (BackupLog) Maplemeleri
-            CreateMap<InventoryItem, InventoryItemDto>().ForMember(dest => dest.EmployeeFullName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName)); // Employee nesnesi üzerinden gelen FirstName ve LastName property'lerini EmployeeFullName alanına mapler
+            CreateMap<InventoryItem, InventoryItemDto>()
+                .ForMember(dest => dest.EmployeeFullName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
+                .ForMember(dest => dest.EmployeePosition, opt => opt.MapFrom(src => src.Employee.Position)); // Employee nesnesi üzerinden gelen FirstName ve LastName property'lerini EmployeeFullName alanına mapler
             CreateMap<InventoryItemDto, InventoryItem>().ForMember(dest => dest.Employee, opt => opt.Ignore()); // Employee alanını yok sayar, çünkü InventoryItemDto'da Employee nesnesi yoktur
         }
     }

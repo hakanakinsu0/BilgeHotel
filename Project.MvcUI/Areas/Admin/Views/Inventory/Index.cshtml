@@ -20,6 +20,7 @@
             <th>Konum</th>
             <th>Kategori</th>
             <th>Sorumlu</th>
+            <th>Sorumlu Birim</th>
             <th>Durum</th>
             <th>Oluşturma Tarihi</th>
             <th>İşlemler</th>
@@ -34,6 +35,7 @@
                 <td>@item.Location</td>
                 <td>@item.Category</td>
                 <td>@item.EmployeeFullName</td>
+                <td>@item.EmployeePosition</td>
                 <td>
                     @if (item.Status == Project.Entities.Enums.DataStatus.Inserted)
                     {

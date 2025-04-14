@@ -14,8 +14,9 @@ namespace Project.MvcUI.Areas.Admin.Models.ResponseModels.Inventory
         public string Description { get; set; }
         public string Category { get; set; }
         public string EmployeeFullName { get; set; }
-
         public DataStatus Status { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string EmployeePosition { get; set; }
+
     }
 }
