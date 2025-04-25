@@ -138,7 +138,8 @@ Proje boyunca **Clean Architecture** prensipleri, **Hybrid N-Tier Architecture**
    - `https://localhost:5114`  
 
 > **Admin** kullanıcı:  
-> - Kullanıcı Adı: `bilgehotel`  
+> - Kullanıcı Adı: `bilgehotel`
+> - Email: `bilgehotel@email.com`
 > - Şifre: `bilgehotel`
 
 ---
