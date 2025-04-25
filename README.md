@@ -145,6 +145,6 @@ Proje boyunca **Clean Architecture** prensipleri, **Hybrid N-Tier Architecture**
 
 ## 🤝 **Yazılım Geliştirici**
 
-[Hakan Akınsu - Computer Engineer](https://ornek.com](https://github.com/hakanakinsu0))
+[Hakan Akınsu - Computer Engineer](https://github.com/hakanakinsu0)
 
 ---
